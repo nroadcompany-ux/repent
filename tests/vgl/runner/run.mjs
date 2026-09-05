@@ -36,6 +36,27 @@ async function loadJson(p) {
   return JSON.parse(raw);
 }
 
+// Runner Adapter (PM 지시 섹션 7): Canonical fixture(ac-cases.official.json)는
+// { cases: [{ ac_id, test_sentence, expected_verdict, ... }] } 구조이고,
+// 기존 자체 제작 fixture(smoke-cases.json)는 [{ ac_id, input, expected_verdict,
+// mockResponseKey, ... }] 평면 배열이다. Canonical 파일 자체는 수정하지 않고,
+// 여기서 두 형태를 모두 읽어 동일한 내부 표현으로 정규화한다.
+function normalizeCasesFile(data) {
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.cases)) {
+    return data.cases.map((c) => ({
+      ac_id: c.ac_id,
+      input: c.test_sentence,
+      expected_verdict: c.expected_verdict,
+      gate: c.gate ?? null,
+      severity: c.severity ?? null,
+      rule_id: c.rule_id ?? null,
+      source: c.source ?? null,
+    }));
+  }
+  return [];
+}
+
 export async function runSuite({ configPath, casesPath, outDir, providerOverride, official }) {
   const config = await loadJson(path.resolve(REPO_ROOT, configPath));
   const provider = providerOverride || config.provider;
@@ -46,7 +67,8 @@ export async function runSuite({ configPath, casesPath, outDir, providerOverride
 
   let cases = [];
   try {
-    cases = await loadJson(path.resolve(REPO_ROOT, casesPath));
+    const raw = await loadJson(path.resolve(REPO_ROOT, casesPath));
+    cases = normalizeCasesFile(raw);
   } catch (e) {
     cases = [];
   }
@@ -101,8 +123,9 @@ export async function runSuite({ configPath, casesPath, outDir, providerOverride
   const executed = results.filter((r) => r.pass_fail !== 'NOT_RUN').length;
   const pass = results.filter((r) => r.pass_fail === 'PASS').length;
   const fail = results.filter((r) => r.pass_fail === 'FAIL').length;
+  // P0 False Negative: 차단됐어야(ALLOW가 아니어야) 할 것을 ALLOW로 통과시킨 경우.
   const p0FalseNegative = results.filter(
-    (r) => r.severity === 'P0' && r.expected_verdict !== 'PASS' && r.actual_verdict === 'PASS'
+    (r) => r.severity === 'P0' && r.expected_verdict !== 'ALLOW' && r.actual_verdict === 'ALLOW'
   ).length;
 
   // Gate 집계: gates.json에 정의된 gate의 AC가 전부 실행+PASS일 때만 그 gate PASS.

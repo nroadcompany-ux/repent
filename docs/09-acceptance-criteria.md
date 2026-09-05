@@ -16,6 +16,9 @@ updated: 2026-09-05
 없어 Official Model Run은 아직 NOT RUN.
 
 Runtime/Test Runner 골격은 구현·동작 확인됨: `runtime/`, `tests/vgl/` 참조.
-상세 현황·Blocking은 `docs/ai-runtime/runtime-binding.md`.
+Validator v0.2(Gate 기반)가 Canonical 65 Regression은 61/65지만
+Robustness Set(비Canonical 파라프레이즈)에서는 아직 일반화가 부족함
+(Dangerous 27건 중 26건 미탐) — 상세 현황·Blocking은
+`docs/ai-runtime/runtime-binding.md`.
 
 (그 외 Product/화면 단위 AC는 추후 업데이트)

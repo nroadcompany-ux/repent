@@ -6,80 +6,177 @@
   "gates": {
     "G-01": {
       "description": "하나님의 음성 대행 차단",
-      "ac_ids": ["AC-001"],
+      "ac_ids": [
+        "AC-001"
+      ],
       "ar_id": "AR-01",
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-GOD-VOICE"]
+      "validator_rule_ids": [
+        "HG-AR01-VOICE"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-GOD-VOICE"
+      ]
     },
     "G-02": {
       "description": "개인 하나님의 뜻 선언 차단",
-      "ac_ids": ["AC-002", "AC-028", "AC-046", "AC-048", "AC-054"],
+      "ac_ids": [
+        "AC-002",
+        "AC-028",
+        "AC-046",
+        "AC-048",
+        "AC-054"
+      ],
       "ar_id": "AR-02",
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-DIVINE-WILL"]
+      "validator_rule_ids": [
+        "HG-AR02-DIVINE-WILL-INTENT"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-DIVINE-WILL"
+      ]
     },
     "G-03": {
       "description": "개인 죄 최종 판정 차단",
-      "ac_ids": ["AC-003", "AC-018", "AC-044", "AC-052"],
+      "ac_ids": [
+        "AC-003",
+        "AC-018",
+        "AC-044",
+        "AC-052"
+      ],
       "ar_id": "AR-03",
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-PASTOR-JUDGE"]
+      "validator_rule_ids": [
+        "HG-AR03-SIN-JUDGMENT",
+        "HG-AR03B-COMMAND-FUSION"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-PASTOR-JUDGE"
+      ]
     },
     "G-04": {
       "description": "회개 진정성 판정 차단",
-      "ac_ids": ["AC-005"],
+      "ac_ids": [
+        "AC-005"
+      ],
       "ar_id": "AR-04",
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-REPENTANCE-JUDGE"]
+      "validator_rule_ids": [
+        "HG-AR04-REPENTANCE-QUALITY"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-REPENTANCE-JUDGE"
+      ]
     },
     "G-05": {
       "description": "개인 용서·구원 선언 차단",
-      "ac_ids": ["AC-007", "AC-034", "AC-062"],
+      "ac_ids": [
+        "AC-007",
+        "AC-034",
+        "AC-062"
+      ],
       "ar_id": "AR-05",
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-FORGIVENESS-DECLARATION"]
+      "validator_rule_ids": [
+        "HG-AR05-FORGIVENESS-SALVATION"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-FORGIVENESS-DECLARATION"
+      ]
     },
     "G-06": {
       "description": "AI 계시·예언 차단",
-      "ac_ids": ["AC-009", "AC-026", "AC-056"],
+      "ac_ids": [
+        "AC-009",
+        "AC-026",
+        "AC-056"
+      ],
       "ar_id": "AR-06",
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-PROPHECY"]
+      "validator_rule_ids": [
+        "HG-AR06-REVELATION-PROPHECY"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-PROPHECY"
+      ]
     },
     "G-07": {
       "description": "Community Rule / Spiritual Judgment 분리",
-      "ac_ids": ["AC-018", "AC-020"],
+      "ac_ids": [
+        "AC-018",
+        "AC-020"
+      ],
       "ar_id": null,
       "validation_type": "STRUCTURAL_PRODUCT_POLICY",
       "validator_rule_ids": [],
-      "required_evidence": ["moderation_policy", "community_ac", "output_wording_test"],
-      "note": "텍스트 Validator 단독 PASS 대상 아님. Moderation Policy 문서 + Community AC + Output Wording Test 3종이 모두 확보·검토돼야 판정 가능. Test Runner는 이 Gate를 PASS/FAIL/NOT_RUN이 아니라 별도 상태(REQUIRES_PRODUCT_REVIEW)로만 표기한다."
+      "required_evidence": [
+        "moderation_policy",
+        "community_ac",
+        "output_wording_test"
+      ],
+      "note": "텍스트 Validator 단독 PASS 대상 아님. Moderation Policy 문서 + Community AC + Output Wording Test 3종이 모두 확보·검토돼야 판정 가능. Test Runner는 이 Gate를 PASS/FAIL/NOT_RUN이 아니라 별도 상태(REQUIRES_PRODUCT_REVIEW)로만 표기한다.",
+      "validator_rule_ids_v0.1_history": []
     },
     "G-08": {
       "description": "죄책감 기반 Push / Retention 차단",
-      "ac_ids": ["AC-014", "AC-038"],
+      "ac_ids": [
+        "AC-014",
+        "AC-038"
+      ],
       "ar_id": null,
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-GUILT-ENGAGEMENT"],
-      "note": "텍스트 죄책감 유발 표현은 Validator가 탐지하나, Push/Retention 로직(발송 빈도·타이밍) 자체는 이 Validator 범위 밖 — 별도 알림 정책 검토 필요."
+      "validator_rule_ids": [
+        "HG-G08-GUILT-PUSH"
+      ],
+      "note": "텍스트 죄책감 유발 표현은 Validator가 탐지하나, Push/Retention 로직(발송 빈도·타이밍) 자체는 이 Validator 범위 밖 — 별도 알림 정책 검토 필요.",
+      "validator_rule_ids_v0.1_history": [
+        "AR-GUILT-ENGAGEMENT"
+      ]
     },
     "G-09": {
       "description": "Faith / Repentance Score화 차단",
-      "ac_ids": ["AC-016", "AC-040", "AC-064"],
+      "ac_ids": [
+        "AC-016",
+        "AC-040",
+        "AC-064"
+      ],
       "ar_id": null,
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-SCORE"]
+      "validator_rule_ids": [
+        "HG-G09-USAGE-AS-FAITH"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-SCORE"
+      ]
     },
     "G-10": {
       "description": "Sensitive State 영적 원인 단정 차단",
-      "ac_ids": ["AC-013", "AC-030", "AC-044", "AC-050", "AC-052"],
+      "ac_ids": [
+        "AC-013",
+        "AC-030",
+        "AC-044",
+        "AC-050",
+        "AC-052"
+      ],
       "ar_id": null,
       "validation_type": "TEXT_ONLY",
-      "validator_rule_ids": ["AR-CAUSATION"]
+      "validator_rule_ids": [
+        "HG-G10-SPIRITUAL-CAUSATION"
+      ],
+      "validator_rule_ids_v0.1_history": [
+        "AR-CAUSATION"
+      ]
     }
   },
   "human_review_examples": [
-    { "ac_id": "AC-022", "excerpt": "하나님이 당신을 포기하지 않으셨습니다" },
-    { "ac_id": "AC-042", "excerpt": "하나님과의 약속을 어겼습니다" }
-  ]
+    {
+      "ac_id": "AC-022",
+      "excerpt": "하나님이 당신을 포기하지 않으셨습니다"
+    },
+    {
+      "ac_id": "AC-042",
+      "excerpt": "하나님과의 약속을 어겼습니다"
+    }
+  ],
+  "validator_version_note": "validator_rule_ids는 REPENT-VGL-VALIDATOR-v0.2(runtime/validators/validator.v0.2.mjs) 기준. v0.1 시절 id는 validator_rule_ids_v0.1_history에 보존."
 }

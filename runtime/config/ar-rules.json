@@ -1,12 +1,13 @@
 {
   "source": "runtime/config/source/ar-01-06.owner-approved.json (REPENT_VGL_Runtime_Canonical_Import_Pack.zip, 2026-09-05 실제 첨부·확인됨). 설명 텍스트를 이전에 세션 채팅으로 먼저 받았던 것과 대조한 결과 byte-level로 동일 — 변경 없음.",
+  "validator_version_note": "validator_rule_id는 REPENT-VGL-VALIDATOR-v0.2 기준. v0.1 id는 validator_rule_id_v0.1_history에 보존.",
   "rules": {
-    "AR-01": { "description": "하나님의 직접 음성 대행", "gate": "G-01", "validator_rule_id": "AR-GOD-VOICE" },
-    "AR-02": { "description": "개인에 대한 하나님의 뜻 최종 선언", "gate": "G-02", "validator_rule_id": "AR-DIVINE-WILL" },
-    "AR-03": { "description": "개인 죄의 최종 영적 판정", "gate": "G-03", "validator_rule_id": "AR-PASTOR-JUDGE" },
-    "AR-04": { "description": "회개의 진정성·충분성 판정", "gate": "G-04", "validator_rule_id": "AR-REPENTANCE-JUDGE" },
-    "AR-05": { "description": "개인의 하나님의 용서·구원 상태 선언", "gate": "G-05", "validator_rule_id": "AR-FORGIVENESS-DECLARATION" },
-    "AR-06": { "description": "AI 생성 계시·예언", "gate": "G-06", "validator_rule_id": "AR-PROPHECY" }
+    "AR-01": { "description": "하나님의 직접 음성 대행", "gate": "G-01", "validator_rule_id": "HG-AR01-VOICE", "validator_rule_id_v0.1_history": "AR-GOD-VOICE" },
+    "AR-02": { "description": "개인에 대한 하나님의 뜻 최종 선언", "gate": "G-02", "validator_rule_id": "HG-AR02-DIVINE-WILL-INTENT", "validator_rule_id_v0.1_history": "AR-DIVINE-WILL" },
+    "AR-03": { "description": "개인 죄의 최종 영적 판정", "gate": "G-03", "validator_rule_id": ["HG-AR03-SIN-JUDGMENT", "HG-AR03B-COMMAND-FUSION"], "validator_rule_id_v0.1_history": "AR-PASTOR-JUDGE" },
+    "AR-04": { "description": "회개의 진정성·충분성 판정", "gate": "G-04", "validator_rule_id": "HG-AR04-REPENTANCE-QUALITY", "validator_rule_id_v0.1_history": "AR-REPENTANCE-JUDGE" },
+    "AR-05": { "description": "개인의 하나님의 용서·구원 상태 선언", "gate": "G-05", "validator_rule_id": "HG-AR05-FORGIVENESS-SALVATION", "validator_rule_id_v0.1_history": "AR-FORGIVENESS-DECLARATION" },
+    "AR-06": { "description": "AI 생성 계시·예언", "gate": "G-06", "validator_rule_id": "HG-AR06-REVELATION-PROPHECY", "validator_rule_id_v0.1_history": "AR-PROPHECY" }
   },
   "coverage_note": "AR-01~06과 G-01~06 설명이 1:1 대응이라 validator_rule_id도 각 Gate에 이미 매핑된 것과 동일하게 연결됨. 새 AR 번호는 생성하지 않음. G-07~G-10에 대응하는 공식 AR 번호는 없음(요청받지 않음, 임의 부여 금지)."
 }

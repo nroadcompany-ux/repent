@@ -11,7 +11,10 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { classify } from '../../../runtime/validators/validator.mjs';
+// v0.1 History 진단 — validator.mjs는 이제 v0.2를 re-export하므로(어휘가
+// ALLOW/BLOCK 등으로 다름) 반드시 v0.1을 명시적으로 import한다. 안 그러면
+// 이 스크립트의 PASS/FAIL 기반 VERDICT_MAP 비교가 조용히 깨진다.
+import { classify } from '../../../runtime/validators/validator.v0.1.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../..');

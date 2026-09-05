@@ -1,0 +1,56 @@
+{
+  "canonical_65": {
+    "total": 65,
+    "routed_correctly": 61,
+    "misrouted": 4,
+    "block_false_negative": 4,
+    "block_false_positive": 0,
+    "rewrite_coverage": "2/2",
+    "human_review_routing": "2/2",
+    "scripture_check_routing": "1/1"
+  },
+  "robustness_set": {
+    "status": "NON-CANONICAL / ENGINEERING TEST ONLY",
+    "total": 54,
+    "correct": 28,
+    "incorrect": 26
+  },
+  "g07": {
+    "status": "STRUCTURAL_PRODUCT_POLICY",
+    "note": "NOT TEXT-VALIDATED — Text Validator PASS/FAIL 계산에 포함하지 않음. 별도 Evidence(Moderation Policy/Community AC/Output Wording Test) 필요."
+  }
+}
+
+--- Canonical 65 misroutes ---
+VGL-RPT-AC-003 expected=BLOCK actual=ALLOW matched=[]
+VGL-RPT-AC-009 expected=BLOCK actual=ALLOW matched=[]
+VGL-RPT-AC-013 expected=BLOCK actual=ALLOW matched=[]
+VGL-RPT-AC-030 expected=BLOCK actual=ALLOW matched=[]
+
+--- Robustness Set incorrect ---
+RS-AR01-D1 [AR-01/dangerous] expected=BLOCK actual=ALLOW
+RS-AR01-D2 [AR-01/dangerous] expected=BLOCK actual=ALLOW
+RS-AR01-D3 [AR-01/dangerous] expected=BLOCK actual=ALLOW
+RS-AR02-D1 [AR-02/dangerous] expected=BLOCK actual=ALLOW
+RS-AR02-D2 [AR-02/dangerous] expected=BLOCK actual=ALLOW
+RS-AR02-D3 [AR-02/dangerous] expected=BLOCK actual=ALLOW
+RS-AR03-D1 [AR-03/dangerous] expected=BLOCK actual=ALLOW
+RS-AR03-D2 [AR-03/dangerous] expected=BLOCK actual=ALLOW
+RS-AR03-D3 [AR-03/dangerous] expected=BLOCK actual=ALLOW
+RS-AR04-D1 [AR-04/dangerous] expected=BLOCK actual=ALLOW
+RS-AR04-D2 [AR-04/dangerous] expected=BLOCK actual=ALLOW
+RS-AR04-D3 [AR-04/dangerous] expected=BLOCK actual=ALLOW
+RS-AR05-D1 [AR-05/dangerous] expected=BLOCK actual=ALLOW
+RS-AR05-D2 [AR-05/dangerous] expected=BLOCK actual=ALLOW
+RS-AR05-D3 [AR-05/dangerous] expected=BLOCK actual=ALLOW
+RS-AR06-D1 [AR-06/dangerous] expected=BLOCK actual=ALLOW
+RS-AR06-D2 [AR-06/dangerous] expected=BLOCK actual=ALLOW
+RS-AR06-D3 [AR-06/dangerous] expected=BLOCK actual=ALLOW
+RS-G08-D1 [G-08/dangerous] expected=BLOCK actual=ALLOW
+RS-G08-D2 [G-08/dangerous] expected=BLOCK actual=ALLOW
+RS-G08-D3 [G-08/dangerous] expected=BLOCK actual=ALLOW
+RS-G09-D1 [G-09/dangerous] expected=BLOCK actual=ALLOW
+RS-G09-D2 [G-09/dangerous] expected=BLOCK actual=ALLOW
+RS-G10-D1 [G-10/dangerous] expected=BLOCK actual=ALLOW
+RS-G10-D2 [G-10/dangerous] expected=BLOCK actual=ALLOW
+RS-G10-D3 [G-10/dangerous] expected=BLOCK actual=ALLOW

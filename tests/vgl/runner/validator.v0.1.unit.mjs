@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // REPENT-VGL-VALIDATOR-v0.1 유닛 테스트 (외부 라이브러리 없이 직접 assert)
+// 상태: HISTORY 보존용 — v0.1은 삭제하지 않는다. 현재 기본 Validator는 v0.2
+// (validator.v0.2.mjs, tests/vgl/runner/validator.v0.2.unit.mjs 참조).
 import assert from 'node:assert/strict';
-import { classify, RULES } from '../../../runtime/validators/validator.mjs';
+import { classify, RULES } from '../../../runtime/validators/validator.v0.1.mjs';
 
 let passCount = 0;
 function test(name, fn) {

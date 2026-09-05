@@ -16,13 +16,18 @@ runtime/
   README.md                     실행 방법 요약
   config/
     runtime.candidate.json      Runtime Binding 필드 (Candidate)
-    gates.json                  G-01~G-10 정의 + AC 번호 매핑 + Rule 매핑
+    gates.json                  G-01~G-10 정의 + AC 번호 매핑 + validator_rule_ids(v0.2)
+    ar-rules.json                AR-01~06 정의 + Gate/Validator 매핑
+    source/
+      ar-01-06.owner-approved.json   AR-01~06 Owner 승인 원본 (수정 금지)
   prompts/
     system_prompt.v0.1.md       System Prompt 원문
     system_prompt.v0.1.sha256.txt
     MANIFEST.json               Canonical ID → 파일 경로
   validators/
-    validator.mjs                REPENT-VGL-VALIDATOR-v0.1 (Rule-based)
+    validator.mjs                현재 기본(v0.2 re-export)
+    validator.v0.1.mjs            REPENT-VGL-VALIDATOR-v0.1 (History 보존, 삭제 금지)
+    validator.v0.2.mjs            REPENT-VGL-VALIDATOR-v0.2 (Gate 기반 — A~E 역할 분리)
   src/
     provider-client.mjs          Model Provider 호출 추상화 (mock / openai)
 
@@ -33,12 +38,16 @@ tests/vgl/
     source/
       02_VGL_for_REPENT_RedTeam_65_v0.2.md   원본 Evidence 문서 (수정 금지)
     smoke-cases.json             자체 제작 스모크 테스트 5건 (공식 아님)
+    robustness/
+      paraphrase-challenge-set.json  NON-CANONICAL 파라프레이즈 54건(일반화 검증용)
     README.md                    AC 원문 확보 상태·절차
   runner/
-    run.mjs                      CLI Test Runner (Provider+Validator 파이프라인)
+    run.mjs                      CLI Test Runner (Provider+Validator 파이프라인, Canonical/자체 fixture Adapter)
     validate-official.mjs        공식 65 AC 구조·건수·ID·원본 대조 검증
-    validator-dryrun.mjs         Validator 단독 진단(모델 호출 없음)
-    validator.unit.mjs           Validator 유닛 테스트
+    validator-dryrun.mjs         v0.1 단독 진단(모델 호출 없음, History)
+    validator-v2-regression.mjs  v0.2 Canonical 65 Regression + Robustness Set 측정
+    validator.v0.1.unit.mjs      v0.1 유닛 테스트(History)
+    validator.v0.2.unit.mjs      v0.2 유닛 테스트(Gate별 라우팅)
   results/
     run-*.jsonl                  실행별 Evidence Log
     run-*.summary.json           실행별 요약(집계)
@@ -58,14 +67,15 @@ tests/vgl/
 ## 실행 명령
 
 ```bash
-# 유닛 테스트
-node tests/vgl/runner/validator.unit.mjs
+# 유닛 테스트 (v0.2 = 현재 기본, v0.1 = History)
+node tests/vgl/runner/validator.v0.2.unit.mjs
+node tests/vgl/runner/validator.v0.1.unit.mjs
 
 # 공식 65 AC 구조 검증 (API Key 불필요)
 node tests/vgl/runner/validate-official.mjs
 
-# Validator 단독 진단 — Official Model Run 아님(모델 호출 없음)
-node tests/vgl/runner/validator-dryrun.mjs
+# v0.2 Canonical 65 Regression + Robustness Set — Official Model Run 아님(모델 호출 없음)
+node tests/vgl/runner/validator-v2-regression.mjs
 
 # 스모크 테스트 (mock provider, 공식 AC 아님)
 node tests/vgl/runner/run.mjs \
@@ -104,6 +114,22 @@ OPENAI_API_KEY=sk-... node tests/vgl/runner/run.mjs \
 G-07~G-10에는 대응하는 공식 AR 번호가 없다(요청받지 않음 — 임의 부여 금지).
 새 Gate/AR 번호를 여기서 만들지 않는다. 새로운 판정축이 필요하다고 판단되면
 PM/Owner Escalation.
+
+## Validator 아키텍처 (v0.2, 되돌리지 말 것)
+
+`runtime/validators/validator.v0.2.mjs`는 5개 Verdict를 하나의 Rule
+목록으로 판정하지 않는다 — Hard Authority Guard(BLOCK) / Rewrite
+Guard(REWRITE) / Scripture Router(SCRIPTURE_CHECK) / Human Review
+Router(HUMAN_REVIEW) / (Structural Product Gate는 이 파일 밖) 로 나누고
+`BLOCK > REWRITE > SCRIPTURE_CHECK > HUMAN_REVIEW > ALLOW` 우선순위로
+Final Verdict를 만든다. Canonical 65의 문장을 그대로 옮긴 패턴이 아니라
+구조를 일반화한 것 — case별 literal 문자열/AC ID 예외를 넣지 않는다.
+
+측정 결과(Canonical 65 Regression 61/65, Robustness Set 28/54)와 Robustness
+Set의 중요성(Dangerous 파라프레이즈 27건 중 26건 미탐)은
+`docs/ai-runtime/runtime-binding.md`에 상세 기록. **Robustness Set 문장에
+맞춰 반응적으로 패턴을 추가하지 않는다** — 그건 정답지를 바꿔가며 암기하는
+것과 같다. 일반화 접근 자체를 재설계해야 할 사안으로 남겨둔다.
 
 ## AC 원문 반입 절차 (완료 — 2026-09-05)
 

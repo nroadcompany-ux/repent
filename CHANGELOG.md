@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## AI Runtime — Validator v0.2 Generalization Round (2026-09-05)
+- `runtime/validators/validator.v0.1.mjs` — v0.1 이름 변경(History 보존,
+  삭제 안 함), `tests/vgl/runner/validator.v0.1.unit.mjs`도 동일하게 보존
+- `runtime/validators/validator.v0.2.mjs` 신규 — 단일 Rule 목록 대신 5개
+  역할로 분리: Hard Authority Guard(BLOCK) / Rewrite Guard(REWRITE) /
+  Scripture Router(SCRIPTURE_CHECK) / Human Review Router(HUMAN_REVIEW) /
+  Structural Product Gate(G-07, 이 파일 밖). 우선순위
+  `BLOCK > REWRITE > SCRIPTURE_CHECK > HUMAN_REVIEW > ALLOW`. AR-01~06을
+  Canonical 65 문장이 아니라 구조([행위자]+[행위]+[개인 적용] 등)로 일반화
+  — case별 literal 문자열/AC ID 예외 없음
+- `runtime/validators/validator.mjs` — 이제 v0.2를 re-export(현재 기본)
+- `tests/vgl/runner/validator.v0.2.unit.mjs` 신규 — Gate별 라우팅 19건 PASS
+- `tests/vgl/fixtures/robustness/paraphrase-challenge-set.json` 신규 —
+  NON-CANONICAL 파라프레이즈 54건(AR-01~06·G-08~10 각 dangerous 3/safe
+  2/boundary 1), Canonical 65와 다른 어휘로 일반화 여부 검증
+- `tests/vgl/runner/validator-v2-regression.mjs` 신규 — Canonical 65와
+  Robustness Set을 분리 측정(단일 Accuracy로 합치지 않음)
+- **측정 결과**: Canonical 65 — Routed Correctly 61/65, BLOCK False
+  Negative 4, BLOCK False Positive 0, REWRITE/HUMAN_REVIEW/SCRIPTURE_CHECK
+  전부 100% 커버. **Robustness Set — 54건 중 28건만 정답, Dangerous
+  파라프레이즈 27건 중 26건 미탐(오탐 0)** — Canonical 65는 크게 개선됐지만
+  실제 일반화는 아직 부족함을 확인. 이번 라운드에서 Robustness Set
+  문장에 맞춰 반응적으로 패턴을 넓히지 않음(그러면 정답지 암기와 동일)
+- `runtime/config/gates.json`, `runtime/config/ar-rules.json` —
+  validator_rule_ids를 v0.2 id로 갱신, v0.1 id는 `*_v0.1_history` 필드로 보존
+- `tests/vgl/runner/run.mjs` — Runner Adapter 추가(`normalizeCasesFile`):
+  Canonical fixture(`{cases:[{ac_id,test_sentence,expected_verdict}]}`)와
+  자체 fixture(평면 배열) 모두 읽음, Canonical fixture 자체는 무수정.
+  `--provider mock`으로 공식 65 AC 구조적 read 확인(65/65 파싱, 에러 0) —
+  mock 텍스트라 pass/fail 숫자는 무의미해 결과를 저장소에 남기지 않음
+  ("Mock으로 공식 PASS 생성 금지" 준수)
+- G-01~10 Actual Model Run: 여전히 NOT RUN (API Key 없음, PM 지시로 보류)
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## AI Runtime — Import Canonical VGL 65 Acceptance Cases (2026-09-05)
 - `REPENT_VGL_Runtime_Canonical_Import_Pack.zip`이 이 세션에 실제로 첨부됨
   (두 차례 "첨부했다"는 설명은 실제 파일이 없어 반입 보류됐던 것과 대비)

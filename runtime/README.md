@@ -9,35 +9,42 @@
 ```
 runtime/
   config/runtime.candidate.json   Runtime Binding 후보값
-  config/gates.json               G-01~G-10 정의 + AC 번호 매핑
+  config/gates.json               G-01~G-10 정의 + AC 번호 매핑 + validator_rule_ids(v0.2)
+  config/ar-rules.json            AR-01~06 정의 + Gate/Validator 매핑
+  config/source/ar-01-06.owner-approved.json  AR-01~06 Owner 승인 원본
   prompts/system_prompt.v0.1.md   System Prompt (REPENT-SYSTEM-PROMPT-v0.1)
-  validators/validator.mjs        REPENT-VGL-VALIDATOR-v0.1 (Rule-based)
+  validators/validator.mjs        현재 기본(v0.2 re-export)
+  validators/validator.v0.1.mjs   REPENT-VGL-VALIDATOR-v0.1 (History, 삭제 금지)
+  validators/validator.v0.2.mjs   REPENT-VGL-VALIDATOR-v0.2 (Gate 기반)
   src/provider-client.mjs         Model Provider 호출 (mock / openai)
 
 tests/vgl/
-  fixtures/   AC 스키마 + 스모크 테스트 (공식 65 AC 아님 — README 참조)
-  runner/     Test Runner + Validator 유닛 테스트
+  fixtures/   공식 65 AC + 스모크 + Robustness Set(NON-CANONICAL)
+  runner/     Test Runner + 검증/Regression 스크립트 + 유닛 테스트
   results/    실행 결과 (Evidence Log)
 ```
 
 ## 빠른 실행
 
 ```bash
-node tests/vgl/runner/validator.unit.mjs
-node tests/vgl/runner/validate-official.mjs       # 공식 65 AC 구조 검증
-node tests/vgl/runner/validator-dryrun.mjs        # Validator 단독 진단
+node tests/vgl/runner/validator.v0.2.unit.mjs           # 현재 기본 Validator 유닛 테스트
+node tests/vgl/runner/validate-official.mjs             # 공식 65 AC 구조 검증
+node tests/vgl/runner/validator-v2-regression.mjs       # Canonical 65 Regression + Robustness Set
 node tests/vgl/runner/run.mjs \
   --config runtime/config/runtime.candidate.json \
   --cases tests/vgl/fixtures/smoke-cases.json \
   --provider mock --out tests/vgl/results
 ```
 
-## 65 AC 원문 반입 완료, 공식 Model Run은 아직
+## 현재 상태 요약
 
-`VGL-RPT-AC-001~065` 원문은 반입·독립 재검증 완료(`tests/vgl/fixtures/`).
-다만 이 세션에 Model Provider API Key가 없어 실제 Provider를 호출하는
-Official Model Run은 아직 안 했다 — "테스트를 실행하지 않고 PASS 선언"에
-해당하는 어떤 결과도 만들지 않는다(지시서 10번 금지 항목 그대로). Validator
-단독 진단(모델 호출 없음)은 65건 전부 돌려봤고, 현재 패턴이 대부분의 BLOCK
-사례를 못 잡는다는 것을 확인했다 — 자세한 내용은
-`docs/ai-runtime/runtime-binding.md`.
+- 65 AC 원문 반입·독립 재검증 완료.
+- Validator v0.2(Gate 기반)로 재설계: Canonical 65 Regression 61/65,
+  REWRITE·HUMAN_REVIEW·SCRIPTURE_CHECK 100% 커버.
+- **단, Robustness Set(Canonical과 다른 어휘 54건)에서 Dangerous 27건 중
+  26건 미탐** — 실제 일반화는 아직 부족함을 확인. 반응적 패턴 추가로
+  메우지 않았다(암기와 같아짐).
+- Model Provider API Key 없어 Official Model Run은 아직 미실행 —
+  "테스트를 실행하지 않고 PASS 선언" 금지 원칙 유지.
+
+자세한 내용은 `docs/ai-runtime/runtime-binding.md`.
