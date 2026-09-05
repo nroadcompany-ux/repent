@@ -227,15 +227,23 @@ HOLD:
 
 ### Vercel / 배포 현황
 
+**Live URL: https://repent-app.vercel.app** — 로그인 없이 열람 가능.
+
 | 항목 | 상태 |
 |---|---|
-| `repent-prototype` (기존) | GitHub 연결됨. **Framework 설정이 정적 사이트**라 Next.js 앱을 빌드하지 않는다. 배포는 READY지만 산출물 없음 |
-| `repent-app` (신규) | **미생성** — Vercel API 403 `forbidden` (현재 토큰에 project create 권한 없음). Owner가 대시보드에서 생성 필요 |
-| Deployment Protection | `repent-prototype` = Vercel Authentication ON (`all_except_custom_domains`). 로그인 없이는 preview 열람 불가 |
+| `repent-app` (신규) | **운영 중**. Project `prj_QKXe1xWtvP6Fx9dhhgaKlFubSdbx`, Root Directory `/`, Production Branch = **`claude/new-session-gwiqkv`** |
+| Production URL | `https://repent-app.vercel.app` (Next.js 빌드 정상, serverless function 2개) |
+| Branch Preview | `repent-app-git-claude-new-session-gwiqkv-nroad-projects.vercel.app` |
+| `repent-prototype` (기존) | 레거시 유지. **Root Directory가 하위 폴더로 설정**돼 있어 이 브랜치 빌드는 실패한다(`No Next.js version detected`). main 기준 프로토타입 URL은 영향 없음 |
+| Deployment Protection | 두 프로젝트 모두 Vercel Authentication ON(`all_except_custom_domains`). Production alias는 공개 열람됨 |
 
-신규 프로젝트 생성 시 설정: Repository `nroadcompany-ux/repent`, Framework
-`Next.js`, Root Directory `/`, Production Branch는 main 유지(merge 금지이므로
-실제 확인은 `claude/new-session-gwiqkv` branch preview URL로 한다).
+`vercel.json`(framework: nextjs)을 repository에 두어 프로젝트 설정과 무관하게
+Next.js로 빌드된다. Production Branch를 작업 브랜치로 잡았으므로 **main merge
+없이** production URL에서 최신 구현을 확인할 수 있다.
+
+> 주의: `repent-prototype`도 같은 repo에 연결돼 있어 이 브랜치에 push할 때마다
+> 빌드 실패 배포가 하나씩 쌓인다. 필요하면 해당 프로젝트의 Git 연결을 끊거나
+> Ignored Build Step을 설정한다.
 
 ## 9. Next Action / 다음 작업
 
