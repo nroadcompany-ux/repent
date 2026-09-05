@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## Figma Visual v1.0 Reconstruction — Legacy Purge + 23 Screens (2026-09-05)
+
+- Owner 지시로 REPENT Figma 기존 페이지/화면 전부 삭제.
+- 기존 `REPENT v0.5 — 5-Tab IA` 삭제 완료.
+- 새 단일 페이지 생성: `REPENT Final Lock — Visual v1.0` / Page Node `44:2`.
+- Final Documentation의 `docs/final/08-screen-specification.md`만 기준으로 23개 Screen ID 전체 시각화.
+- 생성 화면군: Journey/Turning Point/Search, Onboarding/Prayer, Promise/Action/Action Follow-up, Repentance/Finish, Confession/Privacy Preview, ShareCopy 3종, Scripture Reference, Community/Report/Moderation Candidate, Reminder, Account Delete, Export, AI Memory.
+- 기존 Figma/Prototype을 Product Planning Source로 사용하지 않음.
+- 다음 Product Lock을 Visual에 반영:
+  - Main Nav = 여정/약속/실행/회개/고백
+  - Today = Journey 내부 현재 좌표
+  - Journey Social/함께 제거
+  - Prayer Response Tracking 제거
+  - Action Failure Cause Taxonomy 금지 + Retry/Modify/Reschedule/Record Only/Optional Repent
+  - Repentance Fixed Step/Progress/Score 제거 + `회개 기록 마치기`
+  - Promise 1:N Action + `마무리됨`
+  - Confession 4종/Privacy 3옵션/공감 1종/랭킹 금지
+  - Search = Journey 내부
+  - AI Memory Default OFF
+  - Scripture Reference 중심 / Full Text HOLD
+- `SCR-RPT-MOD-001`은 CANDIDATE DETAIL로 표시, 상세 Workflow/Action 임의 확정하지 않음.
+- `SCR-RPT-EXP-001`은 OPEN / LOW PRIORITY로 표시.
+- Minor Public Sharing / Longitudinal Consent / Scripture Full Text·Retrieval 등 HOLD 경계를 유지.
+- Figma Visual v1.0 상태 = **BUILT 23/23 / VISUAL REVIEW NEXT**.
+- New Product Meaning Created = 0
+- New Theology Rule Created = 0
+
 ## Final Documentation Lock — 01~10 (2026-09-05)
 
 - `docs/final/01~10` Final Development Documentation 전 10종 작성 및 Remote 존재 검증 완료.
