@@ -59,6 +59,7 @@ RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본�
 | Missing Product Planning | **0** |
 | Unresolved Owner Decision | **0** |
 | Blocking | **0** |
+| Trace Break(공식 10종 Break Code — ORPHAN_REQUIREMENT ~ POLICY_WITHOUT_AC) | **0** |
 | Gate 판정에 포함되지 않는 개별 예외(각자의 범위에서만 보류) | Moderation Workflow Detail·Moderator Action Detail(CANDIDATE), Minor Confession Public 공유(HOLD) — 이 2개 화면군만 자기 범위 안에서 보류, 나머지 Final 10 Documents 착수를 막지 않음 |
 | **Figma** | **NON-CANONICAL / NON-BLOCKING FOR PRODUCT PLANNING** — FINAL DOCUMENTATION LOCK 이후 새로 설계 |
 | **Prototype** | **LEGACY ARTIFACT / NON-CANONICAL** — Product Planning Blocking 아님 |
