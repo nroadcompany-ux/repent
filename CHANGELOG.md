@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## Planning Delta — 4 Product Decisions + Figma Status (2026-09-05)
+- PM/Owner가 Product Planning Completion Audit 이후 4건의 Product
+  Decision을 확정, `docs/04-policy-business-rules.md`에 LOCKED로
+  반영:
+  1. Prayer Response Tracking = REMOVED(응답됨/응답대기/응답률 통계
+     전부 미제공)
+  2. Journey "함께" = REMOVED(Journey=개인 시간축, Social Surface는
+     Confession으로 일원화)
+  3. Action Failure = FOLLOW-UP ACTION CHOICE(Retry/Modify/
+     Reschedule/Record Only/Optional Repent) — Failure Cause
+     Taxonomy 생성 금지, Action Failure ≠ Sin 재확인
+  4. Repentance Fixed 10-Step = REMOVED(Optional Progressive Flow,
+     Final CTA "회개 기록 마치기", "회개 완료" 표현 금지)
+- **신규 발견(충돌)**: `prototype/index.html`의 `s-action-fail` 화면
+  (af1~af6, 6개 실패 원인 선택지)이 위 결정 3번이 금지한 Failure
+  Cause Taxonomy 그 자체임을 확인 — Correction Required로 기록,
+  이번 라운드에서 prototype 코드는 수정하지 않음(지시 범위 밖 확대
+  금지)
+- **Figma Delta**: PM이 Figma Source를 직접 검증 — 현재 Artifact
+  "REPENT v0.5 — 5-Tab IA"는 Product Foundation v1.0 기준
+  OUTDATED/CORRECTION REQUIRED. Claude 세션은 파일 URL 미제공으로
+  독립 재검증 못 함(Figma MCP는 연결됐으나 대상 파일 특정 불가) —
+  PM 보고를 Source로 기록하고 독립검증 여부는 명시적으로 구분
+- `docs/PRODUCT-PLANNING-COMPLETION-AUDIT-2026-09-05.md`: 원문 삭제
+  없이 SUPERSEDED/REASSESSMENT PENDING 배너 추가(이전 Gate=C,
+  Planning≈22% 판정이 최신이 아님을 명시, 재산출은 PM 지정 순서
+  진행 후)
+- `docs/REPENT-MASTER-HANDOFF.md`: Planning Completion Status 섹션을
+  Resolved Since Audit / New Correction Required / Critical Gap(갱신)
+  / Current P0(PM 지정 체인 그대로 기록)로 재구성. Gate·Planning %는
+  REASSESSMENT PENDING으로 명시(임의로 새 숫자 산출하지 않음)
+- 이번 라운드는 Product Decision 기록 + 충돌 발견 + 문서 갱신만
+  수행 — PM이 지시한 다음 체인(Requirements→Feature→Flow→...)은
+  착수하지 않음(명시적 다음 지시 대기)
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## Product Planning Completion Audit (2026-09-05)
 - 신규 `docs/PRODUCT-PLANNING-COMPLETION-AUDIT-2026-09-05.md` — 최종
   Development Documentation 10종 작성 전, 제품/서비스 기획 자체의

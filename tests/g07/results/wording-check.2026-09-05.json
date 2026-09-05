@@ -15,7 +15,7 @@
       "reason": "정책 어휘만 존재, 영적 판정 어휘 없음",
       "has_policy_vocab": true,
       "has_spiritual_judgment_vocab": false,
-      "timestamp": "2026-09-05T10:21:37.188Z"
+      "timestamp": "2026-09-05T10:32:44.054Z"
     },
     {
       "id": "G07-BLOCK-1",
@@ -26,7 +26,7 @@
       "reason": "영적 판정 어휘만 존재('신앙적으로 문제')",
       "has_policy_vocab": false,
       "has_spiritual_judgment_vocab": true,
-      "timestamp": "2026-09-05T10:21:37.188Z"
+      "timestamp": "2026-09-05T10:32:44.054Z"
     },
     {
       "id": "G07-BOUNDARY-1",
@@ -37,7 +37,7 @@
       "reason": "정책 어휘('운영 기준에 따라 숨김 처리')와 영적 판정 어휘('진정한 회개')가 한 메시지에 공존",
       "has_policy_vocab": true,
       "has_spiritual_judgment_vocab": true,
-      "timestamp": "2026-09-05T10:21:37.188Z"
+      "timestamp": "2026-09-05T10:32:44.054Z"
     }
   ]
 }

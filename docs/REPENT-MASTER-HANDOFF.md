@@ -29,12 +29,12 @@ updated: 2026-09-05
 
 | 항목 | 값 |
 |---|---|
-| Last Update | 2026-09-05 (Product Planning Completion Audit) |
-| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `061d9a13af979ec0b402986203c7a548f36e5134` |
-| Changed Area | Product Planning Completion Audit(신규 감사 문서) — Runtime/AI/G-07 코드·판정 변경 없음 |
-| Status Delta | **Planning Completion Gate = C(NOT READY — PLANNING GAP REMAINS)** — 최초로 Product 레이어(Journey~Confession, Community) 기획 완성도를 정량 감사함 |
-| Remaining Blocking | 아래 "Critical Gap" + I·J 섹션(API Binding/Privacy/Minor Safety/Scripture License는 기존과 동일하게 HOLD) |
-| Next P0 | 아래 "Current P0(Planning)" 참조 — 기존 "M. Current P0(AI Runtime)"와는 별도 트랙 |
+| Last Update | 2026-09-05 (Planning Delta — 4 Product Decision 확정 + Figma Delta) |
+| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `fae4eae4201f0a1a395294f3481c39e468b05cb7` |
+| Changed Area | `docs/04-policy-business-rules.md`(4개 정책 LOCKED 추가), Planning Completion Status 재구성, Planning Audit 문서에 SUPERSEDED 배너 |
+| Status Delta | 이전 "Gate=C, Planning≈22%"는 **SUPERSEDED/REASSESSMENT PENDING**. Prayer Response Tracking·Journey"함께" REMOVED, Action Failure=Follow-up Action Choice화, Repentance 고정10단계 REMOVED 확정. Figma "v0.5 5-Tab IA" = OUTDATED/CORRECTION REQUIRED(PM 보고) |
+| Remaining Blocking | 신규: prototype `s-action-fail` Failure Cause Taxonomy 교정 필요, Figma Correction 필요. 기존 유지: Community/Moderation 기능 미정의, 4개 엔티티 데이터모델, 권한모델, Lifecycle State, API Binding/Privacy/Minor Safety/Scripture License(HOLD) |
+| Next P0 | PM 지정 체인 — "Current P0(Planning)" 섹션 참조(Requirements→Feature→Flow→Data/State/Permission→Story/Task/AC→Community Minimum Scope→Figma Correction Blueprint→Planning Gate 재평가) |
 
 이 커밋(이 문서를 포함해 새로 만드는 커밋)의 실제 SHA는 이번 라운드
 RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본문에는
@@ -42,60 +42,90 @@ RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본�
 그 시점의 새 origin SHA로 교체한다(자기 자신의 커밋 SHA를 문서가 커밋
 되기 전에 알 수 없으므로 항상 "직전 확인된 SHA"를 남긴다).
 
-## Planning Completion Status (2026-09-05 감사, 신규)
+## Planning Completion Status (2026-09-05, PM Delta 반영 — 최신)
 
-전체 감사 보고서: `docs/PRODUCT-PLANNING-COMPLETION-AUDIT-2026-09-05.md`
-(이 섹션은 그 보고서의 요약이며, 세부 판정·근거는 원본 참조)
+전체 감사 원문(History, SUPERSEDED 배너 포함 그대로 보존):
+`docs/PRODUCT-PLANNING-COMPLETION-AUDIT-2026-09-05.md`
 
 | 항목 | 값 |
 |---|---|
-| Final Documentation Gate | **C — NOT READY, PLANNING GAP REMAINS** |
-| Planning Completion % | **≈ 22%**(정성적 가중 추정, 10개 Area 기준 — 근거는 감사 보고서 §10) |
-| Documentation Completion % | **≈ 42%**(docs/00~10 실제 작성 밀도 기준) |
-| 핵심 결론 | 두 수치의 차이(42% vs 22%) 자체가 결론 — AI/VGL/Governance 레이어(06~10)는 두텁게 작성됐지만 Product 레이어(Journey/Promise/Action/Repentance/Confession, Community)의 실제 결정은 대부분 OPEN/MISSING. 문서 포맷이 11개 파일 전부 동일해 보여도 내용 완성도는 균일하지 않음 |
-| Figma v0.8 | **이 세션에서 접근 불가**(URL/파일키 미제공, MCP 세션 없음, 저장소 내 참조 0건) — 아래 화면 판정은 `prototype/index.html`(실존 확인된 HTML, 21개 화면) 기준이며 Figma가 더 진행돼 있을 가능성은 배제하지 않음 |
+| Final Documentation Gate | **REASSESSMENT PENDING** (이전 C 판정은 SUPERSEDED — 아래 Resolved 4건 + Figma Delta 반영 후 재산출 필요, 이 세션에서 새 숫자 임의 산출하지 않음) |
+| Planning Completion % | **REASSESSMENT PENDING** (이전 ≈22%는 SUPERSEDED) |
+| Documentation Completion % | **REASSESSMENT PENDING** (docs/04에 신규 4개 정책 반영으로 문서 밀도 변동, 재계산 필요) |
+| Figma | **PM 직접 검증 완료 — Claude 세션에서는 미독립검증**. PM 보고: 현재 확인된 Artifact는 "REPENT v0.5 — 5-Tab IA", 상태 **OUTDATED / CORRECTION REQUIRED**(Product Foundation v1.0이 우선). Figma MCP는 이 턴 기준 연결돼 있으나 파일 URL/키가 전달되지 않아 Claude가 직접 열람하지 못함 — URL 공유 시 독립 재검증 가능 |
 
-### Critical Gap (P0 BLOCKING — Product Decision 누락, 문서 작업만으로 해소 불가)
+### Resolved Since Audit (2026-09-05, Owner/PM 확정 — `docs/04-policy-business-rules.md`에 LOCKED로 기록 완료)
 
-1. **Action Failure 정책 부재** — 실행 실패 사유 수집(5종 UI는
-   prototype에 존재)의 목적이 어디에도 정의돼 있지 않음. G-10(영적
-   원인 단정 금지) 가드레일과 직접 인접한 기능이라 방치 위험 높음
-2. **Community/Moderation 기능 자체 미정의** — G-07 제약(무엇을 하면
-   안 되는가)은 CURRENT/CANONICAL인데, 그 제약이 적용될 신고/모더레이션
-   기능(화면·데이터·Review Queue·상태) 자체가 저장소 어디에도 없음
-3. **핵심 엔티티 6종 데이터 모델 부재** — Prayer, Promise, Action,
-   Repentance Record, Scripture Reference, Turning Point (CRUD/Owner/
-   Visibility/Lifecycle 전부 미정의; LifeEvent/Season/StoryArc는 명칭만
-   확정)
-4. **권한(Permission) 모델 전무** — 전 도메인에 "누가 보고/고치고/
-   지울 수 있는가"가 정의된 곳이 하나도 없음
-5. **Lifecycle State 전무** — Draft/Published/Hidden/Removed 등, 특히
-   Confession Privacy 3옵션·G-07 모더레이션 동사(Hide/Delete/Reject)가
-   실제 상태값으로 연결되지 않음
+1. **Prayer Response Tracking = REMOVED** — 응답됨/응답 대기/응답률
+   통계 전부 미제공
+2. **Journey "함께" = REMOVED** — Journey는 개인 시간축, Social Surface는
+   Confession으로 일원화
+3. **Action Failure = FOLLOW-UP ACTION CHOICE** — Retry/Modify/
+   Reschedule/Record Only/Optional Repent 5가지. **Failure Cause
+   Taxonomy 생성 금지**, Action Failure ≠ Sin 재확인
+4. **Repentance Fixed 10-Step = REMOVED** — Optional Progressive
+   Flow, Final CTA "회개 기록 마치기"(prototype 문구 이미 일치 확인),
+   "회개 완료" 표현 금지
+
+이 4건으로 이전 Critical Gap #1(Action Failure 정책 부재)의 **목적
+정의 부분은 해소**됐다 — 단, 아래 신규 Correction 항목이 그 자리를
+대체한다.
+
+### ⚠ New Correction Required (Artifact ↔ Decision 충돌, 이번 delta에서 발견)
+
+- **`prototype/index.html`의 `s-action-fail` 화면(af1~af6)이 새로
+  금지된 Failure Cause Taxonomy 그 자체다** — "감정이 먼저 앞섰어요"
+  등 6개 원인 선택지는 위 결정 3번과 정면 충돌. 이 화면을 Retry/
+  Modify/Reschedule/Record Only/Optional Repent 구조로 교체해야 함.
+  **prototype 코드는 이번 라운드에서 수정하지 않았다**(지시 범위 밖
+  임의 확대 금지) — `docs/04-policy-business-rules.md`의 Action
+  Failure 섹션에 상세 기록
+- **Figma "REPENT v0.5 — 5-Tab IA" = OUTDATED / CORRECTION REQUIRED**
+  (PM 보고) — Product Foundation v1.0(Main Nav 5탭·Vertical Way 확정
+  구조) 기준으로 Figma 쪽 교정이 필요. Correction Blueprint 작성은
+  PM이 지시한 순서(아래 Next P0)의 후반 단계
+
+### Critical Gap (갱신)
+
+1. ~~Action Failure 정책 부재~~ — **목적 정의는 해소(위 결정 3번)**,
+   대신 **prototype Correction Required**(위 참조)로 대체
+2. **Community/Moderation 기능 자체 미정의** — 변경 없음, 여전히 P0
+3. **핵심 엔티티 6종 데이터 모델 부재** — Prayer/Promise/Repentance
+   Record/Scripture Reference/Turning Point 변경 없음. **Action은 이번
+   delta로 상태 모델 방향(Follow-up Action Choice)이 생겨 데이터모델
+   설계가 더 쉬워짐(완료는 아님)**
+4. **권한(Permission) 모델 전무** — 변경 없음
+5. **Lifecycle State 전무** — 변경 없음
+6. (신규) **Figma Correction 필요** — 위 참조
 
 ### Remaining Owner Decision
 
-- Community/Moderation 기능 범위(신고 사유 taxonomy, 모더레이션 액션,
-  누가 처리하는가) — Owner/PM 결정 필요, Claude가 임의 설계 금지
-- Action Failure 사유 수집의 제품 목적(회고용/통계용/AI 인풋용 등) —
-  Owner/PM 결정 필요
-- Feature WORKING ID → Canonical ID 체계 전환 여부·방식 — Owner/PM 결정
-- (기존 유지) Privacy/Consent Gate, Minor Safety, Scripture License —
-  변경 없음, 여전히 Owner/Legal 결정 대기(HOLD)
-- (기존 유지) RS-AR05-D3, RS-G10-D1 Governance 재검토 — 변경 없음
+- Community/Moderation 기능 범위 — 변경 없음, Owner/PM 결정 필요
+- Feature WORKING ID → Canonical ID 전환 여부 — 변경 없음
+- Figma Correction Blueprint의 구체 내용(어떤 화면을 어떻게 고칠지) —
+  Owner/PM 결정, Claude가 임의 설계 금지
+- (기존 유지) Privacy/Consent Gate, Minor Safety, Scripture License,
+  RS-AR05-D3/RS-G10-D1 — 변경 없음
 
-### Current P0 (Planning 트랙, AI Runtime P0와 별도)
+### Current P0 (Planning 트랙 — PM 지정 순서, 2026-09-05 Delta)
 
-Critical Gap 5건 중 우선순위는 Owner/PM이 정한다(Claude가 임의로 순서
-매기지 않음). 참고로 감사 보고서는 P0/P1/P2/HOLD/NON-BLOCKING 5단계로
-전체 Gap을 분류해뒀다(§9). **PM 지시 전까지 이 감사 결과를 근거로
-스스로 착수하지 않는다.**
+PM이 명시한 순서를 그대로 기록한다(Claude가 임의 재배열하지 않음):
+
+```
+Requirements → Feature → Flow → Data/State/Permission
+→ Story/Task/AC → Community Minimum Scope
+→ Figma Correction Blueprint → Planning Gate 재평가
+```
+
+**PM의 다음 명시 지시 전까지 이 체인을 스스로 착수하지 않는다** —
+이번 턴은 4개 결정 기록 + prototype 충돌 발견 + Handoff/Audit 갱신까지만
+수행
 
 ### Next Documentation Gate
 
-Gate 재평가 시점: 위 Critical Gap 5건 중 최소 P0 항목들이 Owner/PM
-결정으로 해소된 후. 그 전까지 최종 문서 10종(01~10) 작성에 착수하지
-않는다(A 또는 B 판정 후 작성 원칙, 감사 보고서 §11).
+REASSESSMENT PENDING. 위 P0 체인이 진행되고 최소 Requirements~Data/
+State/Permission까지 진전된 뒤 Gate를 재산출한다. 그 전까지 최종 문서
+10종(01~10) 작성 미착수 원칙 유지.
 
 ---
 

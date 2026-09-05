@@ -1,8 +1,26 @@
 ---
-status: AUDIT REPORT (non-canonical — does not replace 00-10)
+status: SUPERSEDED / REASSESSMENT PENDING (원문 보존 — 아래 배너 참조)
 version: 1.0
 updated: 2026-09-05
 ---
+
+> # ⚠ SUPERSEDED / REASSESSMENT PENDING (2026-09-05, 같은 날 후속)
+>
+> 이 문서의 **Planning Completion ≈22% 및 Final Documentation Gate =
+> C 판정은 SUPERSEDED**다 — PM/Owner가 이 감사 이후 Product Decision
+> 4건(Prayer Response Tracking 제거, Journey "함께" 제거, Action
+> Failure Follow-up Action Choice화, Repentance 고정 10단계 제거)을
+> 추가 확정했고, Figma Source를 직접 검증해 별도 Correction 필요
+> 상태를 보고했다(`REPENT MASTER HANDOFF — CURRENT PLANNING DELTA`).
+>
+> **이 문서 본문은 삭제하지 않고 그대로 보존한다** — 감사 당시 시점의
+> 실제 상태를 기록한 History다. 최신 상태·해소된 항목·재평가 대기
+> 목록은 `docs/REPENT-MASTER-HANDOFF.md`의 "Planning Completion
+> Status" 섹션을 Source of Truth로 본다. 새 Planning Completion %는
+> PM이 지시한 순서(Requirements → Feature → Flow → Data/State/
+> Permission → Story/Task/AC → Community Minimum Scope → Figma
+> Correction Blueprint → Planning Gate 재평가)가 진행된 뒤 산출한다 —
+> 이 세션에서 임의로 새 숫자를 만들지 않았다.
 
 # REPENT — Product Planning Completion Audit (2026-09-05)
 
