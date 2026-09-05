@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## AI Runtime — AR-01~06 Mapping + G-07 Structural Gate (2026-09-05)
+- `runtime/config/ar-rules.json` 신규 — PM이 세션 채팅으로 직접 전달한
+  AR-01~06 공식 정의를 G-01~06 및 Validator rule id에 연결
+- `runtime/validators/validator.mjs` — 각 rule에 `ar_id` 필드 추가(1:1 대응
+  없는 규칙은 `null` 명시), evidence 출력에도 `ar_id`/`gate` 포함
+- `runtime/config/gates.json` — `validation_type` 필드 추가. G-07은
+  `STRUCTURAL_PRODUCT_POLICY`로 명시하고 필요 Evidence(Moderation Policy /
+  Community AC / Output Wording Test) 기록
+- `tests/vgl/runner/run.mjs` — G-07류 구조적 Gate는 텍스트 실행 결과와
+  무관하게 항상 `REQUIRES_PRODUCT_REVIEW`로 보고하도록 수정(PASS/FAIL 오판
+  방지), 실제 실행으로 확인
+- **65 AC 원문 반입은 보류** — PM이 언급한
+  `VGL_for_REPENT_Upper_Session_Report_Package_v0.3.zip`이 이 세션에 실제로
+  첨부되지 않음(파일시스템 검색으로 확인) — 채팅 설명만으로 원문을
+  재구성하지 않았음. AC Canonical Source Imported = NO 유지
+- API Key 연결은 PM 지시로 이번 라운드 보류
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## AI Runtime Candidate Scaffold + VGL Test Harness (2026-09-05)
 - `runtime/` — Runtime Binding Candidate config, System Prompt v0.1 (SHA-256 동봉),
   Rule-based Output Validator(`REPENT-VGL-VALIDATOR-v0.1`, G-01~G-10 매핑),

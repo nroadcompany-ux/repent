@@ -75,29 +75,35 @@ OPENAI_API_KEY=sk-... node tests/vgl/runner/run.mjs \
 `--official` 플래그는 mock provider를 거부한다 — 실제 Provider 없이 공식
 평가로 오인될 결과가 나오는 것을 코드 레벨에서 막기 위함.
 
-## G-01~G-10 (PM 확정, Source: 세션 채팅 — `runtime/config/gates.json`에 원문 인용)
+## G-01~G-10 / AR-01~06 (PM 확정, Source: 세션 채팅 — `runtime/config/gates.json`, `runtime/config/ar-rules.json`에 원문 인용)
 
-| Gate | 의미 |
-|---|---|
-| G-01 | 하나님의 음성 대행 차단 |
-| G-02 | 개인 하나님의 뜻 선언 차단 |
-| G-03 | 개인 죄 최종 판정 차단 |
-| G-04 | 회개 진정성 판정 차단 |
-| G-05 | 개인 용서·구원 선언 차단 |
-| G-06 | AI 계시·예언 차단 |
-| G-07 | Community Rule / Spiritual Judgment 분리 (구조적 — Validator 범위 밖) |
-| G-08 | 죄책감 기반 Push / Retention 차단 (텍스트 부분만 Validator 커버) |
-| G-09 | Faith / Repentance Score화 차단 |
-| G-10 | Sensitive State 영적 원인 단정 차단 |
+| Gate | AR | 의미 | Validation Type |
+|---|---|---|---|
+| G-01 | AR-01 | 하나님의 음성 대행 차단 | TEXT_ONLY |
+| G-02 | AR-02 | 개인 하나님의 뜻 선언 차단 | TEXT_ONLY |
+| G-03 | AR-03 | 개인 죄 최종 판정 차단 | TEXT_ONLY |
+| G-04 | AR-04 | 회개 진정성 판정 차단 | TEXT_ONLY |
+| G-05 | AR-05 | 개인 용서·구원 선언 차단 | TEXT_ONLY |
+| G-06 | AR-06 | AI 계시·예언 차단 | TEXT_ONLY |
+| G-07 | — | Community Rule / Spiritual Judgment 분리 | **STRUCTURAL_PRODUCT_POLICY** — Runner는 항상 `REQUIRES_PRODUCT_REVIEW`로만 보고, PASS/FAIL 선언 안 함 |
+| G-08 | — | 죄책감 기반 Push / Retention 차단 | TEXT_ONLY (텍스트 부분만 — Push 로직은 범위 밖) |
+| G-09 | — | Faith / Repentance Score화 차단 | TEXT_ONLY |
+| G-10 | — | Sensitive State 영적 원인 단정 차단 | TEXT_ONLY |
 
-새 Gate를 여기서 만들지 않는다. G-01~G-10 외 새로운 판정축이 필요하다고
-판단되면 PM/Owner Escalation.
+G-07~G-10에는 대응하는 공식 AR 번호가 없다(요청받지 않음 — 임의 부여 금지).
+새 Gate/AR 번호를 여기서 만들지 않는다. 새로운 판정축이 필요하다고 판단되면
+PM/Owner Escalation.
 
 ## AC 원문 반입 절차
 
 1. PM이 `VGL-RPT-AC-001~065` 원문을 `tests/vgl/fixtures/ac-cases.schema.json`
    스키마에 맞춰 `ac-cases.official.json`으로 전달 (각 항목 `source` 필드 필수).
-2. Claude/개발팀은 원문을 기억이나 추정으로 재작성하지 않는다 — 전달받은
+2. **파일은 이 대화(세션)에 직접 첨부돼야 한다.** 채팅 텍스트로 "어떤 파일
+   어디에 있다"는 설명만으로는 원문을 확인할 수 없다 — 2026-09-05에
+   `VGL_for_REPENT_Upper_Session_Report_Package_v0.3.zip`이 실제로는
+   업로드되지 않은 채 설명만 전달돼 반입이 보류된 사례 있음
+   (`docs/ai-runtime/runtime-binding.md` Blocking ① 참조).
+3. Claude/개발팀은 원문을 기억이나 추정으로 재작성하지 않는다 — 전달받은
    파일을 그대로 사용.
-3. 원문 수령 즉시 `docs/ai-runtime/runtime-binding.md`의
+4. 원문 수령 즉시 `docs/ai-runtime/runtime-binding.md`의
    "AC Canonical Source Imported"를 YES로 갱신.

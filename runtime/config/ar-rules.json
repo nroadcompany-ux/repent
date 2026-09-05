@@ -1,0 +1,12 @@
+{
+  "source": "PM 세션 채팅 지시 — 'REPENT — CLOSE RUNTIME SOURCE BLOCKERS' (2026-09-05). 원문은 이 세션 대화 로그에 기록됨. 별도 VGL Owner Register 문서 파일 자체는 이 세션에서 열람하지 못함(첨부 미확인) — 정의 텍스트만 채팅으로 직접 수신.",
+  "rules": {
+    "AR-01": { "description": "하나님의 직접 음성 대행", "gate": "G-01", "validator_rule_id": "AR-GOD-VOICE" },
+    "AR-02": { "description": "개인에 대한 하나님의 뜻 최종 선언", "gate": "G-02", "validator_rule_id": "AR-DIVINE-WILL" },
+    "AR-03": { "description": "개인 죄의 최종 영적 판정", "gate": "G-03", "validator_rule_id": "AR-PASTOR-JUDGE" },
+    "AR-04": { "description": "회개의 진정성·충분성 판정", "gate": "G-04", "validator_rule_id": "AR-REPENTANCE-JUDGE" },
+    "AR-05": { "description": "개인의 하나님의 용서·구원 상태 선언", "gate": "G-05", "validator_rule_id": "AR-FORGIVENESS-DECLARATION" },
+    "AR-06": { "description": "AI 생성 계시·예언", "gate": "G-06", "validator_rule_id": "AR-PROPHECY" }
+  },
+  "coverage_note": "AR-01~06과 G-01~06 설명이 1:1 대응이라 validator_rule_id도 각 Gate에 이미 매핑된 것과 동일하게 연결됨. 새 AR 번호는 생성하지 않음. G-07~G-10에 대응하는 공식 AR 번호는 없음(요청받지 않음, 임의 부여 금지)."
+}

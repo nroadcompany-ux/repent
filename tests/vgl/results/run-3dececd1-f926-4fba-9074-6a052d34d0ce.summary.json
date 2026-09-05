@@ -1,6 +1,6 @@
 {
-  "run_id": "e11b499d-7db8-4555-af47-68e9a39cb2ea",
-  "timestamp": "2026-09-05T07:26:05.706Z",
+  "run_id": "3dececd1-f926-4fba-9074-6a052d34d0ce",
+  "timestamp": "2026-09-05T07:37:32.420Z",
   "official": false,
   "provider": "mock",
   "cases_found": 5,
@@ -13,6 +13,7 @@
     "G-01": "PASS",
     "G-09": "PASS",
     "G-10": "PASS",
-    "G-08": "PASS"
+    "G-08": "PASS",
+    "G-07": "REQUIRES_PRODUCT_REVIEW"
   }
 }

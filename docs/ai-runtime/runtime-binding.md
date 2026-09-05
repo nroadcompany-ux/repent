@@ -18,7 +18,7 @@ updated: 2026-09-05
 | E. Prompt Version | `v0.1` (`REPENT-SYSTEM-PROMPT-v0.1`, Candidate) |
 | F. System Prompt Hash | `e295da39df9817459127d497d45cee568d56114a5467f5db1e5ab279633cdb6f` (SHA-256, `runtime/prompts/system_prompt.v0.1.md`) |
 | G. Retrieval Config | Scripture Retrieval OFF (Phase A) — Config Version 없음 |
-| H. Output Validator / Classifier Version | `REPENT-VGL-VALIDATOR-v0.1` (Rule-based, `runtime/validators/validator.mjs`) |
+| H. Output Validator / Classifier Version | `REPENT-VGL-VALIDATOR-v0.1` (Rule-based, `runtime/validators/validator.mjs`, AR-01~06 매핑 포함) |
 | I. Test Runner Path / Method | `tests/vgl/runner/run.mjs` — Node.js CLI |
 | J. 65 AC Executable YES/NO | **NO** — AC Canonical Source Imported = NO (아래 참조) |
 | K. Actual Test Started YES/NO | **NO** (공식 65 AC 기준). 스모크 테스트(자체 제작 5건)는 실행함 |
@@ -34,18 +34,25 @@ updated: 2026-09-05
 
 1. **AC Canonical Source Imported = NO** — `VGL-RPT-AC-001~065` 원문(Input +
    Expected Verdict)이 Repository에도, 접근 가능한 Notion Workspace에도 없음.
-   Notion `REPENT PM Working Hub`에는 상태값("65/65 READY")과 G-Gate ↔ AC 번호
-   매핑, Human Review 대상 2건 제목만 있음. **PM이 원문을
-   `tests/vgl/fixtures/ac-cases.official.json`로 전달해야 함.**
+   PM이 `VGL_for_REPENT_Upper_Session_Report_Package_v0.3.zip`(경로:
+   `Evidence_v0.2/02_VGL_for_REPENT_RedTeam_65_v0.2.md`)에 원문이 있다고
+   전달했으나, **이 파일은 세션 업로드 디렉토리(`/root/.claude/uploads/`)와
+   파일시스템 전체 검색 결과 실제로 존재하지 않음(2026-09-05 확인).** 채팅
+   설명만으로 65건을 재구성하지 않았다 — 실제 파일이 이 대화에 첨부돼야
+   진행 가능. **PM이 zip을 이 세션에 직접 업로드해야 함.**
 2. **Model Provider API Key 없음** — 이 세션에 `OPENAI_API_KEY` 등 어떤 Provider
-   자격증명도 설정돼 있지 않음(확인 완료, 값 미기록). Provider/Key 확보 및
-   실제 호출 승인 필요.
-3. **AR-01~AR-06 공식 번호·원문 미확보** — G-01~G-10 정의는 PM이 이번에
-   확정해 전달했으나, `AR-01~AR-06`이라는 별도 번호 체계의 원문은 어떤
-   출처에도 없음. `runtime/validators/validator.mjs`의 rule id는 자체
-   명명이며 AR 번호와 대조되지 않음.
-4. **G-07 (Community Rule / Spiritual Judgment 분리)** — 구조적/Product
-   정책 Gate라 텍스트 Validator만으로 검증 불가. 별도 Product Review 필요.
+   자격증명도 설정돼 있지 않음(확인 완료, 값 미기록). PM 지시로 이번 라운드는
+   보류.
+3. ~~AR-01~AR-06 공식 번호·원문 미확보~~ — **해결.** PM이 세션 채팅으로
+   AR-01~06 정의를 직접 전달(`runtime/config/ar-rules.json` 출처 명시) →
+   G-01~06과 1:1 대응돼 `runtime/validators/validator.mjs`의 각 rule에
+   `ar_id` 필드로 연결 완료. 단, VGL Owner Register 원본 문서 자체는 이
+   세션에서 열람하지 못했고 텍스트 정의만 수신했음을 기록해둔다.
+4. **G-07 (Community Rule / Spiritual Judgment 분리)** — `validation_type:
+   STRUCTURAL_PRODUCT_POLICY`로 명시. Test Runner는 이 Gate를
+   PASS/FAIL/NOT_RUN이 아니라 항상 `REQUIRES_PRODUCT_REVIEW`로 보고하도록
+   구현·확인함(`runtime/config/gates.json`). 필요 Evidence: Moderation
+   Policy, Community AC, Output Wording Test — 아직 미확보.
 
 ## 실행 가능한 것 (증거)
 

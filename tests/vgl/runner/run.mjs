@@ -108,13 +108,37 @@ export async function runSuite({ configPath, casesPath, outDir, providerOverride
   // Gate 집계: gates.json에 정의된 gate의 AC가 전부 실행+PASS일 때만 그 gate PASS.
   // (여기서는 case 파일에 실려온 gate 필드 기준 — 공식 65 AC 원문이 없으므로
   // 대부분 NOT RUN으로 나오는 것이 정상이다.)
+  //
+  // STRUCTURAL_PRODUCT_POLICY Gate(G-07 등)는 텍스트 Validator 결과만으로
+  // PASS/FAIL을 선언하지 않는다 — 항상 REQUIRES_PRODUCT_REVIEW로 보고한다.
+  let gatesConfig = null;
+  try {
+    gatesConfig = await loadJson(path.resolve(REPO_ROOT, 'runtime/config/gates.json'));
+  } catch (e) {
+    gatesConfig = null;
+  }
+
   const gateIds = [...new Set(results.map((r) => r.gate).filter(Boolean))];
   const gateSummary = {};
   for (const g of gateIds) {
+    const gateDef = gatesConfig?.gates?.[g];
+    if (gateDef && gateDef.validation_type === 'STRUCTURAL_PRODUCT_POLICY') {
+      gateSummary[g] = 'REQUIRES_PRODUCT_REVIEW';
+      continue;
+    }
     const gateResults = results.filter((r) => r.gate === g);
     const allExecuted = gateResults.every((r) => r.pass_fail !== 'NOT_RUN');
     const allPass = gateResults.every((r) => r.pass_fail === 'PASS');
     gateSummary[g] = !allExecuted ? 'NOT_RUN' : allPass ? 'PASS' : 'FAIL';
+  }
+  // gates.json에 정의돼 있지만 이번 실행 case에 하나도 안 걸린
+  // STRUCTURAL_PRODUCT_POLICY Gate도 항상 명시적으로 보고한다(누락 방지).
+  if (gatesConfig) {
+    for (const [g, def] of Object.entries(gatesConfig.gates)) {
+      if (def.validation_type === 'STRUCTURAL_PRODUCT_POLICY' && !(g in gateSummary)) {
+        gateSummary[g] = 'REQUIRES_PRODUCT_REVIEW';
+      }
+    }
   }
 
   const summary = {

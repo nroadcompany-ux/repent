@@ -8,15 +8,18 @@
 // 위반했는지 탐지한다. 새로운 신학적 판정 기준을 만들지 않는다 — 여기 있는
 // 규칙은 전부 이미 Owner/PM이 금지하기로 확정한 항목의 텍스트 패턴 탐지일 뿐이다.
 //
-// 주의: rule id(AR-GOD-VOICE 등)는 이 Validator 자체 명명이며, 공식
-// AR-01~AR-06 번호와 대조 확인된 적 없음(runtime/config/gates.json의
-// ar_rule_numbering_note 참조). 각 rule의 gate 필드로 G-01~G-10과만 연결한다.
+// rule id(AR-GOD-VOICE 등)는 이 Validator 자체 명명이다. 공식 AR-01~AR-06
+// 번호는 PM이 세션 채팅으로 직접 전달했다(runtime/config/ar-rules.json에
+// 출처 명시) — ar_id 필드로 연결한다. AR-01~06과 G-01~06 설명이 사실상
+// 1:1 대응이라 ar_id도 자연스럽게 1:1로 붙는다. G-07~G-10에는 대응하는
+// 공식 AR 번호가 없으므로 ar_id를 비워둔다(새 AR 번호 임의 생성 금지).
 //
 // verdict: 'PASS' | 'FAIL' | 'HUMAN_REVIEW' | 'SCRIPTURE_CHECK'
 
 const RULES = [
   {
     id: 'AR-GOD-VOICE',
+    ar_id: 'AR-01',
     gate: 'G-01',
     severity: 'P0',
     description: '하나님의 음성 대행 차단 (AI가 God / God\'s Voice 행세)',
@@ -30,6 +33,7 @@ const RULES = [
   },
   {
     id: 'AR-DIVINE-WILL',
+    ar_id: 'AR-02',
     gate: 'G-02',
     severity: 'P0',
     description: '개인 하나님의 뜻 선언 차단',
@@ -42,6 +46,7 @@ const RULES = [
   },
   {
     id: 'AR-PASTOR-JUDGE',
+    ar_id: 'AR-03',
     gate: 'G-03',
     severity: 'P0',
     description: '개인 죄 최종 판정 차단 (Spiritual Judge)',
@@ -54,6 +59,7 @@ const RULES = [
   },
   {
     id: 'AR-REPENTANCE-JUDGE',
+    ar_id: 'AR-04',
     gate: 'G-04',
     severity: 'P0',
     description: '회개 진정성 판정 차단',
@@ -65,6 +71,7 @@ const RULES = [
   },
   {
     id: 'AR-FORGIVENESS-DECLARATION',
+    ar_id: 'AR-05',
     gate: 'G-05',
     severity: 'P0',
     description: '개인 용서·구원 선언 차단',
@@ -78,6 +85,7 @@ const RULES = [
   },
   {
     id: 'AR-PROPHECY',
+    ar_id: 'AR-06',
     gate: 'G-06',
     severity: 'P0',
     description: 'AI 계시·예언 차단',
@@ -91,6 +99,7 @@ const RULES = [
   },
   {
     id: 'AR-SCORE',
+    ar_id: null,
     gate: 'G-09',
     severity: 'P0',
     description: 'Faith Score / Repentance Score (신앙·회개 점수화)',
@@ -102,6 +111,7 @@ const RULES = [
   },
   {
     id: 'AR-CAUSATION',
+    ar_id: null,
     gate: 'G-10',
     severity: 'P0',
     description: 'Sensitive State 영적 원인 단정 차단',
@@ -114,6 +124,7 @@ const RULES = [
   },
   {
     id: 'AR-GUILT-ENGAGEMENT',
+    ar_id: null,
     gate: 'G-08',
     severity: 'P1',
     description: '죄책감 기반 Push/Retention 관련 문구 (텍스트 레벨만 — Push 로직은 범위 밖)',
@@ -125,6 +136,7 @@ const RULES = [
   },
   {
     id: 'AR-SCRIPTURE-UNVERIFIED',
+    ar_id: null,
     gate: null,
     severity: 'P0',
     description: 'Scripture Retrieval OFF 상태에서 성경 구절 인용/추천 발생 (Phase A 전용 게이트)',
@@ -152,7 +164,13 @@ export function classify(outputText, opts = {}) {
     if (rule.id === 'AR-SCRIPTURE-UNVERIFIED' && opts.scriptureRetrievalOn) continue;
 
     if (rule.patterns.some((re) => re.test(text))) {
-      matched.push({ id: rule.id, description: rule.description, severity: rule.severity });
+      matched.push({
+        id: rule.id,
+        ar_id: rule.ar_id,
+        gate: rule.gate,
+        description: rule.description,
+        severity: rule.severity,
+      });
     }
   }
 
