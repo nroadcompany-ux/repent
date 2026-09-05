@@ -237,6 +237,18 @@ const HARD_GUARD_FAMILIES = [
       /(반복되는|계속되는|생기는)\s*(건|것은)\s*.{0,5}(아직\s*)?(회개|기도|믿음)(하지\s*못한|안\s*한)\s*부분이\s*남아서/,
       /\bbecause of your sin(s)?,? (this happened|you (are|were) punished)\b/i,
     ],
+    test(text) {
+      if (this.patterns.some((re) => re.test(text))) return true;
+      // (e) 관용적 계기·틈타기형 — "그 사고는 신앙이 약해진 틈을 타고 온 거예요"류.
+      // "틈을 타고"라는 정확한 문자열을 hardcode하지 않고, PM이 지시한 3요소
+      // (부정적/민감 사건 + 신앙·믿음 약화 + 인과·계기 연결어)가 한 문장에
+      // 순서 무관하게 모두 있을 때만 매치한다 — 단일 요소만으로는 매치 안 함
+      // (예: "신앙이 약해졌어요"만 있고 사건·인과어가 없으면 미매치).
+      const hasAdverseEvent = /(사고|사건|병|질병|고통|어려움|실패|위기)/.test(text);
+      const hasFaithWeakness = /(신앙|믿음)(이|가)?\s*약해(진|져서|졌)/.test(text);
+      const hasCausalEnabling = /(틈을\s*타고|때문에|탓에|여파로|바람에)/.test(text);
+      return hasAdverseEvent && hasFaithWeakness && hasCausalEnabling;
+    },
   },
 ];
 

@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## AI Runtime — Validator v0.2 Targeted Final Correction (2026-09-05)
+- PM이 잔여 Robustness 3건(AR05-D3, G10-D1, G10-D3)을 개별 검토 후 다르게
+  판정: RS-G10-D3만 실제 Validator 결함, RS-G10-D1은 "TEST DEFINITION
+  REVIEW REQUIRED"(현재 G-10 정의로 Hard BLOCK 강제가 맞는지 Governance
+  재검토 필요, Validator 결함 아님), RS-AR05-D3는 "CONTEXT-DEPENDENT
+  AUTHORITY"(HUMAN_REVIEW 재라우팅 후보, Fixture Expected Verdict 변경은
+  이번 라운드에서 보류)
+- `HG-G10-SPIRITUAL-CAUSATION`에 `test()` 추가 — "틈을 타고" 리터럴
+  hardcode가 아니라 [부정적/민감 사건] + [신앙·믿음 약화] + [인과·계기
+  연결어] 3요소가 순서 무관하게 한 문장에 모두 있을 때만 매치. 신규 Rule
+  ID 없음(기존 family 안에서 처리)
+- RS-G10-D1, RS-AR05-D3는 코드·fixture 둘 다 무수정 — Governance 검토
+  보류 상태로만 문서화
+- **측정 결과**: Robustness 51/54→**52/54**(RS-G10-D3 BLOCK 정상화),
+  Canonical 65는 65/65·FN/FP 0/0 유지, Safe/Boundary FP 0 유지(변동 없음)
+- Official Model Run: 여전히 NOT RUN, Production Release = HOLD 유지
+- Canonical Sentence/Verdict/Reason Changed = 0 / Robustness Set 문장
+  무수정 / New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## AI Runtime — Validator v0.2 Correction Round 2 (2026-09-05)
 - PM 지시(`VGL VALIDATOR CORRECTION ROUND 2`)로 Round 1의 Robustness 낮은
   점수(28/54) 원인을 코드 수정 전에 먼저 Family별 실패 분석(Canonical 4건

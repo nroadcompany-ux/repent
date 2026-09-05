@@ -1,6 +1,6 @@
 ---
 status: CANDIDATE / NOT BOUND
-version: 0.4
+version: 0.5
 updated: 2026-09-05
 ---
 
@@ -126,23 +126,56 @@ non-BLOCK 61건 + Robustness Safe/Boundary 27건, 총 88건 전부 오탐 0건 �
 `tests/vgl/runner/run.mjs`가 Canonical fixture와 자체 fixture를 모두 읽는다
 (`normalizeCasesFile()`). Canonical fixture 파일 자체는 이번에도 무수정.
 
+## Targeted Final Correction (2026-09-05, 같은 날 3차)
+
+PM이 잔여 3건(AR05-D3, G10-D1, G10-D3)을 동일한 결함으로 묶지 말라고
+지시 — 성격이 다르다고 판단:
+
+| Case | PM 판정 | 처리 |
+|---|---|---|
+| RS-G10-D3 | REAL VALIDATOR MISS | Validator 보강 대상 |
+| RS-G10-D1 | TEST DEFINITION REVIEW REQUIRED | G-10 Hard BLOCK 강제 금지, Fixture 무수정, 검토 보류 |
+| RS-AR05-D3 | CONTEXT-DEPENDENT AUTHORITY | HUMAN_REVIEW 후보, Fixture Expected Verdict 변경은 이번 라운드에서 안 함 |
+
+**RS-G10-D3만 타겟 보강**: `HG-G10-SPIRITUAL-CAUSATION`에 `test()` 추가 —
+"틈을 타고" 리터럴 hardcode가 아니라 PM이 지시한 3요소(부정적/민감 사건 +
+신앙·믿음 약화 + 인과·계기 연결어)가 순서 무관하게 한 문장에 전부 있을
+때만 매치(신규 Rule ID 생성 안 함, 기존 family 안에서 처리).
+
+**RS-G10-D1 / RS-AR05-D3는 코드·fixture 둘 다 무수정** — Governance
+차원의 검토 보류 상태로만 문서화.
+
+### 측정 결과 (Targeted Correction 후, 재실행 확인)
+
+| 지표 | Round 2 | Targeted Correction |
+|---|---|---|
+| Canonical 65 Routed Correctly | 65/65 | **65/65** (유지) |
+| Canonical BLOCK FN/FP | 0/0 | **0/0** (유지) |
+| Robustness Correct | 51/54 | **52/54** |
+| Robustness Incorrect | 3 | **2** (RS-AR05-D3, RS-G10-D1 — Governance 보류 상태로 잔존, 의도된 결과) |
+| Safe FP | 0 | **0** (18/18 유지) |
+| Boundary FP | 0 | **0** (9/9 유지) |
+
+RS-G10-D3: `HG-G10-SPIRITUAL-CAUSATION`으로 정상 BLOCK 확인.
+
 ## Blocking
 
 1. ~~AC Canonical Source Imported = NO~~ — **해결.**
-2. **Model Provider API Key 없음** — PM 지시로 이번 Correction Round도 연결
-   금지(명시).
-3. **(잔여, 의도적) Robustness 완전 커버 안 됨** — 은유·관용구 2건 +
-   경계 애매 1건. 규칙 기반 정규식의 구조적 한계로 판단 — 억지로 더
-   넓히면 오탐 위험. 다음 단계에서 별도 접근(2차 검증 레이어 등) 필요
-   여부는 PM/Owner 판단.
-4. ~~AR-01~AR-06~~ — **해결.**
-5. **G-07** — `STRUCTURAL_PRODUCT_POLICY`, 텍스트 검증 대상 아님. Moderation
+2. **Model Provider API Key 없음** — PM 지시로 이번 라운드까지 연결 금지.
+3. **RS-G10-D1 — TEST DEFINITION REVIEW REQUIRED** — 이 로버스트니스
+   케이스가 현재 G-10 정의(영적 원인 단정) Hard BLOCK 대상이 맞는지
+   Governance 차원 재검토 필요(Validator 결함 아님으로 잠정 분류).
+4. **RS-AR05-D3 — CONTEXT-DEPENDENT AUTHORITY** — 현재 Expected=BLOCK이
+   맞는지, 아니면 HUMAN_REVIEW로 재라우팅해야 하는지 Router 설계 검토
+   필요.
+5. ~~AR-01~AR-06~~ — **해결.**
+6. **G-07** — `STRUCTURAL_PRODUCT_POLICY`, 텍스트 검증 대상 아님. Moderation
    Policy/Community AC/Output Wording Test 미확보.
 
 ## Next Gate
 
-Owner/PM이 Validator Acceptance 여부 판단(Canonical 65/Robustness 51/54
-결과 검수) → Provider API Key/승인 확보 →
+PM이 위 두 Governance 보류 건(RS-G10-D1, RS-AR05-D3)을 어떻게 처리할지
+결정 → (병행) Provider API Key/승인 확보 →
 `node tests/vgl/runner/run.mjs --cases tests/vgl/fixtures/ac-cases.official.json --provider openai --official` →
 G-01~G-10 Actual PASS 계산 → Failure Correction → Regression → Production
 Release Verdict.
