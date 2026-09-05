@@ -16,20 +16,20 @@
     <span class="proto-bar__tag">UX VALIDATION</span>
     <span>ux-v1-2 · NON-CANONICAL</span>
     <span class="proto-bar__spacer"></span>
-    <button id="proto-loop" type="button">전체 흐름 처음부터</button>
+    <button id="proto-loop" type="button">처음부터</button>
     <button id="proto-menu" type="button">화면 목록</button>
   </div>
 
   <div class="proto-index" id="proto-index">
     <h2>프로토타입 화면 목록</h2>
-    <p>검수용 목록입니다. 실제 앱에는 없는 화면입니다. 각 항목은 필요한 데모 데이터를 자동으로 맞춰서 엽니다.</p>
+    <p>검수용 목록입니다. 실제 앱에는 없는 화면입니다.</p>
     <ol id="proto-index-list"></ol>
     <p style="margin-top:20px">
       <button id="proto-index-close" class="cta cta--soft" type="button">닫기</button>
     </p>
   </div>
 
-  <!-- ============================== 01 INTRO ============================== -->
+  <!-- ============================== INTRO ============================== -->
   <section class="screen" id="screen-intro">
     <div class="intro">
       <div>
@@ -42,87 +42,42 @@
       </div>
 
       <div class="intro__art" aria-hidden="true">
-        <svg viewBox="0 0 320 120" width="100%" height="120">
-          <circle cx="30" cy="86" r="7" fill="#8B5CF6" />
-          <circle cx="96" cy="62" r="7" fill="#6D45C6" />
-          <circle cx="158" cy="94" r="7" fill="#4FA6D9" />
-          <circle cx="222" cy="48" r="7" fill="#C77DBB" />
-          <circle cx="288" cy="76" r="7" fill="#5BB58C" />
+        <svg viewBox="0 0 320 110" width="100%" height="110">
+          <path d="M20 78 C 70 78, 78 42, 110 44 S 175 84, 210 58 S 272 34, 300 46"
+                fill="none" stroke="#c9baff" stroke-width="2.5" stroke-linecap="round" />
+          <circle cx="20" cy="78" r="6" fill="#6D4AFF" />
+          <circle cx="110" cy="44" r="6" fill="#6D4AFF" />
+          <circle cx="210" cy="58" r="6" fill="#6D4AFF" />
+          <circle cx="300" cy="46" r="6" fill="#6D4AFF" />
         </svg>
       </div>
 
       <div class="stack">
-        <button class="cta" data-go="questions" type="button">시작하기</button>
+        <button class="cta" id="intro-start" type="button">시작하기</button>
         <p class="note" style="text-align:center">
-          지금 바로 답하지 않아도 괜찮습니다. 언제든 건너뛸 수 있어요.
+          가입이나 질문 없이 바로 둘러볼 수 있어요.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- ============================ 02 QUESTIONS ============================ -->
-  <section class="screen" id="screen-questions">
-    <div class="scroll">
-      <div class="dots" id="q-dots"></div>
-      <div class="head">
-        <p class="head__eyebrow" id="q-eyebrow"></p>
-        <h1 class="head__title" id="q-title"></h1>
-      </div>
-
-      <div class="why">
-        <span class="why__icon" aria-hidden="true">?</span>
-        <p class="why__text" id="q-why"></p>
-      </div>
-
-      <div class="field">
-        <textarea class="textarea" id="q-input" aria-label="답변"></textarea>
-      </div>
-
-      <div class="stack">
-        <button class="cta" id="q-next" type="button">다음</button>
-        <button class="cta cta--ghost" id="q-skip" type="button">건너뛰기</button>
-      </div>
-
-      <p class="note" style="margin-top:20px" id="q-foot"></p>
-    </div>
-  </section>
-
-  <!-- ========================= 03 FIRST RECORD SAVED ====================== -->
-  <section class="screen" id="screen-first-saved">
-    <div class="scroll">
-      <div class="head">
-        <h1 class="head__title" id="fs-title"></h1>
-        <p class="head__sub" id="fs-body"></p>
-      </div>
-
-      <div class="hero">
-        <div class="hero__head">
-          <span class="hero__title">나의 여정</span>
-          <span class="badge">방금 추가됨</span>
-        </div>
-        <div id="fs-curve"></div>
-        <div class="hero__legend" id="fs-legend"></div>
-      </div>
-
-      <div class="stack">
-        <button class="cta" data-go="journey" type="button">여정 보기</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================== 04 JOURNEY ============================ -->
+  <!-- ============================= JOURNEY (HOME) ======================= -->
   <section class="screen" id="screen-journey">
-    <div class="scroll">
-      <div class="head">
-        <p class="head__eyebrow" id="j-date"></p>
-        <h1 class="head__title">여정</h1>
-        <p class="head__sub">기록이 있는 날만 남습니다.</p>
-      </div>
+    <header class="appbar">
+      <span class="appbar__title">여정</span>
+      <span class="appbar__spacer"></span>
+      <button class="appbar__btn" id="j-help" type="button" aria-label="사용법 다시 보기">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.3 2.5c-.6.2-.8.6-.8 1.2v.4" stroke-linecap="round"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/></svg>
+      </button>
+    </header>
 
-      <div class="life">
+    <div class="scroll">
+      <p class="head__eyebrow" id="j-date" style="margin-bottom:12px"></p>
+
+      <div class="life" id="tour-life">
         <div class="life__head">
           <span class="life__title">인생 그래프</span>
-          <span class="badge badge--sample" id="j-sample">예시</span>
+          <span class="badge badge--sample">예시</span>
         </div>
         <p class="life__hint">좌우로 밀어보세요. 지나온 시간이 순서대로 이어집니다.</p>
         <div class="life__scroll" id="j-life-scroll"></div>
@@ -134,36 +89,39 @@
 
       <div class="section">
         <p class="section__title">지나온 순간</p>
-        <p class="note" style="margin:-4px 0 12px">눌러보면 그날의 생각과 돌아봄이 나옵니다.</p>
+        <p class="note" style="margin:-6px 0 12px">눌러보면 그날의 생각과 돌아봄이 나옵니다.</p>
         <div class="life-list" id="j-life-list"></div>
         <div id="j-life-detail"></div>
       </div>
 
-      <div class="section hero">
-        <div class="hero__head">
-          <span class="hero__title">최근에 남긴 기록</span>
-        </div>
-        <div id="j-curve"></div>
-        <div class="hero__legend" id="j-legend"></div>
-        <p class="hero__caption" id="j-caption"></p>
-      </div>
-
-      <div class="chips" id="j-ranges">
-        <button class="chip" data-range="today" type="button">오늘</button>
-        <button class="chip" data-range="week" type="button">주</button>
-        <button class="chip" data-range="month" type="button">월</button>
-        <button class="chip" data-range="year" type="button">해</button>
-        <button class="chip" data-range="all" type="button">전체</button>
-      </div>
-
-      <div class="section">
-        <p class="section__title">최근 기록</p>
-        <ul id="j-recent"></ul>
-      </div>
-
       <div class="section">
         <p class="section__title">터닝포인트</p>
+        <div class="banner" style="margin-bottom:12px">
+          <p class="banner__eyebrow">터닝포인트가 뭔가요?</p>
+          <p class="banner__body" style="margin-top:6px">
+            인생 그래프에 <b>이름을 남길 만한 시기</b>를 표시해 두는 기능입니다.
+            나중에 돌아봤을 때 "이때부터 달라졌다" 싶은 지점이 그래프에 큰 점으로 남습니다.
+            표시는 본인만 할 수 있고, 언제든 지울 수 있습니다.
+          </p>
+        </div>
         <div id="j-tp"></div>
+      </div>
+
+      <div class="section">
+        <p class="section__title">최근에 남긴 기록</p>
+        <div class="chips" id="j-ranges" style="margin-bottom:12px">
+          <button class="chip chip--sm" data-range="today" type="button">오늘</button>
+          <button class="chip chip--sm" data-range="week" type="button">주</button>
+          <button class="chip chip--sm" data-range="month" type="button">월</button>
+          <button class="chip chip--sm" data-range="year" type="button">해</button>
+          <button class="chip chip--sm" data-range="all" type="button">전체</button>
+        </div>
+        <div class="markers" style="margin-bottom:12px">
+          <div id="j-curve"></div>
+          <div class="legend" id="j-legend"></div>
+        </div>
+        <div id="j-recent"></div>
+        <p class="note" style="margin-top:10px" id="j-caption"></p>
       </div>
 
       <div class="section">
@@ -174,31 +132,133 @@
     </div>
   </section>
 
-  <!-- ============================== 05 PRAYER ============================= -->
+  <!-- ========================= FIRST RECORD SAVED ======================= -->
+  <section class="screen" id="screen-first-saved">
+    <div class="scroll">
+      <div class="head" style="margin-top:20px">
+        <h1 class="head__title" id="fs-title"></h1>
+        <p class="head__sub" id="fs-body"></p>
+      </div>
+      <div class="markers">
+        <div id="fs-curve"></div>
+        <div class="legend" id="fs-legend"></div>
+      </div>
+      <div class="section">
+        <button class="cta" data-go="journey" type="button">여정 보기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= PRAYER — GROUP LIST ====================== -->
   <section class="screen" id="screen-prayer">
+    <header class="appbar">
+      <span class="appbar__title">기도</span>
+      <span class="appbar__spacer"></span>
+    </header>
+
     <div class="scroll">
       <div class="context" data-context></div>
 
-      <div class="head">
-        <h1 class="head__title">기도</h1>
-        <p class="head__sub">오늘 하나님께 어떤 마음을 드리고 싶으신가요?</p>
-      </div>
-
-      <div class="dash">
-        <div class="dash__row">
-          <div class="dash__stat">
-            <p class="dash__num" id="p-week">0</p>
-            <p class="dash__label">이번 주 기도</p>
-          </div>
-          <div class="dash__stat">
-            <p class="dash__num" id="p-total">0</p>
-            <p class="dash__label">전체 기록</p>
-          </div>
+      <div class="stats">
+        <div class="stats__cell">
+          <p class="stats__num" id="p-week">0</p>
+          <p class="stats__label">이번 주 기도</p>
         </div>
-        <p class="dash__recent" id="p-recent"></p>
+        <div class="stats__cell">
+          <p class="stats__num" id="p-total">0</p>
+          <p class="stats__label">전체 기록</p>
+        </div>
+      </div>
+      <p class="recent-line" id="p-recent"></p>
+
+      <div class="section">
+        <p class="section__title">기도 제목</p>
+        <p class="note" style="margin:-6px 0 12px">묶음을 누르면 그 안의 제목들을 볼 수 있어요.</p>
+        <div id="p-groups"></div>
       </div>
 
-      <p class="field__hint">짧은 한 문장이어도 좋습니다. 하나님과 나눈 시간을 남겨보세요.</p>
+      <div class="section">
+        <button class="cta" id="p-new" type="button">기도 남기기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= PRAYER — TITLES IN GROUP =================== -->
+  <section class="screen" id="screen-prayer-group">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title" id="pg-title"></span>
+    </header>
+
+    <div class="scroll">
+      <p class="note" id="pg-desc" style="margin-bottom:12px"></p>
+      <div id="pg-list"></div>
+      <div class="section">
+        <button class="cta cta--ghost" id="pg-new" type="button">이 묶음에 기도 추가</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= PRAYER — DETAIL ========================== -->
+  <section class="screen" id="screen-prayer-detail">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">기도</span>
+    </header>
+
+    <div class="scroll">
+      <div class="head">
+        <p class="head__eyebrow" id="pd2-group"></p>
+        <h1 class="head__title" id="pd2-title"></h1>
+        <p class="head__sub" id="pd2-since"></p>
+      </div>
+
+      <div class="card">
+        <p class="card__body" id="pd2-body"></p>
+      </div>
+
+      <div class="section">
+        <p class="section__title">이 기도의 마음</p>
+        <div class="heart-grid" id="pd2-hearts"></div>
+      </div>
+
+      <div class="section">
+        <div class="discern">
+          <p class="discern__title">기도하기 전에, 한 번만 스스로 물어보세요</p>
+          <p class="discern__body" id="pd2-discern"></p>
+          <p class="discern__note">
+            이 물음의 답은 본인만 알 수 있습니다. 앱과 AI는 이 기도가 옳은지 그른지,
+            욕심인지 아닌지 판단하지 않습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="section__title">기도로 그치지 않았는지</p>
+        <p class="note" style="margin:-6px 0 12px">이 기도에서 이어진 약속과 실행입니다.</p>
+        <div class="living" id="pd2-living"></div>
+        <div class="stack" style="margin-top:12px">
+          <button class="cta cta--soft" id="pd2-to-promise" type="button">이 기도를 약속으로 남기기</button>
+          <button class="cta cta--ghost" id="pd2-pray" type="button">지금 이 제목으로 기도 기록하기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= PRAYER — COMPOSE ========================= -->
+  <section class="screen" id="screen-prayer-new">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">기도 남기기</span>
+    </header>
+
+    <div class="scroll">
+      <div class="context" data-context></div>
+
+      <p class="field__hint">
+        오늘 하나님께 어떤 마음을 드리고 싶으신가요?
+        짧은 한 문장이어도 좋습니다.
+      </p>
 
       <div class="field">
         <label class="field__label" for="p-title-input">기도제목</label>
@@ -206,84 +266,78 @@
       </div>
 
       <div class="field">
+        <label class="field__label" for="p-group-input">어디에 넣을까요</label>
+        <div class="chips" id="p-group-chips"></div>
+      </div>
+
+      <div class="field">
         <label class="field__label" for="p-body-input">기도 기록 <span class="note">(선택)</span></label>
         <textarea class="textarea" id="p-body-input" placeholder="마음에 있는 것을 그대로 적어보세요."></textarea>
       </div>
 
-      <div class="stack">
-        <button class="cta" id="p-save" type="button">기도 남기기</button>
-        <button class="cta cta--ghost" data-go="prayer-history" type="button">지난 기도 보기</button>
+      <div class="discern" style="margin-bottom:16px">
+        <p class="discern__title">한 번만 스스로 물어보세요</p>
+        <p class="discern__body">
+          이 기도는 <b>내가 원하는 것을 이뤄달라는 마음</b>에 가깝나요,
+          아니면 <b>하나님께서 기뻐하실 일을 구하는 마음</b>에 가깝나요?
+          둘 다여도 괜찮습니다. 다만 모르고 지나가지는 않도록 한 번 짚어봅니다.
+        </p>
+        <p class="discern__note">답은 적지 않아도 됩니다. 앱은 판단하지 않습니다.</p>
       </div>
+
+      <button class="cta" id="p-save" type="button">기도 남기기</button>
     </div>
   </section>
 
-  <!-- ====================== 05b PRAYER → PROMISE BRIDGE =================== -->
+  <!-- ====================== PRAYER → PROMISE BRIDGE ===================== -->
   <section class="screen" id="screen-prayer-bridge">
     <div class="scroll">
-      <div class="head">
+      <div class="head" style="margin-top:20px">
         <p class="head__eyebrow">기도를 남겼어요</p>
         <h1 class="head__title">이 기도에서<br />마음에 남은 약속이 있나요?</h1>
       </div>
 
-      <div class="preview" style="margin-bottom:24px">
+      <div class="preview" style="margin-bottom:16px">
         <p class="preview__tag">방금 남긴 기도</p>
         <p class="post__body" id="pb-quote"></p>
       </div>
 
       <div class="stack">
         <button class="choice choice--primary" id="pb-make-promise" type="button">
-          <span>약속으로 이어 적기<span class="choice__hint">지금 떠오른 결단을 한 줄로</span></span>
+          <span>약속으로 이어 적기<span class="choice__hint">기도가 삶으로 이어지는 자리</span></span>
           <span class="choice__arrow">›</span>
         </button>
         <button class="choice" id="pb-done" type="button">
           <span>여기서 마치기<span class="choice__hint">기도만 남겨도 충분합니다</span></span>
           <span class="choice__arrow">›</span>
         </button>
-        <button class="choice" id="pb-history" type="button">
-          <span>지난 기도 보기</span>
-          <span class="choice__arrow">›</span>
-        </button>
       </div>
     </div>
   </section>
 
-  <!-- =========================== 06 PRAYER HISTORY ======================== -->
-  <section class="screen" id="screen-prayer-history">
-    <div class="scroll">
-      <button class="back" data-back type="button">‹ 뒤로</button>
-      <div class="head"><h1 class="head__title">지난 기도</h1></div>
-      <ul id="ph-list" class="stack"></ul>
-      <div class="section">
-        <button class="cta cta--soft" data-go="journey" type="button">여정에서 함께 보기</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================= 07 PROMISE DASHBOARD ======================= -->
+  <!-- ========================= PROMISE DASHBOARD ======================== -->
   <section class="screen" id="screen-promise">
+    <header class="appbar">
+      <span class="appbar__title">약속</span>
+      <span class="appbar__spacer"></span>
+    </header>
+
     <div class="scroll">
       <div class="context" data-context></div>
 
-      <div class="head">
-        <h1 class="head__title">약속</h1>
-        <p class="head__sub">기도했던 시간을 잠시 떠올려보세요.</p>
-      </div>
-
-      <div class="dash">
-        <div class="dash__row">
-          <div class="dash__stat">
-            <p class="dash__num" id="pr-active">0</p>
-            <p class="dash__label">진행 중 약속</p>
-          </div>
-          <div class="dash__stat">
-            <p class="dash__num" id="pr-closed">0</p>
-            <p class="dash__label">마무리된 약속</p>
-          </div>
+      <div class="stats">
+        <div class="stats__cell">
+          <p class="stats__num" id="pr-active">0</p>
+          <p class="stats__label">진행 중 약속</p>
         </div>
-        <p class="dash__recent" id="pr-recent"></p>
+        <div class="stats__cell">
+          <p class="stats__num" id="pr-closed">0</p>
+          <p class="stats__label">마무리된 약속</p>
+        </div>
       </div>
+      <p class="recent-line" id="pr-recent"></p>
 
-      <div id="pr-compose" style="display:none">
+      <div id="pr-compose" style="display:none; margin-top:16px">
         <p class="field__hint">그때 하나님 앞에서 마음에 새긴 약속이나 결단이 있었나요?</p>
         <div class="field">
           <input class="input" id="pr-new-input" type="text" placeholder="예) 매일 아침 10분 먼저 기도하기" />
@@ -293,15 +347,19 @@
 
       <div class="section">
         <p class="section__title">내 약속</p>
-        <ul id="pr-list" class="stack"></ul>
+        <div id="pr-list" class="stack"></div>
       </div>
     </div>
   </section>
 
-  <!-- ====================== 08 PROMISE DETAIL + ACTION ==================== -->
+  <!-- ====================== PROMISE DETAIL + ACTION ===================== -->
   <section class="screen" id="screen-promise-detail">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">약속</span>
+    </header>
+
     <div class="scroll">
-      <button class="back" data-back type="button">‹ 뒤로</button>
       <div class="context" data-context></div>
 
       <div class="head">
@@ -323,7 +381,7 @@
 
       <div class="section">
         <p class="section__title">실행 기록</p>
-        <ul id="pd-actions"></ul>
+        <div id="pd-actions"></div>
       </div>
 
       <div class="section stack">
@@ -333,18 +391,22 @@
     </div>
   </section>
 
-  <!-- ========================= 09 REFLECTION BRIDGE ======================= -->
+  <!-- ========================= REFLECTION BRIDGE ======================== -->
   <section class="screen" id="screen-reflection">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">돌아보기</span>
+    </header>
+
     <div class="scroll">
       <div class="context" data-context></div>
 
       <div class="head">
-        <p class="head__eyebrow">돌아보기</p>
         <h1 class="head__title" id="rf-title"></h1>
         <p class="head__sub" id="rf-sub"></p>
       </div>
 
-      <p class="note" style="margin-bottom:20px">
+      <p class="note" style="margin-bottom:16px">
         잘했는지 못했는지를 묻지 않습니다. 하지 못한 이유도 묻지 않습니다.
         다음에 무엇을 하고 싶은지만 고르면 됩니다.
       </p>
@@ -372,64 +434,61 @@
     </div>
   </section>
 
-  <!-- ============================ 10 REPENTANCE =========================== -->
+  <!-- ============================ REPENTANCE ============================ -->
   <section class="screen" id="screen-repentance">
+    <header class="appbar">
+      <span class="appbar__title">회개</span>
+      <span class="appbar__spacer"></span>
+    </header>
+
     <div class="scroll">
       <div class="context" data-context></div>
 
-      <div class="head">
-        <h1 class="head__title">회개</h1>
-        <p class="head__sub">원하는 만큼만 적어도 됩니다. 순서도 정해져 있지 않아요.</p>
-      </div>
-
-      <div class="dash">
-        <div class="dash__row">
-          <div class="dash__stat">
-            <p class="dash__num" id="rp-month">0</p>
-            <p class="dash__label">이번 달 회개 기록</p>
-          </div>
-          <div class="dash__stat">
-            <p class="dash__num" id="rp-total">0</p>
-            <p class="dash__label">전체 기록</p>
-          </div>
+      <div class="stats">
+        <div class="stats__cell">
+          <p class="stats__num" id="rp-month">0</p>
+          <p class="stats__label">이번 달 회개 기록</p>
         </div>
-        <p class="dash__recent" id="rp-recent"></p>
+        <div class="stats__cell">
+          <p class="stats__num" id="rp-total">0</p>
+          <p class="stats__label">전체 기록</p>
+        </div>
       </div>
+      <p class="recent-line" id="rp-recent"></p>
 
-      <div class="field">
-        <label class="field__label" for="rp-sin">죄를 돌아보기</label>
-        <p class="field__hint">
-          오늘 어떤 죄를 돌아보게 되었나요?
-          오늘 일이 아니어도 됩니다. 오래 마음에 남아 있던 기억이나 사건도 지금 꺼낼 수 있어요.
-        </p>
-        <textarea class="textarea" id="rp-sin" placeholder="하나님 앞에서 돌아보게 된 것을 적어보세요."></textarea>
-      </div>
+      <div class="section">
+        <div class="field">
+          <label class="field__label" for="rp-sin">죄를 돌아보기</label>
+          <p class="field__hint">
+            오늘 어떤 죄를 돌아보게 되었나요?
+            오늘 일이 아니어도 됩니다. 오래 마음에 남아 있던 기억이나 사건도 지금 꺼낼 수 있어요.
+          </p>
+          <textarea class="textarea" id="rp-sin" placeholder="하나님 앞에서 돌아보게 된 것을 적어보세요."></textarea>
+        </div>
 
-      <div class="field">
-        <label class="field__label" for="rp-behavior">구체적으로 돌아보기</label>
-        <p class="field__hint">
-          그 죄와 관련해 어떤 말이나 행동, 태도를 돌아보게 되었나요?
-          기억나는 대로, 숨기지 않고 적어보세요.
-        </p>
-        <textarea class="textarea" id="rp-behavior" placeholder="그때의 말, 행동, 태도를 적어보세요."></textarea>
-      </div>
+        <div class="field">
+          <label class="field__label" for="rp-behavior">구체적으로 돌아보기</label>
+          <p class="field__hint">
+            그 죄와 관련해 어떤 말이나 행동, 태도를 돌아보게 되었나요?
+          </p>
+          <textarea class="textarea" id="rp-behavior" placeholder="그때의 말, 행동, 태도를 적어보세요."></textarea>
+        </div>
 
-      <div class="field">
-        <label class="field__label" for="rp-insight">새롭게 깨달은 것 <span class="note">(선택)</span></label>
-        <p class="field__hint">
-          이 일을 돌아보며 무엇을 새롭게 깨닫게 되었나요?
-          아직 잘 모르겠다면 비워 두어도 괜찮습니다.
-        </p>
-        <textarea class="textarea" id="rp-insight"></textarea>
-      </div>
+        <div class="field">
+          <label class="field__label" for="rp-insight">새롭게 깨달은 것 <span class="note">(선택)</span></label>
+          <p class="field__hint">
+            이 일을 돌아보며 무엇을 새롭게 깨닫게 되었나요? 비워 두어도 괜찮습니다.
+          </p>
+          <textarea class="textarea" id="rp-insight"></textarea>
+        </div>
 
-      <div class="field">
-        <label class="field__label" for="rp-turn">돌이키기</label>
-        <p class="field__hint">
-          앞으로 어떻게 돌이키고 싶나요?
-          거창하지 않아도 됩니다. 오늘부터 할 수 있는 것 하나면 충분합니다.
-        </p>
-        <textarea class="textarea" id="rp-turn" placeholder="앞으로 하고 싶은 한 가지를 적어보세요."></textarea>
+        <div class="field">
+          <label class="field__label" for="rp-turn">돌이키기</label>
+          <p class="field__hint">
+            앞으로 어떻게 돌이키고 싶나요? 오늘부터 할 수 있는 것 하나면 충분합니다.
+          </p>
+          <textarea class="textarea" id="rp-turn" placeholder="앞으로 하고 싶은 한 가지를 적어보세요."></textarea>
+        </div>
       </div>
 
       <div class="section">
@@ -457,17 +516,17 @@
         <div id="rp-return"></div>
       </div>
 
-      <p class="note" style="margin-top:20px">
+      <p class="note" style="margin-top:16px">
         네 가지 모두 적지 않아도 됩니다. 순서를 지키지 않아도 되고, 도중에 마쳐도 괜찮습니다.
         마치기는 기록을 남기는 것이며, 회개의 충분함이나 용서 여부를 판단하지 않습니다.
       </p>
     </div>
   </section>
 
-  <!-- ==================== 10b REPENTANCE → SHARE BRIDGE =================== -->
+  <!-- ==================== REPENTANCE → SHARE BRIDGE ===================== -->
   <section class="screen" id="screen-repentance-bridge">
     <div class="scroll">
-      <div class="head">
+      <div class="head" style="margin-top:20px">
         <p class="head__eyebrow">기록을 마쳤어요</p>
         <h1 class="head__title">이 기록의 일부를<br />나누고 싶나요?</h1>
         <p class="head__sub">나누지 않아도 괜찮습니다. 고른 항목만, 원할 때만 나눠집니다.</p>
@@ -492,44 +551,49 @@
     </div>
   </section>
 
-  <!-- ======================= 11 REPENTANCE HISTORY ======================== -->
+  <!-- ======================= REPENTANCE HISTORY ========================= -->
   <section class="screen" id="screen-repentance-history">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">지난 회개 기록</span>
+    </header>
     <div class="scroll">
-      <button class="back" data-back type="button">‹ 뒤로</button>
-      <div class="head"><h1 class="head__title">지난 회개 기록</h1></div>
-      <ul id="rh-list" class="stack"></ul>
-      <div class="section">
-        <button class="cta cta--soft" data-go="journey" type="button">여정에서 함께 보기</button>
-      </div>
+      <div id="rh-list" class="stack"></div>
     </div>
   </section>
 
-  <!-- ========================== 12 CONFESSION FEED ======================== -->
+  <!-- ========================== CONFESSION FEED ========================= -->
   <section class="screen" id="screen-confession">
+    <header class="appbar">
+      <span class="appbar__title">고백</span>
+      <span class="appbar__spacer"></span>
+    </header>
+
+    <div class="seg" id="cf-seg">
+      <button class="seg__item" data-feed="all" aria-selected="true" type="button">전체</button>
+      <button class="seg__item" data-feed="mine" aria-selected="false" type="button">내 기록</button>
+    </div>
+
     <div class="scroll scroll--flush">
-      <div class="feed__head" style="padding-top:20px">
-        <h1 class="head__title">고백</h1>
-        <p class="head__sub">서로의 이야기를 천천히 읽어보세요.</p>
-      </div>
+      <p class="note" style="padding:14px 16px 0">서로의 이야기를 천천히 읽어보세요. 최신순으로만 보입니다.</p>
 
-      <div id="cf-list"></div>
-
-      <button class="composer-trigger" id="cf-compose" type="button">
-        나도 이야기를 남겨볼까요?
+      <button class="composer-trigger" id="cf-compose" type="button" style="margin-top:12px">
+        <span class="post__avatar">나</span>
+        <span>나도 이야기를 남겨볼까요?</span>
       </button>
 
-      <p class="note" style="padding:0 20px 20px">
-        최신순으로만 보입니다. 인기나 순위로 정렬하지 않습니다.
-      </p>
+      <div class="feed" id="cf-list"></div>
     </div>
   </section>
 
-  <!-- ======================== 13 CONFESSION COMPOSER ====================== -->
+  <!-- ======================== CONFESSION COMPOSER ======================= -->
   <section class="screen" id="screen-composer">
-    <div class="scroll">
-      <button class="back" data-back type="button">‹ 뒤로</button>
-      <div class="head"><h1 class="head__title">이야기 남기기</h1></div>
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">이야기 남기기</span>
+    </header>
 
+    <div class="scroll">
       <div class="field">
         <textarea class="textarea textarea--tall" id="cp-input" placeholder="오늘 마음에 남은 것을 그대로 적어보세요."></textarea>
       </div>
@@ -545,7 +609,7 @@
       </div>
 
       <div class="field">
-        <span class="note">공개 범위</span>
+        <span class="field__label">공개 범위</span>
         <div class="privacy" id="cp-privacy">
           <button class="privacy__opt" data-privacy="masked" type="button">이름 가림</button>
           <button class="privacy__opt" data-privacy="named" type="button">이름 공개</button>
@@ -557,18 +621,18 @@
     </div>
   </section>
 
-  <!-- ================= 14 SHARECOPY → CONFESSION PREVIEW ================== -->
+  <!-- ================= SHARECOPY → CONFESSION PREVIEW =================== -->
   <section class="screen" id="screen-sharecopy">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">나눌 부분 고르기</span>
+    </header>
+
     <div class="scroll">
-      <button class="back" data-back type="button">‹ 뒤로</button>
       <div class="context" data-context></div>
+      <p class="note" style="margin-bottom:12px">고른 항목만 사본으로 만들어져 고백에 올라갑니다.</p>
 
-      <div class="head">
-        <h1 class="head__title">나눌 부분 고르기</h1>
-        <p class="head__sub">고른 항목만 사본으로 만들어져 고백에 올라갑니다.</p>
-      </div>
-
-      <div id="sc-fields"></div>
+      <div class="card" id="sc-fields"></div>
 
       <div class="section">
         <p class="section__title">미리보기</p>
@@ -585,7 +649,7 @@
     </div>
   </section>
 
-  <!-- ============================= BOTTOM NAV ============================= -->
+  <!-- ============================= BOTTOM NAV =========================== -->
   <nav class="nav" id="nav" aria-label="주 메뉴">
     <button class="nav__item" data-tab="journey" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="5" cy="17" r="2"/><circle cx="12" cy="9" r="2"/><circle cx="19" cy="14" r="2"/></svg>
@@ -608,6 +672,22 @@
       <span>고백</span>
     </button>
   </nav>
+
+  <!-- ============================ COACH MARKS =========================== -->
+  <div class="coach" id="coach" role="dialog" aria-label="사용법 안내">
+    <div class="coach__scrim"></div>
+    <div class="coach__ring" id="coach-ring"></div>
+    <div class="coach__card" id="coach-card">
+      <p class="coach__step" id="coach-step"></p>
+      <p class="coach__title" id="coach-title"></p>
+      <p class="coach__body" id="coach-body"></p>
+      <div class="coach__foot">
+        <div class="coach__dots" id="coach-dots"></div>
+        <button class="coach__skip" id="coach-skip" type="button">건너뛰기</button>
+        <button class="coach__next" id="coach-next" type="button">다음</button>
+      </div>
+    </div>
+  </div>
 
   <div class="toast" id="toast" role="status">
     <span id="toast-text"></span>

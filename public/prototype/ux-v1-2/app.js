@@ -2,104 +2,121 @@
  * REPENT — UX Validation Prototype (ux-v1-2)
  * NON-CANONICAL. Owner review only.
  *
- * Minimal state + routing so the CROSS-FLOW CONTINUITY can actually be clicked
+ * Minimal state + routing so the cross-flow continuity can actually be clicked
  * through: every screen knows where the user came from (Entry Context), what it
- * optionally leads to (Next Optional Action) and how to get back (Return Target).
+ * optionally leads to, and how to get back (Return Target).
  *
  * Nothing here is production logic. No scoring, no automatic repentance, no
- * automatic sharing — every bridge is an explicit user choice.
+ * automatic sharing, and no judgement of whether a prayer is right or selfish —
+ * the discernment prompts are questions the user asks themselves.
  */
 
 (function () {
   'use strict';
 
-  /* ------------------------------------------------------------------ state */
+  /* ------------------------------------------------------------------ data */
 
   var KINDS = {
-    prayer: { label: '기도', color: '#8B5CF6' },
-    promise: { label: '약속', color: '#6D45C6' },
-    action: { label: '실행', color: '#4FA6D9' },
-    repentance: { label: '회개', color: '#C77DBB' },
-    confession: { label: '고백', color: '#5BB58C' },
+    prayer: { label: '기도', color: '#6D4AFF' },
+    promise: { label: '약속', color: '#4A2FD6' },
+    action: { label: '실행', color: '#3E9BD6' },
+    repentance: { label: '회개', color: '#C06FB8' },
+    confession: { label: '고백', color: '#22A06B' },
   };
 
-  var store = { records: [], nextId: 1 };
+  /** Prayer groups. Grouping is a user-facing organiser, not a status. */
+  var PRAYER_GROUPS = [
+    { id: 'soul', icon: '🙏', name: '영혼을 위한 중보', desc: '아직 예수님을 모르는 이들, 마음이 멀어진 이들을 위해',
+      discern: '그 사람이 변하기를 바라는 마음에, 내가 편해지고 싶은 마음이 섞여 있지는 않나요?' },
+    { id: 'family', icon: '🏠', name: '가족', desc: '함께 사는 사람들, 멀리 있는 가족을 위해',
+      discern: '가족이 잘되기를 바라는 마음 안에, 내 뜻대로 되기를 바라는 마음은 없나요?' },
+    { id: 'health', icon: '🌱', name: '건강', desc: '몸과 마음의 회복을 위해',
+      discern: '회복을 구하면서도, 그 시간 동안 하나님과 함께 있기를 구하고 있나요?' },
+    { id: 'finance', icon: '💼', name: '재정과 일', desc: '생계와 일터, 필요한 것들을 위해',
+      discern: '지금 필요한 것을 구하는 마음과, 더 갖고 싶은 마음 사이에서 이 기도는 어디쯤에 있나요?' },
+    { id: 'church', icon: '⛪', name: '교회와 사역', desc: '섬기는 자리와 함께하는 공동체를 위해',
+      discern: '섬김을 구하는 마음에, 인정받고 싶은 마음이 함께 있지는 않나요?' },
+    { id: 'self', icon: '🕊️', name: '나 자신', desc: '내 마음과 태도, 하나님과의 관계를 위해',
+      discern: '고쳐달라고 구하는 것과, 고치기로 마음먹는 것 중 지금은 어느 쪽에 가깝나요?' },
+  ];
 
-  /** Navigation context stack — powers Entry Context + Return CTA. */
+  function groupById(id) {
+    return PRAYER_GROUPS.filter(function (g) { return g.id === id; })[0] || PRAYER_GROUPS[5];
+  }
+
+  var store = { records: [], nextId: 1 };
   var stack = [];
   var current = { screen: 'intro', ctx: null };
 
   function dayOffset(n) {
     var d = new Date();
     d.setDate(d.getDate() - n);
-    return (
-      d.getFullYear() +
-      '-' +
-      String(d.getMonth() + 1).padStart(2, '0') +
-      '-' +
-      String(d.getDate()).padStart(2, '0')
-    );
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
 
   function prettyDay(iso) {
-    var parts = iso.split('-');
-    return Number(parts[1]) + '월 ' + Number(parts[2]) + '일';
+    var p = iso.split('-');
+    return Number(p[1]) + '월 ' + Number(p[2]) + '일';
+  }
+
+  function daysSince(iso) {
+    return Math.max(0, Math.round((new Date() - new Date(iso + 'T00:00:00')) / 86400000));
   }
 
   function add(type, title, body, extra) {
-    var rec = {
-      id: 'r' + store.nextId++,
-      type: type,
-      title: title,
-      body: body || '',
-      day: dayOffset(0),
-    };
+    var rec = { id: 'r' + store.nextId++, type: type, title: title, body: body || '', day: dayOffset(0) };
     if (extra) Object.keys(extra).forEach(function (k) { rec[k] = extra[k]; });
     store.records.push(rec);
     return rec;
   }
 
-  function byType(type) {
-    return store.records.filter(function (r) { return r.type === type; });
-  }
+  function byType(t) { return store.records.filter(function (r) { return r.type === t; }); }
+  function findById(id) { return store.records.filter(function (r) { return r.id === id; })[0]; }
 
-  function findById(id) {
-    return store.records.filter(function (r) { return r.id === id; })[0];
-  }
+  function resetData() { store.records = []; store.nextId = 1; }
 
-  function resetData() {
-    store.records = [];
-    store.nextId = 1;
-  }
-
-  /** Demo records for the "already has history" states. */
   function seedData() {
     resetData();
     store.records = [
-      { id: 'r1', type: 'prayer', title: '조급한 마음을 내려놓게 해주세요', body: '요즘 마음이 자꾸 앞서갑니다.', day: dayOffset(9) },
-      { id: 'r2', type: 'promise', title: '매일 아침 10분 먼저 기도하기', body: '', day: dayOffset(9), status: 'active' },
-      { id: 'r3', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(7), promiseId: 'r2' },
-      {
-        id: 'r4',
-        type: 'repentance',
-        title: '말로 사람을 아프게 했던 일',
+      { id: 'r1', type: 'prayer', group: 'self', title: '조급한 마음을 내려놓게 해주세요',
+        body: '자꾸 앞서갑니다. 결과부터 계산하다가 하루가 다 갑니다.', day: dayOffset(24),
+        hearts: { give: '기다릴 줄 아는 마음', receive: '조급하지 않은 하루', praise: '끝까지 기다렸구나' } },
+      { id: 'r2', type: 'promise', title: '매일 아침 10분 먼저 기도하기', body: '', day: dayOffset(20),
+        status: 'active', sourcePrayerId: 'r1' },
+      { id: 'r3', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(14), promiseId: 'r2' },
+      { id: 'r4', type: 'repentance', title: '말로 사람을 아프게 했던 일',
         body: '말로 사람을 아프게 했던 일\n\n지친다는 이유로 아이에게 큰 소리를 냈습니다.\n\n피곤함이 이유가 될 수 없다는 걸 알게 됐습니다.\n\n먼저 미안하다고 말하기',
-        day: dayOffset(5),
-      },
-      { id: 'r5', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(3), promiseId: 'r2' },
-      { id: 'r6', type: 'confession', title: '작은 은혜', body: '별것 아닌 하루였는데 마음이 조용했습니다.', day: dayOffset(2), privacy: 'masked' },
-      { id: 'r7', type: 'prayer', title: '가족을 위해', body: '', day: dayOffset(1) },
+        day: dayOffset(9) },
+      { id: 'r5', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(6), promiseId: 'r2' },
+      { id: 'r6', type: 'confession', title: '작은 은혜', body: '별것 아닌 하루였는데 저녁에 마음이 조용했습니다.',
+        day: dayOffset(4), privacy: 'masked', ctype: '은혜' },
+      { id: 'r7', type: 'prayer', group: 'family', title: '아이가 마음 편히 자라기를',
+        body: '요즘 부쩍 말수가 줄었습니다.', day: dayOffset(12),
+        hearts: { give: '먼저 들어주는 마음', receive: '아이와의 편한 저녁', praise: '끝까지 들어줬구나' } },
       { id: 'r8', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(0), promiseId: 'r2' },
-      { id: 'r9', type: 'promise', title: '한 주에 한 번 안부 전하기', body: '', day: dayOffset(4), status: 'closed' },
+      { id: 'r9', type: 'promise', title: '한 주에 한 번 안부 전하기', body: '', day: dayOffset(30), status: 'closed' },
+      { id: 'r10', type: 'prayer', group: 'soul', title: '동생이 다시 교회에 나오기를',
+        body: '오래 기다리고 있습니다.', day: dayOffset(60),
+        hearts: { give: '재촉하지 않는 마음', receive: '동생과의 편한 대화', praise: '끝까지 기다렸구나' } },
+      { id: 'r11', type: 'prayer', group: 'health', title: '어머니 허리가 회복되기를',
+        body: '', day: dayOffset(40),
+        hearts: { give: '자주 찾아뵙는 마음', receive: '어머니의 편한 밤', praise: '곁에 있어줬구나' } },
+      { id: 'r12', type: 'prayer', group: 'finance', title: '이번 달 생활비',
+        body: '', day: dayOffset(8),
+        hearts: { give: '염려 대신 맡기는 마음', receive: '이번 달을 넘길 힘', praise: '흔들려도 맡겼구나' } },
+      { id: 'r13', type: 'prayer', group: 'church', title: '주일학교 아이들',
+        body: '', day: dayOffset(18),
+        hearts: { give: '준비하는 시간', receive: '아이들과 통하는 한마디', praise: '작은 자리를 지켰구나' } },
     ];
-    store.nextId = 10;
+    store.nextId = 20;
   }
 
   /* --------------------------------------------------------------- routing */
 
   var screens = {};
-
   function el(id) { return document.getElementById(id); }
+
+  var TAB_SCREENS = ['journey', 'prayer', 'promise', 'repentance', 'confession'];
 
   function nav(screen, ctx, opts) {
     if (!opts || !opts.replace) {
@@ -116,47 +133,56 @@
   }
 
   function render() {
-    Array.prototype.forEach.call(document.querySelectorAll('.screen'), function (node) {
-      node.classList.toggle('is-active', node.id === 'screen-' + current.screen);
+    Array.prototype.forEach.call(document.querySelectorAll('.screen'), function (n) {
+      n.classList.toggle('is-active', n.id === 'screen-' + current.screen);
     });
 
-    var showNav = ['journey', 'prayer', 'promise', 'repentance', 'confession'].indexOf(current.screen) >= 0;
-    el('nav').style.display = showNav ? 'grid' : 'none';
+    el('nav').style.display = current.screen === 'intro' ? 'none' : 'grid';
 
-    var navKey = current.screen;
-    Array.prototype.forEach.call(document.querySelectorAll('.nav__item'), function (node) {
-      if (node.dataset.tab === navKey) node.setAttribute('aria-current', 'page');
-      else node.removeAttribute('aria-current');
+    Array.prototype.forEach.call(document.querySelectorAll('.nav__item'), function (n) {
+      var owner = current.screen.split('-')[0];
+      if (n.dataset.tab === current.screen || n.dataset.tab === owner) n.setAttribute('aria-current', 'page');
+      else n.removeAttribute('aria-current');
     });
 
     renderContext();
-
     if (screens[current.screen]) screens[current.screen](current.ctx || {});
 
-    var scroller = document.querySelector('#screen-' + current.screen + ' .scroll');
-    if (scroller) scroller.scrollTop = 0;
+    var sc = document.querySelector('#screen-' + current.screen + ' .scroll');
+    if (sc) sc.scrollTop = 0;
   }
 
-  /** Entry Context strip — small, always at the top, never blocking. */
   function renderContext() {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-context]'), function (node) {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-context]'), function (n) {
       var ctx = current.ctx;
-      if (!ctx || !ctx.label) { node.style.display = 'none'; return; }
-      node.style.display = 'flex';
-      node.innerHTML =
-        '<span class="context__label">' + ctx.label + '</span>' +
+      if (!ctx || !ctx.label) { n.style.display = 'none'; return; }
+      n.style.display = 'flex';
+      n.innerHTML = '<span class="context__label">' + ctx.label + '</span>' +
         '<span class="context__value">' + (ctx.value || '') + '</span>';
     });
   }
+
+  function returnBlock(ctx) {
+    if (!ctx || !ctx.returnTo) return '';
+    return '<button class="cta cta--ghost" data-return="' + ctx.returnTo + '"' +
+      (ctx.returnId ? ' data-return-id="' + ctx.returnId + '"' : '') + '>' +
+      (ctx.returnLabel || '돌아가기') + '</button>';
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-return]') : null;
+    if (!b) return;
+    if (b.dataset.return === 'promise-detail' && b.dataset.returnId) nav('promise-detail', { promiseId: b.dataset.returnId });
+    else nav(b.dataset.return);
+  });
 
   /* ----------------------------------------------------------------- toast */
 
   var toastTimer = null;
 
-  /** Every saved record reports where it landed on the Journey. */
-  function markerToast(kindLabel) {
+  function markerToast(label) {
     var t = el('toast');
-    el('toast-text').textContent = '여정에 ' + kindLabel + ' 기록이 남았어요';
+    el('toast-text').textContent = '여정에 ' + label + ' 기록이 남았어요';
     t.classList.add('is-shown');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { t.classList.remove('is-shown'); }, 4200);
@@ -167,46 +193,109 @@
     nav('journey');
   });
 
-  /* ------------------------------------------------------- return CTA block */
+  /* ------------------------------------------------------------ coach marks */
 
-  function returnBlock(ctx) {
-    if (!ctx || !ctx.returnTo) return '';
-    return (
-      '<button class="cta cta--ghost" data-return="' + ctx.returnTo + '"' +
-      (ctx.returnId ? ' data-return-id="' + ctx.returnId + '"' : '') + '>' +
-      (ctx.returnLabel || '돌아가기') +
-      '</button>'
-    );
+  var COACH = [
+    { target: '#tour-life', title: '지나온 시간이 한눈에', body: '인생 그래프예요. 좌우로 밀면 지난 시간이 이어집니다. 점을 누르면 그날의 생각이 나옵니다.' },
+    { target: '.nav__item[data-tab="prayer"]', title: '기도는 제목별로 묶여요', body: '가족, 재정, 영혼을 위한 중보처럼 묶음을 만들고 그 안에 제목을 쌓아둡니다. 응답 여부를 기록하거나 점수를 매기지 않습니다.' },
+    { target: '.nav__item[data-tab="promise"]', title: '기도가 약속으로', body: '기도하다 마음에 남은 결단을 약속으로 적습니다. 오늘 할 수 있는 실행은 그 약속 안에 쌓입니다.' },
+    { target: '.nav__item[data-tab="repentance"]', title: '오늘 일도, 오래된 기억도', body: '실행이 계획과 달랐을 때뿐 아니라, 마음에 오래 남은 일도 직접 꺼내어 기록할 수 있습니다.' },
+    { target: '.nav__item[data-tab="confession"]', title: '원하는 만큼만 나눠요', body: '다른 분들의 이야기를 읽고, 내 기록 중 고른 부분만 나눌 수 있습니다. 이름은 가릴 수 있고, 누가 더 많이 공감받았는지로 줄 세우지 않습니다.' },
+    { target: '.nav__item[data-tab="journey"]', title: '모든 기록은 여정에 남아요', body: '기도·약속·실행·회개·고백이 각각 흩어지지 않고, 여정에 하나의 점으로 모입니다.' },
+    { target: null, title: '기도 한 줄부터 시작해볼까요?', body: '지금 마음에 있는 것을 한 문장만 남겨도 여정의 첫 점이 됩니다.', cta: '기도 남기러 가기' },
+  ];
+
+  var coachIndex = 0;
+
+  function positionCoach() {
+    var step = COACH[coachIndex];
+    var ring = el('coach-ring');
+    var card = el('coach-card');
+    var dRect = document.querySelector('.device').getBoundingClientRect();
+    var vh = window.innerHeight;
+
+    if (!step.target) {
+      ring.style.display = 'none';
+      card.style.top = '';
+      card.style.bottom = '110px';
+      return;
+    }
+
+    var node = document.querySelector(step.target);
+    if (!node) { ring.style.display = 'none'; return; }
+
+    var r = node.getBoundingClientRect();
+    var pad = 6;
+
+    // The overlay is viewport-fixed, so vertical values are viewport-relative
+    // and horizontal ones are measured from the device's left edge.
+    ring.style.display = 'block';
+    ring.style.left = (r.left - dRect.left - pad) + 'px';
+    ring.style.top = (r.top - pad) + 'px';
+    ring.style.width = (r.width + pad * 2) + 'px';
+    ring.style.height = (r.height + pad * 2) + 'px';
+
+    if (vh - r.bottom > 300) {
+      card.style.top = (r.bottom + 18) + 'px';
+      card.style.bottom = '';
+    } else {
+      card.style.top = '';
+      card.style.bottom = (vh - r.top + 18) + 'px';
+    }
   }
 
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('[data-return]') : null;
-    if (!btn) return;
-    var target = btn.dataset.return;
-    var id = btn.dataset.returnId;
-    if (target === 'promise-detail' && id) nav('promise-detail', { promiseId: id });
-    else nav(target);
+  function renderCoach() {
+    var step = COACH[coachIndex];
+
+    // Bring an in-page target into view before measuring it. Nav targets are
+    // fixed, so they never need this.
+    if (step.target && step.target.indexOf('.nav__item') !== 0) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    el('coach-step').textContent = '사용법 ' + (coachIndex + 1) + ' / ' + COACH.length;
+    el('coach-title').textContent = step.title;
+    el('coach-body').textContent = step.body;
+    el('coach-next').textContent = step.cta || (coachIndex === COACH.length - 1 ? '시작하기' : '다음');
+    el('coach-dots').innerHTML = COACH.map(function (_, i) {
+      return '<i class="' + (i === coachIndex ? 'is-on' : '') + '"></i>';
+    }).join('');
+    positionCoach();
+  }
+
+  function openCoach() {
+    coachIndex = 0;
+    el('coach').classList.add('is-open');
+    renderCoach();
+  }
+
+  function closeCoach() { el('coach').classList.remove('is-open'); }
+
+  el('coach-next').addEventListener('click', function () {
+    if (coachIndex < COACH.length - 1) { coachIndex++; renderCoach(); return; }
+    closeCoach();
+    nav('prayer');
   });
 
-  /* ---------------------------------------------------------- life curve */
+  el('coach-skip').addEventListener('click', closeCoach);
+  el('j-help').addEventListener('click', openCoach);
+  window.addEventListener('resize', function () {
+    if (el('coach').classList.contains('is-open')) positionCoach();
+  });
 
-  /**
-   * Points only. One lane per record kind, one dot per record.
-   * A day with no record produces no dot, nothing is interpolated between
-   * dots, and no line or trend is drawn — this is not a growth graph.
-   */
+  /* ---------------------------------------------------------- record curve */
+
   function renderCurve(target, records, days) {
     var lanes = ['prayer', 'promise', 'action', 'repentance', 'confession'];
-    var W = 330, H = 132, padL = 34, padR = 8, padT = 10, padB = 18;
+    var W = 330, H = 128, padL = 34, padR = 8, padT = 8, padB = 18;
     var innerW = W - padL - padR;
     var laneH = (H - padT - padB) / lanes.length;
-
     var today = new Date();
+
     function xFor(iso) {
       var d = new Date(iso + 'T00:00:00');
       var diff = Math.round((today - d) / 86400000);
-      var t = 1 - Math.min(diff, days) / days;
-      return padL + t * innerW;
+      return padL + (1 - Math.min(diff, days) / days) * innerW;
     }
 
     var svg = ['<svg class="curve" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="기록이 있는 날의 표시">'];
@@ -220,94 +309,66 @@
     records.forEach(function (r) {
       var i = lanes.indexOf(r.type);
       if (i < 0) return;
-      var y = padT + laneH * i + laneH / 2;
       var x = xFor(r.day);
       if (x < padL) return;
-      svg.push('<circle cx="' + x.toFixed(1) + '" cy="' + y + '" r="5" fill="' + KINDS[r.type].color + '" />');
+      var y = padT + laneH * i + laneH / 2;
+      svg.push('<circle cx="' + x.toFixed(1) + '" cy="' + y + '" r="4.5" fill="' + KINDS[r.type].color + '" />');
     });
 
-    svg.push('<text class="curve__axis" x="' + padL + '" y="' + (H - 4) + '">' + days + '일 전</text>');
-    svg.push('<text class="curve__axis" x="' + (W - padR) + '" y="' + (H - 4) + '" text-anchor="end">오늘</text>');
+    svg.push('<text class="curve__axis" x="' + padL + '" y="' + (H - 3) + '">' + days + '일 전</text>');
+    svg.push('<text class="curve__axis" x="' + (W - padR) + '" y="' + (H - 3) + '" text-anchor="end">오늘</text>');
     svg.push('</svg>');
-
     target.innerHTML = svg.join('');
   }
 
-  /* ------------------------------------------------------- life curve */
+  function legendHtml() {
+    return Object.keys(KINDS).map(function (k) {
+      return '<span><i style="background:' + KINDS[k].color + '"></i>' + KINDS[k].label + '</span>';
+    }).join('');
+  }
 
-  /**
-   * Sample life history for review — a 40-year-old woman, per the Owner's brief.
-   *
-   * `mood` is the user's OWN marking of how that time felt. It is not a faith
-   * level, not a score and not something the app or AI decides. The axis is
-   * drawn without any numeric scale so it cannot be read as a measurement.
-   */
+  /* ------------------------------------------------------------ life curve */
+
   var LIFE_EVENTS = [
-    {
-      age: 7, era: '유년기', title: '초등학교 입학', mood: 1,
+    { age: 7, era: '유년기', title: '초등학교 입학', mood: 1,
       thought: '학교 가는 길이 멀어서 아침마다 뛰었어요. 엄마가 교문 앞까지 데려다주던 날이 아직 생각납니다.',
-      reflection: '그때는 몰랐는데, 누군가 늘 데려다주고 있었다는 게 지금 보면 참 고맙습니다.',
-    },
-    {
-      age: 12, era: '유년기', title: '아버지 사업이 어려워짐', mood: -2,
+      reflection: '그때는 몰랐는데, 누군가 늘 데려다주고 있었다는 게 지금 보면 참 고맙습니다.' },
+    { age: 12, era: '유년기', title: '아버지 사업이 어려워짐', mood: -2,
       thought: '집 안 공기가 갑자기 달라졌어요. 어른들이 밤늦게까지 이야기하는 소리를 이불 속에서 들었습니다.',
-      reflection: '그 시기를 지나며 걱정이 많은 사람이 된 것 같아요. 지금도 미리 불안해하는 버릇이 남아 있습니다.',
-    },
-    {
-      age: 16, era: '청소년기', title: '수련회에서 처음 울며 기도함', mood: 2,
+      reflection: '그 시기를 지나며 걱정이 많은 사람이 된 것 같아요. 지금도 미리 불안해하는 버릇이 남아 있습니다.' },
+    { age: 16, era: '청소년기', title: '수련회에서 처음 울며 기도함', mood: 2,
       thought: '왜 우는지도 모르고 한참 울었습니다. 그날 처음으로 하나님이 계시는구나 싶었어요.',
-      reflection: '지금까지 붙잡고 있는 기억입니다. 힘들 때마다 그날로 돌아가 봅니다.',
-    },
-    {
-      age: 19, era: '대학·청년', title: '대학 입학, 집을 떠남', mood: 2,
+      reflection: '지금까지 붙잡고 있는 기억입니다. 힘들 때마다 그날로 돌아가 봅니다.' },
+    { age: 19, era: '대학·청년', title: '대학 입학, 집을 떠남', mood: 2,
       thought: '처음으로 혼자 사는 방이 생겼습니다. 자유로우면서도 밤에는 무서웠어요.',
-      reflection: '혼자 있는 시간을 견디는 법을 그때 조금 배웠던 것 같습니다.',
-    },
-    {
-      age: 22, era: '대학·청년', title: '어머니 투병', mood: -2,
+      reflection: '혼자 있는 시간을 견디는 법을 그때 조금 배웠던 것 같습니다.' },
+    { age: 22, era: '대학·청년', title: '어머니 투병', mood: -2,
       thought: '병원과 학교를 오갔습니다. 기도가 잘 안 나왔어요.',
-      reflection: '그때 하나님께 화가 났었다는 걸 한참 뒤에야 인정했습니다.',
-    },
-    {
-      age: 25, era: '대학·청년', title: '첫 직장', mood: 1,
+      reflection: '그때 하나님께 화가 났었다는 걸 한참 뒤에야 인정했습니다.' },
+    { age: 25, era: '대학·청년', title: '첫 직장', mood: 1,
       thought: '첫 월급으로 어머니 내복을 샀습니다. 별것 아닌데 뿌듯했어요.',
-      reflection: '일에 파묻혀 지내면서 교회와는 조금 멀어졌던 시기이기도 합니다.',
-    },
-    {
-      age: 28, era: '결혼', title: '결혼', mood: 3,
+      reflection: '일에 파묻혀 지내면서 교회와는 조금 멀어졌던 시기이기도 합니다.' },
+    { age: 28, era: '결혼', title: '결혼', mood: 3,
       thought: '앞으로는 혼자가 아니라는 게 가장 좋았습니다.',
-      reflection: '그때의 마음이 잘못된 건 아니었어요. 지금도 그날은 좋은 날로 남아 있습니다.',
-    },
-    {
-      age: 30, era: '결혼', title: '첫 아이', mood: 3,
+      reflection: '그때의 마음이 잘못된 건 아니었어요. 지금도 그날은 좋은 날로 남아 있습니다.' },
+    { age: 30, era: '결혼', title: '첫 아이', mood: 3,
       thought: '작은 손이 제 손가락을 쥐던 순간을 잊지 못합니다.',
-      reflection: '이 아이 때문에 버틴 날이 정말 많습니다.',
-    },
-    {
-      age: 34, era: '결혼', title: '오래 다투던 시기', mood: -2,
+      reflection: '이 아이 때문에 버틴 날이 정말 많습니다.' },
+    { age: 34, era: '결혼', title: '오래 다투던 시기', mood: -2,
       thought: '같은 이야기를 반복했습니다. 서로 지쳐가는 게 보였어요.',
-      reflection: '그 시기에 아이에게 큰 소리를 냈던 일들이 지금도 마음에 남아 있습니다.',
-    },
-    {
-      age: 36, era: '이후', title: '이혼', mood: -3,
+      reflection: '그 시기에 아이에게 큰 소리를 냈던 일들이 지금도 마음에 남아 있습니다.' },
+    { age: 36, era: '이후', title: '이혼', mood: -3,
       thought: '제 인생이 여기서 끝난 것 같았습니다. 한동안 아무에게도 말하지 못했어요.',
-      reflection: '오래 지나서야 이 일을 하나님 앞에 꺼내놓을 수 있었습니다. 아직 다 정리되지는 않았습니다.',
-    },
-    {
-      age: 38, era: '이후', title: '다시 교회에 나가기 시작함', mood: 0,
+      reflection: '오래 지나서야 이 일을 하나님 앞에 꺼내놓을 수 있었습니다. 아직 다 정리되지는 않았습니다.' },
+    { age: 38, era: '이후', title: '다시 교회에 나가기 시작함', mood: 0,
       thought: '맨 뒷자리에 앉았다가 축도 전에 나왔습니다. 그래도 매주 갔어요.',
-      reflection: '돌아간 게 아니라 돌아가는 중이었다고 지금은 생각합니다.',
-    },
-    {
-      age: 39, era: '이후', title: '아이와 둘의 일상이 자리잡음', mood: 1,
+      reflection: '돌아간 게 아니라 돌아가는 중이었다고 지금은 생각합니다.' },
+    { age: 39, era: '이후', title: '아이와 둘의 일상이 자리잡음', mood: 1,
       thought: '저녁마다 같이 밥을 먹고 하루를 이야기합니다.',
-      reflection: '화려하지 않아도 이런 하루가 얼마나 귀한지 이제 압니다.',
-    },
-    {
-      age: 40, era: '이후', title: '지금', mood: 1,
+      reflection: '화려하지 않아도 이런 하루가 얼마나 귀한지 이제 압니다.' },
+    { age: 40, era: '이후', title: '지금', mood: 1,
       thought: '조급한 마음이 아직 있지만, 예전보다는 덜합니다.',
-      reflection: '오늘부터 남기는 기록이 다음 점이 됩니다.',
-    },
+      reflection: '오늘부터 남기는 기록이 다음 점이 됩니다.' },
   ];
 
   var selectedEvent = null;
@@ -317,12 +378,11 @@
     var W = padL + padR + STEP * (events.length - 1);
     var baseY = 104, amp = 21;
 
-    function yFor(mood) { return baseY - mood * amp; }
+    function yFor(m) { return baseY - m * amp; }
     function xFor(i) { return padL + STEP * i; }
 
     var svg = ['<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="지나온 시간의 그래프">'];
 
-    // era bands
     var eras = [];
     events.forEach(function (e, i) {
       var last = eras[eras.length - 1];
@@ -332,9 +392,9 @@
 
     eras.forEach(function (band, bi) {
       if (bi % 2 === 0) {
-        var x0 = xFor(band.from) - STEP / 2;
+        var x0 = Math.max(0, xFor(band.from) - STEP / 2);
         var x1 = xFor(band.to) + STEP / 2;
-        svg.push('<rect class="lc-era-band" x="' + Math.max(0, x0) + '" y="0" width="' + (x1 - Math.max(0, x0)) + '" height="' + (H - 44) + '" />');
+        svg.push('<rect class="lc-era-band" x="' + x0 + '" y="0" width="' + (x1 - x0) + '" height="' + (H - 44) + '" />');
       }
       var cx = (xFor(band.from) + xFor(band.to)) / 2;
       svg.push('<text class="lc-era" x="' + cx + '" y="16" text-anchor="middle">' + band.era + '</text>');
@@ -342,18 +402,15 @@
 
     svg.push('<line class="lc-base" x1="0" y1="' + baseY + '" x2="' + W + '" y2="' + baseY + '" />');
 
-    // smooth path through the marked points
     var pts = events.map(function (e, i) { return [xFor(i), yFor(e.mood)]; });
     var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
     for (var i = 1; i < pts.length; i++) {
       var p0 = pts[i - 1], p1 = pts[i];
-      var cx1 = p0[0] + STEP / 2, cx2 = p1[0] - STEP / 2;
-      d += ' C ' + cx1 + ' ' + p0[1] + ', ' + cx2 + ' ' + p1[1] + ', ' + p1[0] + ' ' + p1[1];
+      d += ' C ' + (p0[0] + STEP / 2) + ' ' + p0[1] + ', ' + (p1[0] - STEP / 2) + ' ' + p1[1] + ', ' + p1[0] + ' ' + p1[1];
     }
     svg.push('<path class="lc-area" d="' + d + ' L ' + pts[pts.length - 1][0] + ' ' + (H - 44) + ' L ' + pts[0][0] + ' ' + (H - 44) + ' Z" />');
     svg.push('<path class="lc-line" d="' + d + '" />');
 
-    // today marker
     var lastX = xFor(events.length - 1);
     svg.push('<line class="lc-now" x1="' + lastX + '" y1="24" x2="' + lastX + '" y2="' + (H - 44) + '" />');
 
@@ -361,8 +418,6 @@
       var x = xFor(idx), y = yFor(e.mood);
       var on = selectedEvent === idx;
       svg.push('<circle class="lc-dot' + (on ? ' lc-dot--on' : '') + '" cx="' + x + '" cy="' + y + '" r="' + (on ? 8 : 6) + '" data-ev="' + idx + '" />');
-      // Alternate the label offset so neighbouring titles do not collide, and
-      // keep them short — the full title is always readable in the list below.
       var stagger = idx % 2 === 0 ? 0 : (e.mood >= 0 ? -14 : 14);
       var labelY = (e.mood >= 0 ? y - 17 : y + 25) + stagger;
       var short = e.title.length > 9 ? e.title.slice(0, 8) + '…' : e.title;
@@ -373,35 +428,27 @@
     svg.push('</svg>');
     scrollHost.innerHTML = svg.join('');
 
-    listHost.innerHTML = events
-      .map(function (e, idx) {
-        return (
-          '<button class="life-item" type="button" data-ev="' + idx + '"' +
-          ' aria-expanded="' + (selectedEvent === idx) + '">' +
-          '<span class="life-item__age">' + e.age + '세</span>' +
-          '<span><span class="life-item__title">' + e.title + '</span><br>' +
-          '<span class="life-item__era">' + e.era + '</span></span></button>'
-        );
-      })
-      .join('');
+    listHost.innerHTML = events.map(function (e, idx) {
+      return '<button class="life-item" type="button" data-ev="' + idx + '" aria-expanded="' + (selectedEvent === idx) + '">' +
+        '<span class="life-item__age">' + e.age + '세</span>' +
+        '<span><span class="life-item__title">' + e.title + '</span><br>' +
+        '<span class="life-item__era">' + e.era + '</span></span></button>';
+    }).join('');
 
     if (selectedEvent === null) {
       detailHost.innerHTML = '';
     } else {
       var e = events[selectedEvent];
-      detailHost.innerHTML =
-        '<div class="life-detail">' +
+      detailHost.innerHTML = '<div class="life-detail">' +
         '<p class="life-detail__when">' + e.age + '세 · ' + e.era + '</p>' +
         '<p class="life-detail__title">' + e.title + '</p>' +
         '<div class="life-detail__section"><p class="life-detail__label">그날의 생각</p>' +
         '<p class="life-detail__body">' + e.thought + '</p></div>' +
         '<div class="life-detail__section"><p class="life-detail__label">지금 돌아보면</p>' +
-        '<p class="life-detail__body">' + e.reflection + '</p></div>' +
-        '</div>';
+        '<p class="life-detail__body">' + e.reflection + '</p></div></div>';
     }
   }
 
-  /** Selecting an event from either the curve or the list below it. */
   document.addEventListener('click', function (e) {
     var hit = e.target.closest ? e.target.closest('[data-ev]') : null;
     if (!hit) return;
@@ -411,205 +458,216 @@
     var keep = host.scrollLeft;
     renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
     host.scrollLeft = keep;
-    if (selectedEvent !== null) {
-      var detail = el('j-life-detail');
-      if (detail.firstChild) detail.firstChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
   });
-
-  function legendHtml() {
-    return Object.keys(KINDS)
-      .map(function (k) {
-        return '<span><i style="background:' + KINDS[k].color + '"></i>' + KINDS[k].label + '</span>';
-      })
-      .join('');
-  }
 
   /* --------------------------------------------------------------- screens */
 
   screens.intro = function () {};
 
-  /* 02 — three optional questions */
-  var qIndex = 0;
-  var qAnswers = ['', '', ''];
-  /**
-   * Each question states why it is being asked. A first-time user should never
-   * have to guess what the answer is for.
-   */
-  var QUESTIONS = [
-    {
-      q: '오늘 하나님께 드리고 싶은 기도가 있나요?',
-      ph: '짧게 한 문장이어도 좋습니다.',
-      type: 'prayer',
-      eyebrow: '세 가지만 여쭤볼게요 · 첫 번째',
-      why: '지금 마음에 있는 기도를 남겨두면 <b>여정의 첫 점</b>이 됩니다. 시간이 지나 다시 열어봤을 때, 그때 무엇을 구했는지 그대로 볼 수 있어요.',
-      foot: '답한 내용은 기도 기록으로 남습니다. 비워 두어도 됩니다.',
-    },
-    {
-      q: '마음에 남아 있는 약속이나 결단이 있나요?',
-      ph: '지키지 못해도 괜찮습니다.',
-      type: 'promise',
-      eyebrow: '세 가지만 여쭤볼게요 · 두 번째',
-      why: '적어두면 <b>잊지 않게 됩니다.</b> 나중에 이 약속을 어떻게 살아냈는지 돌아볼 수 있고, 지키지 못한 날이 있어도 그것을 잘못으로 기록하지 않습니다.',
-      foot: '약속 기록으로 남고, 나중에 실행을 이어 붙일 수 있습니다.',
-    },
-    {
-      q: '오늘 실천하고 싶은 한 가지가 있나요?',
-      ph: '아주 작은 것이어도 좋습니다.',
-      type: 'action',
-      eyebrow: '세 가지만 여쭤볼게요 · 마지막',
-      why: '작은 실천 하나가 <b>약속과 이어져</b> 여정에 남습니다. 오늘 못 해도 괜찮습니다. 다음에 어떻게 할지 직접 고르시면 됩니다.',
-      foot: '실행 기록으로 남습니다. 지금 떠오르지 않으면 건너뛰세요.',
-    },
-  ];
+  el('intro-start').addEventListener('click', function () {
+    seedData();
+    nav('journey', null, { replace: true });
+    setTimeout(openCoach, 220);
+  });
 
-  screens.questions = function () {
-    var q = QUESTIONS[qIndex];
-    el('q-dots').innerHTML = QUESTIONS.map(function (_, i) {
-      return '<i class="' + (i <= qIndex ? 'is-on' : '') + '"></i>';
-    }).join('');
-    el('q-eyebrow').textContent = q.eyebrow;
-    el('q-title').textContent = q.q;
-    el('q-why').innerHTML = q.why;
-    el('q-foot').textContent = q.foot;
-    el('q-input').placeholder = q.ph;
-    el('q-input').value = qAnswers[qIndex];
-    el('q-next').textContent = qIndex === QUESTIONS.length - 1 ? '기록하고 여정 시작하기' : '다음';
-  };
-
-  function questionAdvance(save) {
-    if (save) qAnswers[qIndex] = el('q-input').value.trim();
-    if (qIndex < QUESTIONS.length - 1) {
-      qIndex++;
-      screens.questions();
-      return;
-    }
-    var created = [];
-    qAnswers.forEach(function (text, i) {
-      if (text) created.push(add(QUESTIONS[i].type, text, ''));
-    });
-    nav('first-saved', { created: created.length });
-  }
-
-  el('q-next').addEventListener('click', function () { questionAdvance(true); });
-  el('q-skip').addEventListener('click', function () { questionAdvance(false); });
-
-  /* 03 — first record landed on the journey */
-  screens['first-saved'] = function (ctx) {
-    var n = ctx.created || 0;
-    el('fs-title').textContent = n > 0 ? '첫 기록이 여정에 남았어요' : '여정을 시작할 준비가 됐어요';
-    el('fs-body').textContent =
-      n > 0
-        ? '오늘 남긴 ' + n + '개의 기록이 여정의 첫 점이 되었습니다. 앞으로 기록이 쌓이면 이곳에서 지나온 시간을 돌아볼 수 있어요.'
-        : '지금은 비어 있어도 괜찮습니다. 기도 한 줄부터 천천히 남겨보세요.';
-    renderCurve(el('fs-curve'), store.records, 14);
-    el('fs-legend').innerHTML = legendHtml();
-  };
-
-  /* 04 — journey */
+  /* Journey */
   var journeyRange = 'week';
   var RANGE_DAYS = { today: 1, week: 7, month: 30, year: 365, all: 365 };
 
   screens.journey = function () {
     var d = new Date();
-    el('j-date').textContent =
-      d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
+    el('j-date').textContent = d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
 
-    var has = store.records.length > 0;
     var days = RANGE_DAYS[journeyRange];
-
     Array.prototype.forEach.call(document.querySelectorAll('#j-ranges .chip'), function (c) {
       c.setAttribute('aria-pressed', String(c.dataset.range === journeyRange));
     });
 
-    // The life history itself is always sample data in this prototype.
-    el('j-sample').style.display = 'inline-flex';
+    var host = el('j-life-scroll');
+    var first = !host.firstChild;
+    renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
+    if (first) host.scrollLeft = host.scrollWidth;
 
-    var lifeHost = el('j-life-scroll');
-    var firstPaint = !lifeHost.firstChild;
-    renderLifeCurve(lifeHost, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
-    if (firstPaint) lifeHost.scrollLeft = lifeHost.scrollWidth;
-
-    el('j-caption').textContent = has
-      ? '기록이 있는 날에만 점이 남습니다. 비어 있는 날은 표시되지 않아요.'
-      : '기록이 쌓이면 이곳에서 나와 하나님 사이의 시간을 돌아볼 수 있어요. 아래는 예시입니다.';
-
-    var demo = [
-      { type: 'prayer', day: dayOffset(6) },
-      { type: 'promise', day: dayOffset(5) },
-      { type: 'action', day: dayOffset(3) },
-      { type: 'action', day: dayOffset(1) },
-      { type: 'confession', day: dayOffset(0) },
-    ];
-
-    renderCurve(el('j-curve'), has ? store.records : demo, has ? days : 7);
+    renderCurve(el('j-curve'), store.records, days);
     el('j-legend').innerHTML = legendHtml();
 
     var cutoff = dayOffset(days - 1);
-    var recent = store.records
-      .filter(function (r) { return r.day >= cutoff; })
+    var recent = store.records.filter(function (r) { return r.day >= cutoff; })
       .sort(function (a, b) { return a.day < b.day ? 1 : -1; });
 
-    if (recent.length === 0) {
-      el('j-recent').innerHTML =
-        '<div class="empty"><p class="empty__title">이 기간에는 기록이 없습니다.</p>' +
+    el('j-recent').innerHTML = recent.length
+      ? '<div class="rows">' + recent.map(function (r) {
+          return '<div class="row"><span class="row__date">' + prettyDay(r.day) + '</span>' +
+            '<span class="row__text"><span class="row__kind">' + KINDS[r.type].label + '</span>' + r.title + '</span></div>';
+        }).join('') + '</div>'
+      : '<div class="empty"><p class="empty__title">이 기간에는 기록이 없습니다.</p>' +
         '<p class="empty__body">기록이 없는 날은 여정에 점으로 남지 않습니다.</p></div>';
-    } else {
-      el('j-recent').innerHTML = recent
-        .map(function (r) {
-          return (
-            '<li class="tl__day"><span class="tl__date">' + prettyDay(r.day) + '</span>' +
-            '<span class="tl__item"><span class="tl__kind">' + KINDS[r.type].label + '</span>' +
-            r.title + '</span></li>'
-          );
-        })
-        .join('');
-    }
 
-    el('j-tp').innerHTML = has
-      ? '<div class="card"><div class="card__top"><div><p class="card__title">이 시기를 터닝포인트로 표시할까요?</p>' +
-        '<p class="card__meta">' + prettyDay(dayOffset(5)) + ' 전후 · 확인은 직접 하셔야 남습니다</p></div></div>' +
-        '<div class="card__actions"><button class="btn-sm btn-sm--fill">확인</button>' +
-        '<button class="btn-sm">나중에</button></div></div>'
-      : '<p class="note">아직 표시할 터닝포인트가 없습니다.</p>';
+    el('j-caption').textContent = '기록이 있는 날에만 점이 남습니다. 비어 있는 날은 표시되지 않아요.';
+
+    el('j-tp').innerHTML = '<div class="card"><div class="card__top"><div>' +
+      '<p class="card__title">이 시기를 터닝포인트로 표시할까요?</p>' +
+      '<p class="card__meta" style="margin-top:4px">' + prettyDay(dayOffset(5)) + ' 전후 · 표시하면 인생 그래프에 큰 점으로 남습니다</p>' +
+      '</div></div><div class="card__actions">' +
+      '<button class="card__action card__action--primary">표시하기</button>' +
+      '<button class="card__action">나중에</button></div></div>';
   };
 
   Array.prototype.forEach.call(document.querySelectorAll('#j-ranges .chip'), function (c) {
-    c.addEventListener('click', function () {
-      journeyRange = c.dataset.range;
-      screens.journey();
-    });
+    c.addEventListener('click', function () { journeyRange = c.dataset.range; screens.journey(); });
   });
 
-  /* 05 — prayer */
+  /* First record landed */
+  screens['first-saved'] = function (ctx) {
+    el('fs-title').textContent = '첫 기록이 여정에 남았어요';
+    el('fs-body').textContent = (ctx.label || '남긴 기록') + '이 여정의 점이 되었습니다. 앞으로 기록이 쌓이면 이곳에서 지나온 시간을 돌아볼 수 있어요.';
+    renderCurve(el('fs-curve'), store.records, 14);
+    el('fs-legend').innerHTML = legendHtml();
+  };
+
+  /* Prayer — groups */
   screens.prayer = function () {
     var all = byType('prayer');
     var weekCut = dayOffset(6);
     el('p-week').textContent = all.filter(function (r) { return r.day >= weekCut; }).length;
     el('p-total').textContent = all.length;
 
-    var last = all[all.length - 1];
+    var last = all.slice().sort(function (a, b) { return a.day < b.day ? 1 : -1; })[0];
     el('p-recent').innerHTML = last
       ? '최근 기도: <b>' + last.title + '</b> · ' + prettyDay(last.day)
       : '아직 남긴 기도가 없습니다. 한 문장부터 시작해도 좋습니다.';
 
-    el('p-title-input').value = '';
-    el('p-body-input').value = '';
+    el('p-groups').innerHTML = PRAYER_GROUPS.map(function (g) {
+      var n = all.filter(function (r) { return (r.group || 'self') === g.id; }).length;
+      return '<button class="pgroup" type="button" data-group="' + g.id + '">' +
+        '<span class="pgroup__icon">' + g.icon + '</span>' +
+        '<span><span class="pgroup__name">' + g.name + '</span><br>' +
+        '<span class="pgroup__meta">' + g.desc + '</span></span>' +
+        '<span class="pgroup__count">' + n + '개 ›</span></button>';
+    }).join('');
   };
+
+  document.addEventListener('click', function (e) {
+    var g = e.target.closest ? e.target.closest('[data-group]') : null;
+    if (g) nav('prayer-group', { groupId: g.dataset.group });
+    var t = e.target.closest ? e.target.closest('[data-prayer]') : null;
+    if (t) nav('prayer-detail', { prayerId: t.dataset.prayer });
+  });
+
+  el('p-new').addEventListener('click', function () { nav('prayer-new'); });
+
+  /* Prayer — titles in a group */
+  screens['prayer-group'] = function (ctx) {
+    var g = groupById(ctx.groupId);
+    el('pg-title').textContent = g.name;
+    el('pg-desc').textContent = g.desc;
+
+    var list = byType('prayer').filter(function (r) { return (r.group || 'self') === g.id; })
+      .sort(function (a, b) { return a.day < b.day ? 1 : -1; });
+
+    el('pg-list').innerHTML = list.length
+      ? list.map(function (r) {
+          var d = daysSince(r.day);
+          return '<button class="ptitle" type="button" data-prayer="' + r.id + '">' +
+            '<span class="ptitle__body"><span class="ptitle__name">' + r.title + '</span>' +
+            '<span class="ptitle__meta">' + (d === 0 ? '오늘부터' : d + '일째 기도하고 있어요') + '</span></span>' +
+            '<span class="ptitle__arrow">›</span></button>';
+        }).join('')
+      : '<div class="empty"><p class="empty__title">이 묶음에는 아직 기도가 없습니다.</p></div>';
+  };
+
+  el('pg-new').addEventListener('click', function () {
+    nav('prayer-new', { presetGroup: current.ctx && current.ctx.groupId });
+  });
+
+  /* Prayer — detail */
+  screens['prayer-detail'] = function (ctx) {
+    var p = findById(ctx.prayerId);
+    if (!p) { nav('prayer'); return; }
+    var g = groupById(p.group);
+
+    el('pd2-group').textContent = g.icon + ' ' + g.name;
+    el('pd2-title').textContent = p.title;
+    var d = daysSince(p.day);
+    el('pd2-since').textContent = prettyDay(p.day) + '부터 · ' + (d === 0 ? '오늘' : d + '일째');
+    el('pd2-body').textContent = p.body || '아직 적어둔 내용이 없습니다.';
+
+    var hearts = p.hearts || {};
+    el('pd2-hearts').innerHTML = [
+      { key: 'give', label: '하나님께 드리고 싶은 마음', hint: '내가 내어드릴 수 있는 것', val: hearts.give },
+      { key: 'receive', label: '하나님께 받고 싶은 마음', hint: '지금 구하고 있는 것', val: hearts.receive },
+      { key: 'praise', label: '천국에서 듣고 싶은 칭찬', hint: '이 기도가 끝까지 지나간 뒤에', val: hearts.praise },
+    ].map(function (h) {
+      return '<div class="heart"><p class="heart__label">' + h.label + '</p>' +
+        '<p class="heart__hint">' + h.hint + '</p>' +
+        '<p>' + (h.val || '<span class="note">아직 적지 않았어요</span>') + '</p></div>';
+    }).join('');
+
+    el('pd2-discern').innerHTML = g.discern +
+      '<br><br>내가 원하는 결과를 얻으려는 마음인지, 하나님께서 기뻐하실 일을 구하는 마음인지 — 둘 다 섞여 있어도 괜찮습니다. 모르고 지나가지만 않으면 됩니다.';
+
+    // Living it out: promises and actions that grew from this prayer.
+    var promises = byType('promise').filter(function (pr) { return pr.sourcePrayerId === p.id; });
+    var actions = [];
+    promises.forEach(function (pr) {
+      actions = actions.concat(byType('action').filter(function (a) { return a.promiseId === pr.id; }));
+    });
+    var lastAction = actions.sort(function (a, b) { return a.day < b.day ? 1 : -1; })[0];
+
+    el('pd2-living').innerHTML =
+      '<div class="living__row"><span class="living__key">약속</span>' +
+      '<span class="living__val">' + (promises.length ? promises[0].title : '<span class="note">아직 없습니다</span>') + '</span></div>' +
+      '<div class="living__row"><span class="living__key">실행</span>' +
+      '<span class="living__val">' + (actions.length ? actions.length + '회' : '<span class="note">아직 없습니다</span>') + '</span></div>' +
+      '<div class="living__row"><span class="living__key">최근</span>' +
+      '<span class="living__val">' + (lastAction ? prettyDay(lastAction.day) : '<span class="note">—</span>') + '</span></div>';
+
+    el('pd2-to-promise').style.display = promises.length ? 'none' : 'flex';
+  };
+
+  el('pd2-to-promise').addEventListener('click', function () {
+    var p = findById(current.ctx.prayerId);
+    nav('promise', { label: '기도에서 이어짐', value: p.title, openCompose: true, sourcePrayerId: p.id });
+  });
+
+  el('pd2-pray').addEventListener('click', function () {
+    var p = findById(current.ctx.prayerId);
+    nav('prayer-new', { presetGroup: p.group, presetTitle: p.title, label: '이어서 기도', value: p.title });
+  });
+
+  /* Prayer — compose */
+  var composeGroup = 'self';
+
+  screens['prayer-new'] = function (ctx) {
+    composeGroup = (ctx && ctx.presetGroup) || 'self';
+    el('p-title-input').value = (ctx && ctx.presetTitle) || '';
+    el('p-body-input').value = '';
+    el('p-group-chips').innerHTML = PRAYER_GROUPS.map(function (g) {
+      return '<button class="chip chip--sm" type="button" data-gsel="' + g.id + '" aria-pressed="' +
+        (g.id === composeGroup) + '">' + g.icon + ' ' + g.name + '</button>';
+    }).join('');
+  };
+
+  el('p-group-chips').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-gsel]');
+    if (!b) return;
+    composeGroup = b.dataset.gsel;
+    Array.prototype.forEach.call(el('p-group-chips').children, function (c) {
+      c.setAttribute('aria-pressed', String(c.dataset.gsel === composeGroup));
+    });
+  });
 
   el('p-save').addEventListener('click', function () {
     var title = el('p-title-input').value.trim();
     var body = el('p-body-input').value.trim();
     if (!title && !body) { el('p-title-input').focus(); return; }
-    var rec = add('prayer', title || body.slice(0, 24), body);
+    var rec = add('prayer', title || body.slice(0, 24), body, { group: composeGroup, hearts: {} });
     markerToast('기도');
     nav('prayer-bridge', { prayerId: rec.id, title: rec.title });
   });
 
-  /* 05b — prayer → promise bridge (optional, never forced) */
-  screens['prayer-bridge'] = function (ctx) {
-    el('pb-quote').textContent = ctx.title || '';
-  };
+  /* Prayer → promise bridge */
+  screens['prayer-bridge'] = function (ctx) { el('pb-quote').textContent = ctx.title || ''; };
 
   el('pb-make-promise').addEventListener('click', function () {
     nav('promise', {
@@ -620,37 +678,19 @@
     });
   });
 
-  el('pb-done').addEventListener('click', function () { nav('journey', null, { replace: true }); });
-  el('pb-history').addEventListener('click', function () { nav('prayer-history'); });
+  el('pb-done').addEventListener('click', function () { nav('prayer', null, { replace: true }); });
 
-  /* 06 — prayer history */
-  screens['prayer-history'] = function () {
-    var all = byType('prayer').slice().reverse();
-    el('ph-list').innerHTML = all.length
-      ? all
-          .map(function (r) {
-            return (
-              '<li class="card"><p class="card__meta">' + prettyDay(r.day) + '</p>' +
-              '<p class="card__title">' + r.title + '</p>' +
-              (r.body ? '<p class="card__body">' + r.body + '</p>' : '') + '</li>'
-            );
-          })
-          .join('')
-      : '<div class="empty"><p class="empty__title">아직 기도 기록이 없습니다.</p></div>';
-  };
-
-  /* 07 — promise dashboard */
+  /* Promise */
   screens.promise = function (ctx) {
     var all = byType('promise');
     var active = all.filter(function (r) { return r.status !== 'closed'; });
     el('pr-active').textContent = active.length;
     el('pr-closed').textContent = all.length - active.length;
 
-    var last = all[all.length - 1];
+    var last = all.slice().sort(function (a, b) { return a.day < b.day ? 1 : -1; })[0];
     if (last) {
       var acts = byType('action').filter(function (a) { return a.promiseId === last.id; });
-      el('pr-recent').innerHTML =
-        '최근 약속: <b>' + last.title + '</b>' +
+      el('pr-recent').innerHTML = '최근 약속: <b>' + last.title + '</b>' +
         (acts.length ? ' · 최근 실행 ' + prettyDay(acts[acts.length - 1].day) : ' · 아직 실행 없음');
     } else {
       el('pr-recent').textContent = '아직 남긴 약속이 없습니다.';
@@ -660,25 +700,18 @@
     el('pr-new-input').value = '';
 
     el('pr-list').innerHTML = all.length
-      ? all
-          .slice()
-          .reverse()
-          .map(function (r) {
-            var acts = byType('action').filter(function (a) { return a.promiseId === r.id; });
-            var lastAct = acts[acts.length - 1];
-            return (
-              '<li class="card"><div class="card__top"><div>' +
-              '<p class="card__title">' + r.title + '</p>' +
-              '<p class="card__meta">실행 ' + acts.length + '회' +
-              (lastAct ? ' · 최근 ' + prettyDay(lastAct.day) : '') + '</p></div>' +
-              (r.status === 'closed' ? '<span class="badge badge--done">마무리됨</span>' : '<span class="badge">진행 중</span>') +
-              '</div><div class="card__actions">' +
-              '<button class="btn-sm btn-sm--fill" data-open-promise="' + r.id + '">실행 추가</button>' +
-              '<button class="btn-sm" data-reflect-promise="' + r.id + '">돌아보기</button>' +
-              '</div></li>'
-            );
-          })
-          .join('')
+      ? all.slice().reverse().map(function (r) {
+          var acts = byType('action').filter(function (a) { return a.promiseId === r.id; });
+          var lastAct = acts[acts.length - 1];
+          return '<div class="card"><div class="card__top"><div>' +
+            '<p class="card__title">' + r.title + '</p>' +
+            '<p class="card__meta" style="margin-top:4px">실행 ' + acts.length + '회' +
+            (lastAct ? ' · 최근 ' + prettyDay(lastAct.day) : '') + '</p></div>' +
+            (r.status === 'closed' ? '<span class="badge badge--done">마무리됨</span>' : '<span class="badge badge--gray">진행 중</span>') +
+            '</div><div class="card__actions">' +
+            '<button class="card__action card__action--primary" data-open-promise="' + r.id + '">실행 추가</button>' +
+            '<button class="card__action" data-reflect-promise="' + r.id + '">돌아보기</button></div></div>';
+        }).join('')
       : '<div class="empty"><p class="empty__title">아직 약속이 없습니다.</p>' +
         '<p class="empty__body">기도에서 마음에 남은 것이 있다면 한 줄로 적어보세요.</p></div>';
   };
@@ -703,43 +736,42 @@
     }
   });
 
-  /* 08 — promise detail + action */
+  /* Promise detail */
   screens['promise-detail'] = function (ctx) {
     var p = findById(ctx.promiseId);
     if (!p) { nav('promise'); return; }
     el('pd-title').textContent = p.title;
     var acts = byType('action').filter(function (a) { return a.promiseId === p.id; });
-    el('pd-meta').textContent =
-      '실행 ' + acts.length + '회' + (acts.length ? ' · 최근 ' + prettyDay(acts[acts.length - 1].day) : '') +
+    el('pd-meta').textContent = '실행 ' + acts.length + '회' +
+      (acts.length ? ' · 최근 ' + prettyDay(acts[acts.length - 1].day) : '') +
       ' · ' + (p.status === 'closed' ? '마무리됨' : '진행 중');
 
-    el('pd-status').innerHTML =
-      p.status === 'closed'
-        ? '<span class="badge badge--done">마무리됨</span>'
-        : '<button class="badge" id="pd-close">마무리됨으로 표시</button>';
+    el('pd-status').innerHTML = p.status === 'closed'
+      ? '<span class="badge badge--done">마무리됨</span>'
+      : '<button class="badge" id="pd-close">마무리됨으로 표시</button>';
 
     var closeBtn = el('pd-close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        p.status = 'closed';
-        screens['promise-detail']({ promiseId: p.id });
-      });
+    if (closeBtn) closeBtn.addEventListener('click', function () {
+      p.status = 'closed';
+      screens['promise-detail']({ promiseId: p.id });
+    });
+
+    if (p.sourcePrayerId) {
+      var src = findById(p.sourcePrayerId);
+      if (src) {
+        el('pd-meta').textContent += ' · 기도에서 시작됨';
+      }
     }
 
     el('pd-action-input').value = '';
 
     el('pd-actions').innerHTML = acts.length
-      ? acts
-          .slice()
-          .reverse()
-          .map(function (a) {
-            return (
-              '<li class="tl__day"><span class="tl__date">' + prettyDay(a.day) + '</span>' +
-              '<span class="tl__item">' + a.title + '</span></li>'
-            );
-          })
-          .join('')
-      : '<p class="note">아직 실행 기록이 없습니다. 실행이 없어도 약속은 그대로 유효합니다.</p>';
+      ? '<div class="rows">' + acts.slice().reverse().map(function (a) {
+          return '<div class="row"><span class="row__date">' + prettyDay(a.day) + '</span>' +
+            '<span class="row__text">' + a.title + '</span></div>';
+        }).join('') + '</div>'
+      : '<div class="empty"><p class="empty__title">아직 실행 기록이 없습니다.</p>' +
+        '<p class="empty__body">실행이 없어도 약속은 그대로 유효합니다.</p></div>';
 
     el('pd-return').innerHTML = returnBlock(ctx);
   };
@@ -751,29 +783,20 @@
     var rec = add('action', text, '', { promiseId: p.id });
     markerToast('실행');
     nav('reflection', {
-      actionId: rec.id,
-      promiseId: p.id,
-      label: '실행에서 이어짐',
-      value: rec.title,
-      returnTo: 'promise-detail',
-      returnId: p.id,
-      returnLabel: '약속으로 돌아가기',
+      actionId: rec.id, promiseId: p.id, label: '실행에서 이어짐', value: rec.title,
+      returnTo: 'promise-detail', returnId: p.id, returnLabel: '약속으로 돌아가기',
     });
   });
 
   el('pd-reflect').addEventListener('click', function () {
     var p = findById(current.ctx.promiseId);
     nav('reflection', {
-      promiseId: p.id,
-      label: '약속에서 이어짐',
-      value: p.title,
-      returnTo: 'promise-detail',
-      returnId: p.id,
-      returnLabel: '약속으로 돌아가기',
+      promiseId: p.id, label: '약속에서 이어짐', value: p.title,
+      returnTo: 'promise-detail', returnId: p.id, returnLabel: '약속으로 돌아가기',
     });
   });
 
-  /* 09 — reflection bridge */
+  /* Reflection */
   screens.reflection = function (ctx) {
     var p = ctx.promiseId ? findById(ctx.promiseId) : null;
     el('rf-title').textContent = ctx.actionId
@@ -791,28 +814,23 @@
   });
 
   el('rf-retry').addEventListener('click', function () {
-    var c = current.ctx;
-    nav('promise-detail', { promiseId: c.promiseId, label: '다시 시도', value: '오늘 할 수 있는 한 가지를 적어보세요' });
+    nav('promise-detail', { promiseId: current.ctx.promiseId, label: '다시 시도', value: '오늘 할 수 있는 한 가지를 적어보세요' });
   });
 
   el('rf-edit').addEventListener('click', function () {
-    var c = current.ctx;
-    nav('promise-detail', { promiseId: c.promiseId, label: '약속 수정', value: '내용을 다시 적어도 괜찮습니다' });
+    nav('promise-detail', { promiseId: current.ctx.promiseId, label: '약속 수정', value: '내용을 다시 적어도 괜찮습니다' });
   });
 
   el('rf-repent').addEventListener('click', function () {
     var c = current.ctx;
     var p = c.promiseId ? findById(c.promiseId) : null;
     nav('repentance', {
-      label: '실행에서 이어짐',
-      value: p ? p.title : '',
-      returnTo: 'promise-detail',
-      returnId: c.promiseId,
-      returnLabel: '약속으로 돌아가기',
+      label: '실행에서 이어짐', value: p ? p.title : '',
+      returnTo: 'promise-detail', returnId: c.promiseId, returnLabel: '약속으로 돌아가기',
     });
   });
 
-  /* 10 — repentance (both entries: standalone and continued) */
+  /* Repentance */
   screens.repentance = function (ctx) {
     var all = byType('repentance');
     var monthCut = dayOffset(29);
@@ -829,74 +847,45 @@
     el('rp-insight').value = '';
     el('rp-turn').value = '';
     el('rp-scripture-panel').style.display = 'none';
-    el('rp-scripture-panel').innerHTML = '';
     el('rp-return').innerHTML = returnBlock(ctx);
   };
 
-  /**
-   * Scripture is offered as references the user picks from — never as a verdict
-   * on what they wrote. Full text stays out (license HOLD).
-   */
   el('rp-scripture').addEventListener('click', function () {
     var panel = el('rp-scripture-panel');
     if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
     panel.style.display = 'block';
-    panel.innerHTML =
-      '<div class="preview"><p class="preview__tag">참고할 말씀 후보</p>' +
-      '<p class="note" style="margin-bottom:10px">직접 고르실 수 있습니다. 어떤 말씀이 맞는지는 앱이 정하지 않습니다.</p>' +
-      '<label class="checkline"><input type="checkbox"><span>' +
-      '<span class="checkline__label">시편 51:10</span><br>' +
-      '<span class="checkline__value">직접 관련</span></span></label>' +
-      '<label class="checkline"><input type="checkbox"><span>' +
-      '<span class="checkline__label">요한일서 1:9</span><br>' +
-      '<span class="checkline__value">직접 관련</span></span></label>' +
-      '<label class="checkline"><input type="checkbox"><span>' +
-      '<span class="checkline__label">잠언 15:1</span><br>' +
-      '<span class="checkline__value">주제 관련</span></span></label>' +
-      '<label class="checkline" style="border-bottom:0"><input type="checkbox"><span>' +
-      '<span class="checkline__label">누가복음 15:11-32</span><br>' +
-      '<span class="checkline__value">묵상 후보</span></span></label>' +
+    panel.innerHTML = '<div class="preview"><p class="preview__tag">참고할 말씀 후보</p>' +
+      '<p class="note" style="margin-bottom:8px">직접 고르실 수 있습니다. 어떤 말씀이 맞는지는 앱이 정하지 않습니다.</p>' +
+      ['시편 51:10|직접 관련', '요한일서 1:9|직접 관련', '잠언 15:1|주제 관련', '누가복음 15:11-32|묵상 후보']
+        .map(function (s, i, arr) {
+          var parts = s.split('|');
+          return '<label class="checkline"' + (i === arr.length - 1 ? ' style="border-bottom:0"' : '') + '>' +
+            '<input type="checkbox"><span><span class="checkline__label">' + parts[0] + '</span><br>' +
+            '<span class="checkline__value">' + parts[1] + '</span></span></label>';
+        }).join('') +
       '<p class="note" style="margin-top:10px">본문 전문은 라이선스 확보 후 제공합니다.</p></div>';
   });
 
   el('rp-to-promise').addEventListener('click', function () {
     nav('promise', {
-      label: '회개 기록에서 이어짐',
-      value: el('rp-turn').value.trim() || '돌이키고 싶은 방향',
-      openCompose: true,
-      returnTo: 'repentance',
-      returnLabel: '회개 기록으로 돌아가기',
+      label: '회개 기록에서 이어짐', value: el('rp-turn').value.trim() || '돌이키고 싶은 방향',
+      openCompose: true, returnTo: 'repentance', returnLabel: '회개 기록으로 돌아가기',
     });
   });
 
   el('rp-to-action').addEventListener('click', function () {
-    var promises = byType('promise').filter(function (p) { return p.status !== 'closed'; });
-    if (promises.length) {
-      var p = promises[promises.length - 1];
-      nav('promise-detail', {
-        promiseId: p.id,
-        label: '회개 기록에서 이어짐',
-        value: p.title,
-        returnTo: 'repentance',
-        returnLabel: '회개 기록으로 돌아가기',
-      });
+    var open = byType('promise').filter(function (p) { return p.status !== 'closed'; });
+    if (open.length) {
+      var p = open[open.length - 1];
+      nav('promise-detail', { promiseId: p.id, label: '회개 기록에서 이어짐', value: p.title, returnTo: 'repentance', returnLabel: '회개 기록으로 돌아가기' });
     } else {
-      nav('promise', {
-        label: '회개 기록에서 이어짐',
-        value: '실행을 담을 약속을 먼저 남겨주세요',
-        openCompose: true,
-        returnTo: 'repentance',
-        returnLabel: '회개 기록으로 돌아가기',
-      });
+      nav('promise', { label: '회개 기록에서 이어짐', value: '실행을 담을 약속을 먼저 남겨주세요', openCompose: true, returnTo: 'repentance', returnLabel: '회개 기록으로 돌아가기' });
     }
   });
 
   el('rp-finish').addEventListener('click', function () {
-    var sin = el('rp-sin').value.trim();
-    var behavior = el('rp-behavior').value.trim();
-    var insight = el('rp-insight').value.trim();
-    var turn = el('rp-turn').value.trim();
-    var filled = [sin, behavior, insight, turn].filter(Boolean);
+    var vals = ['rp-sin', 'rp-behavior', 'rp-insight', 'rp-turn'].map(function (id) { return el(id).value.trim(); });
+    var filled = vals.filter(Boolean);
     if (!filled.length) { el('rp-sin').focus(); return; }
     var rec = add('repentance', filled[0], filled.join('\n\n'));
     markerToast('회개');
@@ -908,10 +897,7 @@
     });
   });
 
-  /* 10b — repentance → optional share bridge (never automatic) */
-  screens['repentance-bridge'] = function (ctx) {
-    el('rb-return').innerHTML = returnBlock(ctx);
-  };
+  screens['repentance-bridge'] = function (ctx) { el('rb-return').innerHTML = returnBlock(ctx); };
 
   el('rb-share').addEventListener('click', function () {
     nav('sharecopy', { recordId: current.ctx.recordId, label: '회개 기록에서 이어짐', value: '고른 항목만 나눠집니다' });
@@ -925,33 +911,35 @@
 
   el('rb-history').addEventListener('click', function () { nav('repentance-history'); });
 
-  /* 11 — repentance history */
   screens['repentance-history'] = function () {
     var all = byType('repentance').slice().reverse();
     el('rh-list').innerHTML = all.length
-      ? all
-          .map(function (r) {
-            return (
-              '<li class="card"><p class="card__meta">' + prettyDay(r.day) + '</p>' +
-              '<p class="card__body">' + (r.body || r.title) + '</p></li>'
-            );
-          })
-          .join('')
+      ? all.map(function (r) {
+          return '<div class="card"><p class="card__meta">' + prettyDay(r.day) + '</p>' +
+            '<p class="card__body">' + (r.body || r.title) + '</p></div>';
+        }).join('')
       : '<div class="empty"><p class="empty__title">아직 회개 기록이 없습니다.</p></div>';
   };
 
-  /* 12 — confession feed */
+  /* Confession feed */
+  var feedTab = 'all';
+
   var SAMPLE_FEED = [
-    { who: '이름 비공개', type: '기도', when: '2시간 전', body: '오래 붙잡고 있던 일을 오늘은 그냥 맡기기로 했습니다.' },
-    { who: '김은혜', type: '은혜', when: '5시간 전', body: '별일 없는 하루였는데, 저녁에 마음이 이상하게 잔잔했어요.' },
-    { who: '이름 비공개', type: '고백', when: '어제', body: '아이에게 또 큰 소리를 냈습니다. 미안하다고 말하고 왔습니다.' },
-    { who: '박소망', type: '일상', when: '어제', body: '출근길에 라디오에서 나온 찬양 한 소절이 하루 종일 맴돌았습니다.' },
+    { who: '이름 비공개', initial: '비', type: '기도', when: '2시간 전', body: '오래 붙잡고 있던 일을 오늘은 그냥 맡기기로 했습니다.\n\n결정하고 나니 마음이 조금 가벼워졌어요.' },
+    { who: '김은혜', initial: '김', type: '은혜', when: '5시간 전', body: '별일 없는 하루였는데, 저녁에 마음이 이상하게 잔잔했어요.' },
+    { who: '이름 비공개', initial: '비', type: '고백', when: '어제', body: '아이에게 또 큰 소리를 냈습니다.\n\n미안하다고 말하고 왔습니다. 다음에도 잘할 자신은 없지만, 오늘은 말했습니다.' },
+    { who: '박소망', initial: '박', type: '일상', when: '어제', body: '출근길에 라디오에서 나온 찬양 한 소절이 하루 종일 맴돌았습니다.' },
   ];
 
   screens.confession = function () {
+    Array.prototype.forEach.call(document.querySelectorAll('#cf-seg .seg__item'), function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.feed === feedTab));
+    });
+
     var mine = byType('confession').slice().reverse().map(function (r) {
       return {
         who: r.privacy === 'named' ? '나' : '이름 비공개',
+        initial: '나',
         type: r.ctype || '고백',
         when: prettyDay(r.day),
         body: r.body || r.title,
@@ -959,21 +947,26 @@
       };
     });
 
-    el('cf-list').innerHTML = mine
-      .concat(SAMPLE_FEED)
-      .map(function (p) {
-        return (
-          '<article class="post"><div class="post__meta">' +
-          '<span class="post__who">' + p.who + '</span><span>·</span><span>' + p.type + '</span>' +
-          '<span>·</span><span>' + p.when + '</span>' +
-          (p.mine ? '<span>·</span><span>내 기록</span>' : '') +
-          '</div><p class="post__body">' + p.body + '</p>' +
-          '<div class="post__actions"><button class="react" aria-pressed="false">함께 기도해요</button></div>' +
-          '</article>'
-        );
-      })
-      .join('');
+    var list = feedTab === 'mine' ? mine : mine.concat(SAMPLE_FEED);
+
+    el('cf-list').innerHTML = list.length
+      ? list.map(function (p) {
+          return '<article class="post"><span class="post__avatar">' + p.initial + '</span>' +
+            '<div class="post__main"><div class="post__meta">' +
+            '<span class="post__who">' + p.who + '</span><span>·</span><span>' + p.when + '</span>' +
+            (p.mine ? '<span>·</span><span>내 기록</span>' : '') + '</div>' +
+            '<p class="post__body">' + p.body + '</p>' +
+            '<span class="post__tag">' + p.type + '</span>' +
+            '<div class="post__actions"><button class="react" aria-pressed="false" type="button">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9.6A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.4c0 5.2-7 9.6-7 9.6z"/></svg>' +
+            '함께 기도해요</button></div></div></article>';
+        }).join('')
+      : '<div class="empty" style="margin:16px"><p class="empty__title">아직 나눈 기록이 없습니다.</p></div>';
   };
+
+  Array.prototype.forEach.call(document.querySelectorAll('#cf-seg .seg__item'), function (b) {
+    b.addEventListener('click', function () { feedTab = b.dataset.feed; screens.confession(); });
+  });
 
   document.addEventListener('click', function (e) {
     var r = e.target.closest && e.target.closest('.react');
@@ -983,7 +976,7 @@
 
   el('cf-compose').addEventListener('click', function () { nav('composer'); });
 
-  /* 13 — composer */
+  /* Composer */
   var composerType = '기도';
   var composerPrivacy = 'masked';
 
@@ -1013,21 +1006,18 @@
     nav('confession', null, { replace: true });
   });
 
-  /* 14 — ShareCopy preview → confession */
+  /* ShareCopy */
   screens.sharecopy = function (ctx) {
     var rec = ctx.recordId ? findById(ctx.recordId) : null;
-    var parts = rec ? (rec.body || rec.title).split('\n\n') : ['돌아본 내용', '고백한 내용'];
+    var parts = rec ? (rec.body || rec.title).split('\n\n') : ['돌아본 내용'];
     var labels = ['죄를 돌아보기', '구체적으로 돌아보기', '새롭게 깨달은 것', '돌이키기'];
 
-    el('sc-fields').innerHTML = parts
-      .map(function (v, i) {
-        return (
-          '<label class="checkline"><input type="checkbox" data-field="' + i + '"' + (i === 0 ? ' checked' : '') + '>' +
-          '<span><span class="checkline__label">' + (labels[i] || '내용') + '</span><br>' +
-          '<span class="checkline__value">' + v + '</span></span></label>'
-        );
-      })
-      .join('');
+    el('sc-fields').innerHTML = parts.map(function (v, i) {
+      return '<label class="checkline"' + (i === parts.length - 1 ? ' style="border-bottom:0"' : '') + '>' +
+        '<input type="checkbox" data-field="' + i + '"' + (i === 0 ? ' checked' : '') + '>' +
+        '<span><span class="checkline__label">' + (labels[i] || '내용') + '</span><br>' +
+        '<span class="checkline__value">' + v + '</span></span></label>';
+    }).join('');
 
     el('sc-return').innerHTML = returnBlock(ctx);
     updateSharePreview();
@@ -1047,18 +1037,17 @@
   el('sc-fields').addEventListener('change', updateSharePreview);
 
   el('sc-publish').addEventListener('click', function () {
-    var picked = document.querySelectorAll('#sc-fields input:checked').length;
-    if (!picked) return;
     var texts = [];
     Array.prototype.forEach.call(document.querySelectorAll('#sc-fields input:checked'), function (i) {
       texts.push(i.parentNode.querySelector('.checkline__value').textContent);
     });
+    if (!texts.length) return;
     add('confession', texts[0].slice(0, 24), texts.join('\n\n'), { privacy: 'masked', ctype: '고백' });
     markerToast('고백');
     nav('confession', null, { replace: true });
   });
 
-  /* ------------------------------------------------------- nav + chrome */
+  /* ------------------------------------------------------------ nav/chrome */
 
   Array.prototype.forEach.call(document.querySelectorAll('.nav__item'), function (n) {
     n.addEventListener('click', function () { nav(n.dataset.tab); });
@@ -1072,26 +1061,26 @@
     b.addEventListener('click', back);
   });
 
-  /* Prototype-only screen index (not part of the product UI) */
   var INDEX = [
     ['01 Intro', 'intro', 'reset'],
-    ['02 3 Questions', 'questions', 'reset'],
-    ['03 첫 기록 → 여정 안착', 'first-saved', 'first'],
-    ['04 Journey — 신규/빈 상태', 'journey', 'reset'],
-    ['05 Journey — 기록 있음', 'journey', 'seed'],
-    ['06 Prayer', 'prayer', 'seed'],
-    ['07 Prayer → 약속 브릿지', 'prayer-bridge', 'seed'],
-    ['08 Prayer History', 'prayer-history', 'seed'],
-    ['09 Promise Dashboard', 'promise', 'seed'],
-    ['10 Promise Detail + Action', 'promise-detail', 'seed'],
-    ['11 Reflection Bridge', 'reflection', 'seed'],
-    ['12 Repentance — 직접 진입', 'repentance', 'seed'],
-    ['13 Repentance — 실행에서 이어짐', 'repentance', 'seed-linked'],
-    ['14 회개 → 나누기 브릿지', 'repentance-bridge', 'seed'],
-    ['15 Repentance History', 'repentance-history', 'seed'],
-    ['16 Confession Feed', 'confession', 'seed'],
-    ['17 Confession Composer', 'composer', 'seed'],
-    ['18 ShareCopy → Confession Preview', 'sharecopy', 'seed'],
+    ['02 홈 + 사용법 코치마크', 'journey', 'coach'],
+    ['03 여정 (홈)', 'journey', 'seed'],
+    ['04 첫 기록 → 여정 안착', 'first-saved', 'first'],
+    ['05 기도 — 묶음 목록', 'prayer', 'seed'],
+    ['06 기도 — 묶음 안 제목들', 'prayer-group', 'seed'],
+    ['07 기도 — 제목 상세', 'prayer-detail', 'seed'],
+    ['08 기도 — 남기기', 'prayer-new', 'seed'],
+    ['09 기도 → 약속 브릿지', 'prayer-bridge', 'seed'],
+    ['10 약속 대시보드', 'promise', 'seed'],
+    ['11 약속 상세 + 실행', 'promise-detail', 'seed'],
+    ['12 돌아보기 브릿지', 'reflection', 'seed'],
+    ['13 회개 — 직접 진입', 'repentance', 'seed'],
+    ['14 회개 — 실행에서 이어짐', 'repentance', 'seed-linked'],
+    ['15 회개 → 나누기 브릿지', 'repentance-bridge', 'seed'],
+    ['16 지난 회개 기록', 'repentance-history', 'seed'],
+    ['17 고백 피드', 'confession', 'seed'],
+    ['18 고백 작성', 'composer', 'seed'],
+    ['19 ShareCopy → 고백 미리보기', 'sharecopy', 'seed'],
   ];
 
   el('proto-index-list').innerHTML = INDEX.map(function (row, i) {
@@ -1105,12 +1094,17 @@
     var mode = row[2];
 
     if (mode === 'reset') resetData();
-    if (mode === 'seed' || mode === 'seed-linked') seedData();
-    if (mode === 'first') { resetData(); add('prayer', '조급한 마음을 내려놓게 해주세요', ''); }
+    if (mode === 'first') { resetData(); add('prayer', '조급한 마음을 내려놓게 해주세요', '', { group: 'self' }); }
+    if (mode === 'seed' || mode === 'seed-linked' || mode === 'coach') seedData();
 
     stack = [];
+    selectedEvent = null;
     var ctx = null;
     if (row[1] === 'promise-detail') ctx = { promiseId: 'r2' };
+    if (row[1] === 'prayer-group') ctx = { groupId: 'self' };
+    if (row[1] === 'prayer-detail') ctx = { prayerId: 'r1' };
+    if (row[1] === 'prayer-bridge') ctx = { prayerId: 'r1', title: '조급한 마음을 내려놓게 해주세요' };
+    if (row[1] === 'first-saved') ctx = { label: '기도' };
     if (row[1] === 'reflection') {
       ctx = { promiseId: 'r2', actionId: 'r8', label: '실행에서 이어짐', value: '아침 10분 기도', returnTo: 'promise-detail', returnId: 'r2', returnLabel: '약속으로 돌아가기' };
     }
@@ -1119,12 +1113,12 @@
     }
     if (row[1] === 'repentance-bridge') ctx = { recordId: 'r4', returnTo: 'promise-detail', returnId: 'r2', returnLabel: '약속으로 돌아가기' };
     if (row[1] === 'sharecopy') ctx = { recordId: 'r4', label: '회개 기록에서 이어짐', value: '고른 항목만 나눠집니다' };
-    if (row[1] === 'first-saved') ctx = { created: 1 };
-    if (row[1] === 'prayer-bridge') ctx = { prayerId: 'r7', title: '가족을 위해' };
 
     closeIndex();
+    closeCoach();
     current = { screen: row[1], ctx: ctx };
     render();
+    if (mode === 'coach') setTimeout(openCoach, 200);
   });
 
   function openIndex() { el('proto-index').classList.add('is-open'); }
@@ -1135,10 +1129,10 @@
 
   el('proto-loop').addEventListener('click', function () {
     resetData();
-    qIndex = 0;
-    qAnswers = ['', '', ''];
     stack = [];
+    selectedEvent = null;
     closeIndex();
+    closeCoach();
     current = { screen: 'intro', ctx: null };
     render();
   });
