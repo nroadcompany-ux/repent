@@ -22,7 +22,13 @@ import {
 } from '../../src/domain/shared/product-lock';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
-const SCANNED_DIRS = ['src', 'app'];
+
+/**
+ * Production code plus the UX validation prototypes under public/prototype —
+ * a prototype is not canonical, but it must not reintroduce a locked-out
+ * concept either, since Owner review happens on it.
+ */
+const SCANNED_DIRS = ['src', 'app', 'public/prototype'];
 
 /** The lock definitions themselves must name the forbidden values, so skip them. */
 const EXCLUDED_FILES = ['src/domain/shared/product-lock.ts'];
@@ -33,7 +39,10 @@ interface SourceFile {
 }
 
 function stripComments(source: string): string {
-  return source.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/.*$/gm, '$1');
+  return source
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|[^:])\/\/.*$/gm, '$1');
 }
 
 function collectSourceFiles(dir: string, acc: SourceFile[] = []): SourceFile[] {
@@ -46,7 +55,7 @@ function collectSourceFiles(dir: string, acc: SourceFile[] = []): SourceFile[] {
       continue;
     }
 
-    if (!/\.(ts|tsx)$/.test(entry)) continue;
+    if (!/\.(ts|tsx|js|html)$/.test(entry)) continue;
     if (entry.endsWith('.test.ts') || entry.endsWith('.test.tsx')) continue;
     if (EXCLUDED_FILES.includes(relPath)) continue;
 
