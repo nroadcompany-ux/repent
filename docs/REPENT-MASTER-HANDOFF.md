@@ -222,7 +222,20 @@ HOLD:
 | Working Branch | `claude/new-session-gwiqkv` |
 | Final Documentation Lock SHA | `a3c7c6d68a4ddf9d3d8a9d3818b4ddbcba9cb7c0` |
 | Visual Lock Decision | `2026-09-05 Owner PASS` |
+| Implementation Sprint 1 SHA | `7c4e0da220bd411c17766abac7df9655dac8726e` |
 | main merge | 수행하지 않음 |
+
+### Vercel / 배포 현황
+
+| 항목 | 상태 |
+|---|---|
+| `repent-prototype` (기존) | GitHub 연결됨. **Framework 설정이 정적 사이트**라 Next.js 앱을 빌드하지 않는다. 배포는 READY지만 산출물 없음 |
+| `repent-app` (신규) | **미생성** — Vercel API 403 `forbidden` (현재 토큰에 project create 권한 없음). Owner가 대시보드에서 생성 필요 |
+| Deployment Protection | `repent-prototype` = Vercel Authentication ON (`all_except_custom_domains`). 로그인 없이는 preview 열람 불가 |
+
+신규 프로젝트 생성 시 설정: Repository `nroadcompany-ux/repent`, Framework
+`Next.js`, Root Directory `/`, Production Branch는 main 유지(merge 금지이므로
+실제 확인은 `claude/new-session-gwiqkv` branch preview URL로 한다).
 
 ## 9. Next Action / 다음 작업
 
