@@ -29,18 +29,73 @@ updated: 2026-09-05
 
 | 항목 | 값 |
 |---|---|
-| Last Update | 2026-09-05 |
-| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `0ec1ca219d5203ffb05c8380318f03f157f2e2bd` |
-| Changed Area | G-07 Canonicalization(문서), Master Handoff 신설 |
-| Status Delta | G-07: CANDIDATE → CURRENT/CANONICAL PRODUCT POLICY AC |
-| Remaining Blocking | API Binding/Provider Smoke/Official 65(OPENAI_API_KEY 없음), Privacy/Consent, Minor Safety, Scripture License — 전부 HOLD(아래 I·J 참조) |
-| Next P0 | 아래 "M. Current P0" 참조 |
+| Last Update | 2026-09-05 (Product Planning Completion Audit) |
+| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `061d9a13af979ec0b402986203c7a548f36e5134` |
+| Changed Area | Product Planning Completion Audit(신규 감사 문서) — Runtime/AI/G-07 코드·판정 변경 없음 |
+| Status Delta | **Planning Completion Gate = C(NOT READY — PLANNING GAP REMAINS)** — 최초로 Product 레이어(Journey~Confession, Community) 기획 완성도를 정량 감사함 |
+| Remaining Blocking | 아래 "Critical Gap" + I·J 섹션(API Binding/Privacy/Minor Safety/Scripture License는 기존과 동일하게 HOLD) |
+| Next P0 | 아래 "Current P0(Planning)" 참조 — 기존 "M. Current P0(AI Runtime)"와는 별도 트랙 |
 
 이 커밋(이 문서를 포함해 새로 만드는 커밋)의 실제 SHA는 이번 라운드
 RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본문에는
 "갱신 시점 기준 직전 origin SHA"만 고정 기록하고, 매 커밋마다 그 값을
 그 시점의 새 origin SHA로 교체한다(자기 자신의 커밋 SHA를 문서가 커밋
 되기 전에 알 수 없으므로 항상 "직전 확인된 SHA"를 남긴다).
+
+## Planning Completion Status (2026-09-05 감사, 신규)
+
+전체 감사 보고서: `docs/PRODUCT-PLANNING-COMPLETION-AUDIT-2026-09-05.md`
+(이 섹션은 그 보고서의 요약이며, 세부 판정·근거는 원본 참조)
+
+| 항목 | 값 |
+|---|---|
+| Final Documentation Gate | **C — NOT READY, PLANNING GAP REMAINS** |
+| Planning Completion % | **≈ 22%**(정성적 가중 추정, 10개 Area 기준 — 근거는 감사 보고서 §10) |
+| Documentation Completion % | **≈ 42%**(docs/00~10 실제 작성 밀도 기준) |
+| 핵심 결론 | 두 수치의 차이(42% vs 22%) 자체가 결론 — AI/VGL/Governance 레이어(06~10)는 두텁게 작성됐지만 Product 레이어(Journey/Promise/Action/Repentance/Confession, Community)의 실제 결정은 대부분 OPEN/MISSING. 문서 포맷이 11개 파일 전부 동일해 보여도 내용 완성도는 균일하지 않음 |
+| Figma v0.8 | **이 세션에서 접근 불가**(URL/파일키 미제공, MCP 세션 없음, 저장소 내 참조 0건) — 아래 화면 판정은 `prototype/index.html`(실존 확인된 HTML, 21개 화면) 기준이며 Figma가 더 진행돼 있을 가능성은 배제하지 않음 |
+
+### Critical Gap (P0 BLOCKING — Product Decision 누락, 문서 작업만으로 해소 불가)
+
+1. **Action Failure 정책 부재** — 실행 실패 사유 수집(5종 UI는
+   prototype에 존재)의 목적이 어디에도 정의돼 있지 않음. G-10(영적
+   원인 단정 금지) 가드레일과 직접 인접한 기능이라 방치 위험 높음
+2. **Community/Moderation 기능 자체 미정의** — G-07 제약(무엇을 하면
+   안 되는가)은 CURRENT/CANONICAL인데, 그 제약이 적용될 신고/모더레이션
+   기능(화면·데이터·Review Queue·상태) 자체가 저장소 어디에도 없음
+3. **핵심 엔티티 6종 데이터 모델 부재** — Prayer, Promise, Action,
+   Repentance Record, Scripture Reference, Turning Point (CRUD/Owner/
+   Visibility/Lifecycle 전부 미정의; LifeEvent/Season/StoryArc는 명칭만
+   확정)
+4. **권한(Permission) 모델 전무** — 전 도메인에 "누가 보고/고치고/
+   지울 수 있는가"가 정의된 곳이 하나도 없음
+5. **Lifecycle State 전무** — Draft/Published/Hidden/Removed 등, 특히
+   Confession Privacy 3옵션·G-07 모더레이션 동사(Hide/Delete/Reject)가
+   실제 상태값으로 연결되지 않음
+
+### Remaining Owner Decision
+
+- Community/Moderation 기능 범위(신고 사유 taxonomy, 모더레이션 액션,
+  누가 처리하는가) — Owner/PM 결정 필요, Claude가 임의 설계 금지
+- Action Failure 사유 수집의 제품 목적(회고용/통계용/AI 인풋용 등) —
+  Owner/PM 결정 필요
+- Feature WORKING ID → Canonical ID 체계 전환 여부·방식 — Owner/PM 결정
+- (기존 유지) Privacy/Consent Gate, Minor Safety, Scripture License —
+  변경 없음, 여전히 Owner/Legal 결정 대기(HOLD)
+- (기존 유지) RS-AR05-D3, RS-G10-D1 Governance 재검토 — 변경 없음
+
+### Current P0 (Planning 트랙, AI Runtime P0와 별도)
+
+Critical Gap 5건 중 우선순위는 Owner/PM이 정한다(Claude가 임의로 순서
+매기지 않음). 참고로 감사 보고서는 P0/P1/P2/HOLD/NON-BLOCKING 5단계로
+전체 Gap을 분류해뒀다(§9). **PM 지시 전까지 이 감사 결과를 근거로
+스스로 착수하지 않는다.**
+
+### Next Documentation Gate
+
+Gate 재평가 시점: 위 Critical Gap 5건 중 최소 P0 항목들이 Owner/PM
+결정으로 해소된 후. 그 전까지 최종 문서 10종(01~10) 작성에 착수하지
+않는다(A 또는 B 판정 후 작성 원칙, 감사 보고서 §11).
 
 ---
 
@@ -68,14 +123,22 @@ RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본�
 | **CANONICAL MAIN** | 이 세션에서 `main`으로의 병합/통합을 수행한 적 없음 — `claude/new-session-gwiqkv`가 Remote에 존재한다는 사실이 **main Canonical 통합 완료를 의미하지 않는다** |
 | 상태 구분 원칙 | 이 문서와 모든 RETURN에서 `BRANCH CURRENT`(이 브랜치에 존재)와 `CANONICAL MAIN`(main에 병합 완료)을 항상 분리 표기한다. 임의로 "main 반영 완료"라고 보고하지 않는다 |
 
+**실측 분기(2026-09-05, `git log origin/main..origin/claude/new-session-gwiqkv`
+등으로 확인)**: `main`은 `claude/new-session-gwiqkv`가 갈라진 지점(merge-base
+`5231732`)에서 커밋 1개(`b816c71`, prototype 탭바 폰트 크기 조정)만 더
+나아가 있고, **AI Runtime/Validator/G-07/Governance docs/Master
+Handoff/Planning Audit 등 이 브랜치의 9개 커밋은 `main`에 전혀 없다.**
+즉 `main`은 여전히 "Foundation v1.0 + prototype 조정" 수준이고, 이
+세션의 모든 산출물은 `claude/new-session-gwiqkv`에만 존재한다.
+
 ## C. Last Verified Commit SHA
 
-- 이 라운드 작업 **직전** origin/local 일치 SHA(실행 확인,
-  `git fetch` + `git rev-parse` 대조 완료): `0ec1ca219d5203ffb05c8380318f03f157f2e2bd`
-  ("REPENT pre-API parallel package 2 — governance docs")
-- 이 라운드 작업 **이후**(이 문서를 포함하는 커밋)의 SHA는 이번 턴의
-  RETURN `Commit SHA` / `Remote SHA` 필드 참조 — 다음 세션은 그 값을
-  이 표의 "직전 SHA"로 갱신해야 한다
+- 직전 라운드(G-07 Canonicalization) 완료 후 origin/local 일치 확인
+  SHA: `061d9a13af979ec0b402986203c7a548f36e5134`
+  ("REPENT G-07 canonicalization + Master Handoff")
+- 이 라운드(Product Planning Completion Audit) 작업 **이후**의 SHA는
+  이번 턴의 RETURN `Commit SHA` / `Remote SHA` 필드 참조 — 다음 세션은
+  그 값을 이 표의 "직전 SHA"로 갱신해야 한다
 
 ## D. Current Documentation Map
 
@@ -95,7 +158,8 @@ docs/
 ├── ai-runtime/
 │   ├── runtime-binding.md        Runtime Binding 상태 보고 형식
 │   └── execution-protocol.md     실행 절차/Phase A/B/C
-└── REPENT-MASTER-HANDOFF.md      (이 문서)
+├── REPENT-MASTER-HANDOFF.md      (이 문서)
+└── PRODUCT-PLANNING-COMPLETION-AUDIT-2026-09-05.md   Planning Gate=C 감사 보고서(비-Canonical, 01~10 대체 아님)
 
 runtime/
 ├── config/
