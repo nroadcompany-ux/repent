@@ -1,5 +1,90 @@
 # CHANGELOG
 
+## Implementation Sprint 1 — Foundation + Core Domain (2026-09-05)
+
+Final Documentation Lock 및 Owner Visual PASS 이후 첫 실제 코드 구현.
+신규 Product 기획 없음. Legacy Prototype을 구현 근거로 사용하지 않음.
+
+### Stack / 기술 선택
+
+- Next.js 15 App Router + TypeScript strict (`noUncheckedIndexedAccess` 포함)
+- Vitest (도메인/유스케이스 단위 테스트)
+- 외부 Provider/DB 바인딩 없음 — In-memory Mock Adapter만 사용 (Runtime Binding = HOLD 유지)
+- 의존성 최소화: Tailwind 등 추가 UI 라이브러리 없이 CSS 변수 기반 토큰
+
+### Architecture
+
+`Domain → Use Case → Repository Interface → Mock Adapter → UI` 단방향 구조.
+UI/Adapter가 Domain을 의존하며, Domain은 어떤 외부 계층도 import하지 않는다.
+
+- `src/domain/` — Entity, Value, Product Lock 상수, Actor/Permission, Lifecycle
+- `src/usecase/` — Journey / Prayer / Promise / Action / Repentance / Confession / Sharing
+- `src/repository/` — Port 인터페이스 (8종)
+- `src/adapters/mock/` — In-memory 구현
+- `src/app-runtime/` — Composition Root (인증/영속성 교체 지점 단일화)
+- `app/` — Next.js Route + Server Action
+
+### Implemented WBS
+
+| WBS | 범위 | 상태 |
+|---|---|---|
+| WBS-RPT-000 | Foundation — App shell, Main Nav 5, Route, Shared Empty/Error/Loading, Actor/Permission scaffold, 공통 타입, Test 기반 | DONE |
+| WBS-RPT-100 | Journey Core — Today/Week/Month/Year/All, Missing Day=No Point, TurningPoint User Confirm, Journey 내부 Search/Filter | DONE |
+| WBS-RPT-200 | Prayer Core — Prayer Record, Prayer Only Exit, Optional Reference | DONE |
+| WBS-RPT-300 | Promise Core — Create/Read, 1:N Action, Action 0개 허용, `마무리됨` | DONE |
+| WBS-RPT-400 | Action Core — Record, Done, Follow-up 5종 | DONE |
+| WBS-RPT-500 | Repentance Core — Optional Progressive Flow, `회개 기록 마치기` | DONE |
+| WBS-RPT-600 | Confession Core — 4종/Privacy 3옵션/Preview before Publish | DONE |
+| WBS-RPT-610 | ShareCopy — Field 선택, Snapshot, Source 독립, 삭제 시 Keep/Delete 선택 | DONE |
+
+### Screen 구현 (docs/final/08 기준)
+
+구현: `SCR-RPT-JNY-001` `SCR-RPT-JNY-002` `SCR-RPT-SEA-001` `SCR-RPT-PRY-001`
+`SCR-RPT-PRM-001` `SCR-RPT-ACT-001` `SCR-RPT-ACT-002` `SCR-RPT-RPN-001`
+`SCR-RPT-RPN-002` `SCR-RPT-CNF-001` `SCR-RPT-CNF-002` `SCR-RPT-COM-001`(열람 목록)
+`SCR-RPT-SHR-001` `SCR-RPT-SHR-002` `SCR-RPT-SHR-003` — 15종.
+
+미구현(이번 Sprint 범위 밖): ONB-001, SCR-001, COM-002, MOD-001, NOT-001,
+ACC-001, EXP-001, MEM-001.
+
+Visual은 provisional이다. White / Black / Neutral Gray, 44px Touch Target,
+Editorial·Minimal 톤만 유지하고 Pixel-perfect Alignment는 후속 작업으로 남긴다.
+신규 Visual Concept 창작 없음.
+
+### Test
+
+- Vitest 72 tests / 10 files — 전부 PASS
+- 도메인별 Happy Path / Empty / Error / Permission / Product Lock Negative 커버
+- `tests/product-lock/product-lock.regression.test.ts` — `src/`·`app/` 전체를
+  주석 제거 후 스캔하여 금지 개념 재유입을 차단
+
+### Product Lock Regression (코드 레벨 고정)
+
+- Journey Social / 함께 = 없음
+- Prayer Response Tracking(answered/pending/response rate) = 없음
+- Action Failure Cause Taxonomy = 없음 (follow-up에 reason 파라미터 자체가 없음)
+- Auto Repent = 없음 (Optional Repent는 진입만 제공)
+- Repentance Fixed Step / Progress / Score = 없음, `회개 완료` 문자열 = 없음
+- Faith / Repentance / Prayer Response / Spiritual Maturity Score = 없음
+- Forbidden State(`ANSWERED` `FORGIVEN` `SAVED` `REPENTED` `FAITHFUL`
+  `SPIRITUALLY_FAILED`) = 없음
+- Anonymous Confession = 없음
+- 인기순 / 랭킹 / Reaction 기반 정렬 = 없음
+- Promise Streak = 없음
+- Moderator/AI/Viewer의 Private Source 접근 = 차단 (Permission 테스트로 고정)
+- AI/System은 Record Owner가 될 수 없음
+
+### OPEN / HOLD 준수
+
+Exact Lifecycle Enum Naming은 확정하지 않았다. 내부 구현 상태는
+`src/domain/shared/lifecycle.ts`에 소문자 internal state로만 두고,
+Canonical Product Meaning으로 승격하지 않는다는 주석을 명시했다.
+
+CANDIDATE(Moderation Workflow/Action Detail), OPEN(Export 상세, CRUD 컬럼,
+Recovery 상세), HOLD(Minor Public Sharing, Longitudinal Consent, Scripture Full
+Text·Retrieval, OpenAI Runtime Binding, Official Model Run, RS-AR05-D3,
+RS-G10-D1)는 어떤 형태로도 구현하지 않았다.
+
 ## Owner Visual PASS / Visual Lock / Implementation Gate GO (2026-09-05)
 
 - Owner가 현재 REPENT White / Black / Neutral Gray Visual을 명시적으로 PASS.

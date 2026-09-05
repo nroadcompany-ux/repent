@@ -1,0 +1,303 @@
+/*
+ * REPENT — provisional visual tokens.
+ *
+ * Owner-directed concept: White / Black / Neutral Gray, minimal, editorial, quiet.
+ * Source: docs/REPENT-MASTER-HANDOFF.md §6 Visual Language Lock.
+ *
+ * This sprint prioritises logic/state/permission over pixel-perfect styling; the
+ * Figma Final Visual pass comes after. No new visual concept is invented here.
+ */
+
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --text: #111111;
+  --text-secondary: #6b6b6b;
+  --text-tertiary: #9a9a9a;
+  --border: #e5e5e5;
+  --border-strong: #d0d0d0;
+  --cta-bg: #111111;
+  --cta-text: #ffffff;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius: 2px;
+  --nav-height: 64px;
+  --shell-max-width: 480px;
+
+  /* Minimum interactive size — accessibility correction from the visual QA pass. */
+  --touch-target: 44px;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #f4f4f4;
+  color: var(--text);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Apple SD Gothic Neo',
+    'Malgun Gothic', 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Mobile shell ---------- */
+
+.shell {
+  max-width: var(--shell-max-width);
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  border-inline: 1px solid var(--border);
+}
+
+.shell__main {
+  flex: 1;
+  padding: var(--space-5) var(--space-4) calc(var(--nav-height) + var(--space-6));
+}
+
+/* ---------- Header ---------- */
+
+.header {
+  padding: var(--space-5) var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.header__title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.header__subtitle {
+  margin-top: var(--space-1);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Bottom navigation ---------- */
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  max-width: var(--shell-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+.nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--touch-target);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.nav__item[aria-current='page'] {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.nav__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+}
+
+.nav__item[aria-current='page'] .nav__dot {
+  opacity: 1;
+}
+
+/* ---------- Shared states ---------- */
+
+.state {
+  padding: var(--space-7) var(--space-4);
+  text-align: center;
+}
+
+.state__title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.state__body {
+  margin-top: var(--space-2);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Content primitives ---------- */
+
+.section {
+  margin-top: var(--space-6);
+}
+
+.section__title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+
+.card + .card {
+  margin-top: var(--space-3);
+}
+
+.card__meta {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.card__body {
+  margin-top: var(--space-2);
+  white-space: pre-wrap;
+}
+
+.segmented {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.segmented__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-target);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg);
+}
+
+.segmented__item[aria-current='true'] {
+  background: var(--cta-bg);
+  border-color: var(--cta-bg);
+  color: var(--cta-text);
+  font-weight: 600;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: 0 var(--space-4);
+  background: var(--cta-bg);
+  color: var(--cta-text);
+  border: 1px solid var(--cta-bg);
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cta--secondary {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--border-strong);
+  font-weight: 500;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.note {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.7;
+}
+
+.timeline__day {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.timeline__date {
+  min-width: 84px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  padding-top: 2px;
+}
+
+.timeline__marker {
+  font-size: 14px;
+}
+
+.timeline__type {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-right: var(--space-2);
+}

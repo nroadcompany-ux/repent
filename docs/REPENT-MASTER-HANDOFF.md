@@ -1,6 +1,6 @@
 ---
-status: FINAL DOCUMENTATION LOCKED / VISUAL LOCKED / IMPLEMENTATION GATE GO
-version: 1.5
+status: IMPLEMENTATION SPRINT 1 COMPLETE — FOUNDATION + CORE DOMAIN
+version: 1.6
 updated: 2026-09-05
 owner: REPENT PM
 ---
@@ -47,6 +47,12 @@ Legacy Prototype은 Product Planning Source가 아니다.
 | Implementation Gate | **GO — CURRENT NON-HOLD SCOPE** |
 | Prototype | **LEGACY / NON-CANONICAL** |
 | main merge | **NOT PERFORMED** |
+| Implementation | **SPRINT 1 COMPLETE — WBS-RPT-000/100/200/300/400/500/600/610** |
+| Stack | **Next.js 15 App Router + TypeScript strict + Vitest** |
+| Build | **PASS — 14 routes** |
+| Test | **PASS — 72 tests / 10 files** |
+| Product Lock Regression | **PASS — violation 0** |
+| Runtime/Provider Binding | **미바인딩 (HOLD 유지) — In-memory Mock Adapter만 사용** |
 
 ## 3. Final Documentation / 최종 개발 문서
 
@@ -151,6 +157,33 @@ Dependency-safe 병렬 개발 허용.
 
 Figma Visual Lock을 구현 기준으로 사용할 수 있으나 Product Meaning은 반드시 Final Documentation을 우선한다.
 
+### Sprint 1 실행 결과 (2026-09-05)
+
+위 8개 WBS 전부 구현 완료. 상세 내역은 `CHANGELOG.md` 최상단 섹션 참조.
+
+| 항목 | 결과 |
+|---|---|
+| Stack | Next.js 15 App Router + TypeScript strict + Vitest |
+| Architecture | `Domain → Use Case → Repository Interface → Mock Adapter → UI` |
+| Build | PASS — 14 routes |
+| Typecheck | PASS — `tsc --noEmit` |
+| Test | PASS — 72 tests / 10 files |
+| Product Lock Regression | PASS — violation 0 |
+| Screen 구현 | 15/23 (Sprint 범위 내 전부) |
+| External Provider Binding | 없음 — HOLD 유지 |
+
+구현된 Screen: `JNY-001` `JNY-002` `SEA-001` `PRY-001` `PRM-001` `ACT-001`
+`ACT-002` `RPN-001` `RPN-002` `CNF-001` `CNF-002` `COM-001`(열람) `SHR-001`
+`SHR-002` `SHR-003`.
+
+Visual은 **provisional**이다. White / Black / Neutral Gray, 44px Touch Target,
+Editorial·Minimal 톤만 적용했고 Pixel-perfect Alignment는 수행하지 않았다.
+신규 Visual Concept 창작 = 0.
+
+Exact Lifecycle Enum Naming은 확정하지 않았다. 내부 구현 상태는
+`src/domain/shared/lifecycle.ts`에 소문자 internal state로만 존재하며 Canonical
+Product Meaning으로 승격하지 않는다.
+
 ### P1 / Boundary-aware
 
 - Scripture Reference: Full Text/Runtime HOLD 경계 유지
@@ -193,16 +226,20 @@ HOLD:
 
 ## 9. Next Action / 다음 작업
 
-**NEXT = CLAUDE CODE IMPLEMENTATION EXECUTION**
+**Sprint 1 (Foundation + Core Domain) 완료.**
 
-1. Remote Reality Check
-2. WBS-RPT-000 Foundation 착수
-3. WBS-RPT-100~610 Dependency-safe 병렬 구현
-4. Domain Logic / State / Permission / Test 우선
-5. Figma Visual Lock 기준 Functional UI Binding
-6. Build/Test/Regression Evidence 확보
-7. Handoff/CHANGELOG 업데이트
-8. Commit → Push → Fetch → Remote SHA Verify
+**NEXT = SPRINT 2 후보**
+
+1. Onboarding `SCR-RPT-ONB-001` (가입 직후 3개 선택 질문) — CURRENT, 미구현
+2. Notification `SCR-RPT-NOT-001` (Promise/Action Reminder) — P1
+3. Community Reaction/Report `SCR-RPT-COM-002` (공감 1종 + 신고 4종) — P1, G-07 범위
+4. Account Delete `SCR-RPT-ACC-001` (ShareCopy Keep/Delete 선택) — P1
+5. Scripture Reference `SCR-RPT-SCR-001` — Full Text/Retrieval HOLD 경계 유지
+6. 영속성 Adapter 교체 (현재 In-memory Mock, 교체 지점 = `src/app-runtime/session.ts`)
+7. 인증 바인딩 (현재 demo owner scaffold, 교체 지점 동일)
+8. Figma Visual Lock 기준 Pixel-perfect Alignment
+
+CANDIDATE/HOLD 항목은 여전히 착수 금지.
 
 ## 10. Current Verdict / 현재 판정
 
@@ -216,5 +253,9 @@ HOLD:
 - Product Lock Violation: **0**
 - Accessibility / Layout QA: **PASS**
 - Implementation Gate: **GO — CURRENT NON-HOLD SCOPE**
+- Implementation Sprint 1: **COMPLETE (WBS-RPT-000/100/200/300/400/500/600/610)**
+- Build / Typecheck / Test: **PASS (14 routes / tsc clean / 72 tests)**
+- Product Lock Regression: **PASS — violation 0**
+- OPEN / HOLD 침범: **0**
 - New Product Meaning Created: **0**
 - New Theology Rule Created: **0**

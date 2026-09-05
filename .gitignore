@@ -2,3 +2,15 @@
 .env.*
 !.env.example
 node_modules/
+
+# Next.js
+/.next/
+/out/
+next-env.d.ts
+
+# build / test artifacts
+/coverage/
+*.tsbuildinfo
+
+# Vercel
+.vercel
