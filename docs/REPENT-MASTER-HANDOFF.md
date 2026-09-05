@@ -1,6 +1,6 @@
 ---
-status: FINAL DOCUMENTATION LOCKED / VISUAL V1.0 WHITE-BLACK QA PASS
-version: 1.4
+status: FINAL DOCUMENTATION LOCKED / VISUAL LOCKED / IMPLEMENTATION GATE GO
+version: 1.5
 updated: 2026-09-05
 owner: REPENT PM
 ---
@@ -35,15 +35,16 @@ Legacy Prototype은 Product Planning Source가 아니다.
 | Figma Base Screens | **23/23 BUILT** |
 | Figma State Variants | **49 BUILT** |
 | Total Visual Frames | **72** |
-| Visual Concept | **WHITE / BLACK / NEUTRAL GRAY — OWNER DIRECTED RESTORE** |
+| Visual Concept | **WHITE / BLACK / NEUTRAL GRAY** |
 | Screen Spec ↔ Figma Audit | **PASS — Missing 0 / Extra 0 / Duplicate 0** |
 | Product Lock Violation in Figma | **0** |
 | Overflow | **0** |
 | Small Touch Target | **0** |
 | Dark-on-Dark Center Contrast | **0** |
 | P0 UX Correction | **APPLIED** |
-| Visual QA | **PASS / OWNER VISUAL REVIEW NEXT** |
-| Figma Legacy | **OWNER 지시로 기존 페이지/화면 전부 삭제 완료** |
+| Owner Visual Review | **PASS — 2026-09-05** |
+| Visual Lock | **LOCKED** |
+| Implementation Gate | **GO — CURRENT NON-HOLD SCOPE** |
 | Prototype | **LEGACY / NON-CANONICAL** |
 | main merge | **NOT PERFORMED** |
 
@@ -90,73 +91,76 @@ AI는 God / God's Voice / Prophet / Pastor Substitute / Spiritual Judge / Final 
 
 Canonical 65 수정 금지.
 
-## 6. Figma Visual v1.0 / 피그마 시각화
+## 6. Figma Visual Lock / 피그마 시각 잠금
 
 - Figma File Key: `by2RJ4FtyVTQWHyjFuvrc0`
 - Current Page: `REPENT Final Lock — Visual v1.0`
 - Page Node: `44:2`
-- 기존 Figma 페이지/화면: **전부 삭제 완료**
+- 기존 Figma 페이지/화면: Owner 지시로 전부 삭제 완료
 - Base Screen: **23/23**
 - State Variant: **49**
 - Total Screen/State Frame: **72**
 
-### Visual Language Lock Candidate / 시각 언어 후보
+### Owner Visual Decision
 
-Owner가 기존 디자인 컨셉 복원을 명시함.
+2026-09-05 Owner 명시 Decision:
+
+> 현재 White / Black / Neutral Gray Visual을 **PASS**하고 이 컨셉을 Visual 기준으로 승인한다.
+
+### Locked Visual Language
 
 - Background: Pure White
 - Primary Text / CTA: Black / Near Black
 - Secondary Text: Neutral Gray
 - Border / Divider: Light Gray
-- Warm Ivory / Navy Accent: 폐기
+- Warm Ivory / Navy Accent: 사용하지 않음
 - 과도한 Card/Color Accent 사용 금지
 - Editorial / Minimal / Quiet / Serious 톤 유지
 
-이 변경은 Product Meaning 변경이 아니라 **Visual Correction**이다.
+### UX / Accessibility QA
 
-### UX / Accessibility Correction
-
-- 72 Frame 전체 White/Black/Neutral Gray로 동기화
-- Interactive Chip/Segment에 최소 44px Invisible Touch Target 추가: **37개**
-- Restore 과정의 Dark-on-Dark 실제 Label Contrast 6건 수정
+- 72 Frame 전체 White/Black/Neutral Gray 동기화
+- Interactive Chip/Segment 최소 44px Touch Target 적용
 - Final Audit: Overflow 0 / Small Touch Target 0 / Dark-on-Dark Center 0
-
-### P0 UX Review / Correction
-
-대상: Journey / Action Follow-up / Repentance / Confession Privacy / ShareCopy
-
-- Journey: Today가 독립 Tab이 아니라 현재 좌표임을 화면에서 재명시
-- Action Follow-up: Failure Cause 질문/분류 금지 명시, 5 Follow-up 유지
-- Repentance: Fixed Step/Progress 없이 Optional Scripture/Promise/Action 연결을 시각적으로 분리
-- Confession Privacy: Preview 확인 후 Publish 구조 강조
-- ShareCopy: 선택 Field만 공유 + Snapshot/Source 독립성 강조
-
-### State Coverage
-
-`docs/final/08-screen-specification.md`의 State/Empty/Error/HOLD 열을 기준으로 별도 Frame 생성.
-
-- Empty / Error: 기술 상태만 표현, 영적 의미 없음
-- Validation / Success: Screen Spec 범위 내에서만 표현
-- Moderation: CANDIDATE 상세 유지
-- Export: OPEN / LOW PRIORITY 유지
-- Minor Public Sharing: HOLD 유지
-- Scripture Full Text / Retrieval: HOLD 유지
-- AI Memory Longitudinal Consent: HOLD 유지
-
-### Visual Trace Audit Result
-
-- Expected Screen ID: 23
-- Figma Base Screen ID: 23
-- Missing: 0
-- Extra: 0
-- Duplicate Base ID: 0
-- State Variant: 49
+- Screen Spec ↔ Figma: Missing 0 / Extra 0 / Duplicate 0
 - Forbidden Legacy Meaning Reintroduced: 0
 - Forbidden Product Lock Hit: 0
 
-## 7. OPEN / CANDIDATE / HOLD
+**Visual Verdict: OWNER PASS / VISUAL LOCKED**
 
-### Non-blocking OPEN / CANDIDATE
+## 7. Implementation Gate / 개발 착수 게이트
+
+### GO — Current non-HOLD Scope
+
+다음 WBS는 개발 착수 가능:
+
+- `WBS-RPT-000` Foundation
+- `WBS-RPT-100` Journey Core
+- `WBS-RPT-200` Prayer Core
+- `WBS-RPT-300` Promise Core
+- `WBS-RPT-400` Action Core
+- `WBS-RPT-500` Repentance Core
+- `WBS-RPT-600` Confession Core
+- `WBS-RPT-610` ShareCopy
+
+Dependency-safe 병렬 개발 허용.
+
+개발 우선순위:
+
+`Foundation → Domain Logic / State / Permission / Test → Functional UI Binding → Pixel-perfect Visual Alignment`
+
+Figma Visual Lock을 구현 기준으로 사용할 수 있으나 Product Meaning은 반드시 Final Documentation을 우선한다.
+
+### P1 / Boundary-aware
+
+- Scripture Reference: Full Text/Runtime HOLD 경계 유지
+- Community Reaction/Report: G-07 정책 범위에서만 가능
+- Notification: Promise/Action Reminder only
+- Account Delete: Privacy/ShareCopy 선택 정책 준수
+
+### NOT START / CANDIDATE / HOLD
+
+CANDIDATE / OPEN:
 - Moderation Workflow Detail
 - Moderator Action Detail
 - Exact Lifecycle Enum Naming
@@ -165,7 +169,7 @@ Owner가 기존 디자인 컨셉 복원을 명시함.
 - Recovery 상세
 - Scripture dedicated Flow 필요 여부
 
-### HOLD
+HOLD:
 - Minor Public Sharing
 - Longitudinal Consent 상세
 - Scripture Full Text License
@@ -175,6 +179,8 @@ Owner가 기존 디자인 컨셉 복원을 명시함.
 - RS-AR05-D3
 - RS-G10-D1
 
+위 항목은 Implementation Gate GO에 포함되지 않는다.
+
 ## 8. Branch / Reality
 
 | 항목 | 값 |
@@ -182,28 +188,33 @@ Owner가 기존 디자인 컨셉 복원을 명시함.
 | Repository | `nroadcompany-ux/repent` |
 | Working Branch | `claude/new-session-gwiqkv` |
 | Final Documentation Lock SHA | `a3c7c6d68a4ddf9d3d8a9d3818b4ddbcba9cb7c0` |
+| Visual Lock Decision | `2026-09-05 Owner PASS` |
 | main merge | 수행하지 않음 |
 
 ## 9. Next Action / 다음 작업
 
-**NEXT = OWNER VISUAL REVIEW → VISUAL LOCK → IMPLEMENTATION GATE**
+**NEXT = CLAUDE CODE IMPLEMENTATION EXECUTION**
 
-1. Owner가 복원된 White/Black Figma Current Page의 23 Base + 주요 State를 시각 검수
-2. Owner Correction이 있으면 Screen Spec Meaning을 변경하지 않는 범위에서 Visual Correction
-3. Owner Visual PASS 시 `VISUAL LOCK`
-4. Visual Lock 후 `docs/final/10-wbs-development-handoff.md` 기준 Implementation Gate 판단
-5. CANDIDATE/HOLD 영역은 별도 해소 전 개발 금지
+1. Remote Reality Check
+2. WBS-RPT-000 Foundation 착수
+3. WBS-RPT-100~610 Dependency-safe 병렬 구현
+4. Domain Logic / State / Permission / Test 우선
+5. Figma Visual Lock 기준 Functional UI Binding
+6. Build/Test/Regression Evidence 확보
+7. Handoff/CHANGELOG 업데이트
+8. Commit → Push → Fetch → Remote SHA Verify
 
 ## 10. Current Verdict / 현재 판정
 
 - Final Documentation 01~10: **LOCKED**
 - Figma Base Screen: **23/23**
 - Figma State Coverage: **49 Variants / 72 Total Frames**
-- Visual Concept: **WHITE / BLACK / NEUTRAL GRAY RESTORED**
+- Visual Concept: **WHITE / BLACK / NEUTRAL GRAY**
+- Owner Visual Approval: **PASS**
+- Visual Lock: **LOCKED**
 - Screen Spec ↔ Figma: **TRACE PASS**
 - Product Lock Violation: **0**
 - Accessibility / Layout QA: **PASS**
-- Visual QA: **PASS**
-- Owner Visual Approval: **NEXT**
+- Implementation Gate: **GO — CURRENT NON-HOLD SCOPE**
 - New Product Meaning Created: **0**
 - New Theology Rule Created: **0**
