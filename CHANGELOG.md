@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## Owner Visual PASS / Visual Lock / Implementation Gate GO (2026-09-05)
+
+- Owner가 현재 REPENT White / Black / Neutral Gray Visual을 명시적으로 PASS.
+- Figma Visual v1.0을 **VISUAL LOCKED** 상태로 승격.
+- Locked Visual Language:
+  - Pure White Background
+  - Black / Near Black Primary Text & CTA
+  - Neutral Gray Secondary Text
+  - Light Gray Border / Divider
+  - Warm Ivory / Navy Accent 미사용
+  - Editorial / Minimal / Quiet / Serious
+- Figma Coverage 유지: Base 23 / State Variant 49 / Total 72.
+- Screen Spec ↔ Figma Audit 유지: Missing 0 / Extra 0 / Duplicate 0.
+- Layout/Accessibility QA: Overflow 0 / Small Touch Target 0 / Dark-on-Dark Center 0.
+- Product Lock Violation = 0.
+- Implementation Gate = **GO — CURRENT NON-HOLD SCOPE**.
+- GO WBS:
+  - WBS-RPT-000 Foundation
+  - WBS-RPT-100 Journey Core
+  - WBS-RPT-200 Prayer Core
+  - WBS-RPT-300 Promise Core
+  - WBS-RPT-400 Action Core
+  - WBS-RPT-500 Repentance Core
+  - WBS-RPT-600 Confession Core
+  - WBS-RPT-610 ShareCopy
+- Dependency-safe 병렬 개발 허용.
+- 개발 우선순위: Foundation → Domain Logic/State/Permission/Test → Functional UI Binding → Pixel-perfect Visual Alignment.
+- Figma는 Visual 구현 기준으로 사용 가능하지만 Product Meaning Source는 `docs/final/01~10`이 우선.
+- Moderation Detail / Exact Lifecycle Enum / Export 상세 등 CANDIDATE/OPEN은 임의 구현 금지.
+- Minor Public Sharing / Longitudinal Consent / Scripture Full Text·Retrieval / OpenAI Runtime Binding / Official Model Run / RS-AR05-D3 / RS-G10-D1 HOLD 유지.
+- main merge 수행하지 않음.
+- New Product Meaning Created = 0
+- New Theology Rule Created = 0
+
 ## Visual Concept Restore — White / Black / Neutral Gray (2026-09-05)
 
 - Owner 확인: 기존 REPENT Visual Concept은 White Background + Black/Near-Black + Neutral Gray 기반 Minimal UI.
@@ -24,7 +58,6 @@
   - Journey Social `함께` 재유입 = 0
 - Screen Spec ↔ Figma Trace 유지: Missing 0 / Extra 0 / Duplicate 0.
 - Visual QA = PASS.
-- Owner Visual Review = NEXT.
 - New Product Meaning Created = 0
 - New Theology Rule Created = 0
 
@@ -41,17 +74,11 @@
   - Repentance: Fixed Step/Progress 없이 Optional Scripture/Promise/Action 연결을 분리 표시.
   - Confession Privacy: Preview 확인 후 Publish 구조 강조.
   - ShareCopy: 선택 Field만 공유 + Snapshot/Source 독립성 강조.
-- State Coverage를 Screen Spec의 State/Empty/Error/HOLD 열 기준으로 생성:
-  - Empty/Error는 기술 상태로만 표현하고 영적 의미 부여 금지.
-  - Validation/Success는 기존 Screen Spec 범위에서만 표현.
-  - Moderation Workflow/Action Detail = CANDIDATE 유지.
-  - Export = OPEN / LOW PRIORITY 유지.
-  - Minor Public Sharing / Scripture Full Text·Retrieval / AI Memory Longitudinal Consent = HOLD 유지.
+- State Coverage를 Screen Spec의 State/Empty/Error/HOLD 열 기준으로 생성.
 - Forbidden Legacy Product Meaning Reintroduced = 0.
 - Visual QA = PASS.
-- Owner Visual Approval = NEXT.
-- New Product Meaning Created = 0.
-- New Theology Rule Created = 0.
+- New Product Meaning Created = 0
+- New Theology Rule Created = 0
 
 ## Figma Visual v1.0 Reconstruction — Legacy Purge + 23 Screens (2026-09-05)
 
@@ -59,23 +86,7 @@
 - 기존 `REPENT v0.5 — 5-Tab IA` 삭제 완료.
 - 새 단일 페이지 생성: `REPENT Final Lock — Visual v1.0` / Page Node `44:2`.
 - Final Documentation의 `docs/final/08-screen-specification.md`만 기준으로 23개 Screen ID 전체 시각화.
-- 생성 화면군: Journey/Turning Point/Search, Onboarding/Prayer, Promise/Action/Action Follow-up, Repentance/Finish, Confession/Privacy Preview, ShareCopy 3종, Scripture Reference, Community/Report/Moderation Candidate, Reminder, Account Delete, Export, AI Memory.
 - 기존 Figma/Prototype을 Product Planning Source로 사용하지 않음.
-- Product Lock Visual 반영:
-  - Main Nav = 여정/약속/실행/회개/고백
-  - Today = Journey 내부 현재 좌표
-  - Journey Social/함께 제거
-  - Prayer Response Tracking 제거
-  - Action Failure Cause Taxonomy 금지 + Retry/Modify/Reschedule/Record Only/Optional Repent
-  - Repentance Fixed Step/Progress/Score 제거 + `회개 기록 마치기`
-  - Promise 1:N Action + `마무리됨`
-  - Confession 4종/Privacy 3옵션/공감 1종/랭킹 금지
-  - Search = Journey 내부
-  - AI Memory Default OFF
-  - Scripture Reference 중심 / Full Text HOLD
-- `SCR-RPT-MOD-001`은 CANDIDATE DETAIL로 표시, 상세 Workflow/Action 임의 확정하지 않음.
-- `SCR-RPT-EXP-001`은 OPEN / LOW PRIORITY로 표시.
-- Minor Public Sharing / Longitudinal Consent / Scripture Full Text·Retrieval 등 HOLD 경계를 유지.
 - New Product Meaning Created = 0
 - New Theology Rule Created = 0
 
@@ -88,9 +99,7 @@
 - Product Meaning Conflict = 0.
 - Current non-HOLD Blocking = 0.
 - Owner Decision Required for Current Scope = 0.
-- Exact Lifecycle Enum Naming은 기존 Owner Decision대로 CANDIDATE/OPEN 유지, 임의 확정하지 않음.
-- Moderation Workflow Detail / Moderator Action Detail은 CANDIDATE 유지.
-- Minor Public Sharing / Longitudinal Consent / Scripture Full Text License·Retrieval / OpenAI Runtime Binding / Official Model Run / RS-AR05-D3 / RS-G10-D1은 HOLD 유지.
+- CANDIDATE/OPEN/HOLD 상태 유지.
 - Prototype = LEGACY / NON-CANONICAL.
 - `main` merge 수행하지 않음. Working Branch = `claude/new-session-gwiqkv`.
 - Final Lock 직전 Handoff/CHANGELOG 원문은 `docs/history/`에 보존.
