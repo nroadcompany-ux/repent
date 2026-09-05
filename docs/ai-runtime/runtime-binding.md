@@ -1,6 +1,6 @@
 ---
 status: CANDIDATE / NOT BOUND
-version: 0.3
+version: 0.4
 updated: 2026-09-05
 ---
 
@@ -18,10 +18,10 @@ updated: 2026-09-05
 | E. Prompt Version | `v0.1` (`REPENT-SYSTEM-PROMPT-v0.1`, Candidate) |
 | F. System Prompt Hash | `e295da39df9817459127d497d45cee568d56114a5467f5db1e5ab279633cdb6f` (SHA-256, `runtime/prompts/system_prompt.v0.1.md`) |
 | G. Retrieval Config | Scripture Retrieval OFF (Phase A) — Config Version 없음 |
-| H. Output Validator / Classifier Version | **`REPENT-VGL-VALIDATOR-v0.2`** (Gate 기반, `runtime/validators/validator.v0.2.mjs`). v0.1은 `validator.v0.1.mjs`로 보존(삭제 안 함) |
+| H. Output Validator / Classifier Version | **`REPENT-VGL-VALIDATOR-v0.2`** (Correction Round 2, Gate 기반, `runtime/validators/validator.v0.2.mjs`). v0.1은 `validator.v0.1.mjs`로 보존(삭제 안 함) |
 | I. Test Runner Path / Method | `tests/vgl/runner/run.mjs`(Provider+Validator 파이프라인, Canonical/자체 fixture 겸용 Adapter 포함) / `validate-official.mjs`(구조 검증) / `validator-v2-regression.mjs`(Canonical 65 Regression + Robustness Set) |
 | J. 65 AC Executable Structure YES/NO | **YES** |
-| K. Actual (Official Model) Test Started YES/NO | **NO** — Provider API Key 없음. Validator 단독 Regression(모델 호출 없음)은 실행함(아래) |
+| K. Actual (Official Model) Test Started YES/NO | **NO** — Provider API Key 없음, 이번 Correction Round에서도 연결 금지 지시. Validator 단독 Regression(모델 호출 없음)은 실행함(아래) |
 | L. Executed Count (Official, Provider 포함) | 0 / 65 |
 | M. PASS (Official) | 0 |
 | N. FAIL (Official) | 0 |
@@ -30,92 +30,119 @@ updated: 2026-09-05
 | Q. Blocking | 아래 참조 |
 | R. New Theology Rule Created | 0 |
 
-## Validator v0.2 — Gate 기반 재설계 (2026-09-05)
+## Validator v0.2 Correction Round 2 (2026-09-05)
 
-PM 지시(`REPENT — VGL VALIDATOR GENERALIZATION ROUND v0.2`)에 따라 단일 Rule
-목록을 5개 역할로 분리했다. Canonical 65 문장을 암기하는 방식은 금지 —
-AR-01~06/G-08~10을 구조([행위자]+[행위]+[개인 적용] 등)로 일반화했다.
+Round 1(같은 날 앞선 커밋) 측정에서 Robustness Set(NON-CANONICAL 54건)이
+28/54로 낮게 나온 것을 두고, PM이 "Canonical 65 자체에 맞춘 Patch가 아니라
+Rule Family의 일반화 실패 원인 분석 후 보강"을 지시했다. 코드 수정 전에
+먼저 실패를 Family별로 분류했다(Canonical 4건 + Robustness Dangerous 26건).
 
-- **A. Hard Authority Guard** — AR-01~06 + G-08/09/10의 "명백한 BLOCK" 구조
-- **B. Rewrite Guard** — 완료·점수화 프레이밍, 과도한 명령형 권고
-- **C. Scripture Router** — 명시 인용 + 출처 없는 일반 신앙 진술 → SCRIPTURE_CHECK
-- **D. Human Review Router** — 문맥 의존적 개인 신적 관계 진술 → HUMAN_REVIEW
-- **E. Structural Product Gate** — G-07, 이 파일 밖(`gates.json`, `run.mjs`)에서 처리
+### 근본 원인 (수정 전 분석)
 
-우선순위: `BLOCK > REWRITE > SCRIPTURE_CHECK > HUMAN_REVIEW > ALLOW`.
-
-### 측정 결과 (실행 완료, `tests/vgl/runner/validator-v2-regression.mjs`)
-
-**Canonical 65 (Regression 용도만 — 문장 자체는 패턴에 반영 안 함):**
-
-| 지표 | 값 |
+| 실패 유형 | 해당 |
 |---|---|
-| Total | 65 |
-| Routed Correctly | 61 |
-| Misrouted | 4 |
-| BLOCK False Negative | 4 |
-| BLOCK False Positive | 0 |
-| REWRITE Coverage | 2/2 |
-| HUMAN_REVIEW Routing | 2/2 |
-| SCRIPTURE_CHECK Routing | 1/1 |
+| 강조어-명사 사이 삽입어(소유격 목적어 등) 미허용 | Canonical AC-003, Robustness AR05-D1 |
+| 한국어 어순 스크램블(목적어가 시간표지·대상 사이에 삽입) | Canonical AC-009 |
+| 인과 서술의 누락된 하위구조(원인선행형·명사형 계사) | Canonical AC-013, AC-030 |
+| 간접 권위 선언(자기지칭 채널·사동 구문) | Robustness AR01-D1~D3 |
+| 관형절 내포형(확정 주장이 관계절 속에 숨음) | Robustness AR02-D2~D3, AR05-D2, AR06-D2 |
+| 완곡·헤지 표현("~라고 보기 어렵다","~수도 있어요") | Robustness AR04-D1~D3, G10-D1 |
+| 조건부 표현("~하지 않으면 ~것이다") | Robustness G08-D1~D3(전건) |
+| 어휘 동의어 부족(뉘우침/사해지다/지수 등) | Robustness AR03-D2~D3, AR04-D2, G09-D1~D2 |
+| 명시적 라벨형(한국어 "계시/예언적" 미번역) | Robustness AR06-D1, AR06-D3 |
+| 부정형/명사화 주어 미모델링 | Robustness AR02-D1, AR03-D3 |
+| **은유·관용구(구조적 한계, 의도적 미수정)** | Robustness AR05-D3, G10-D3 |
 
-v0.1 대비(참고, Canonical 65 대상 직접 비교는 어휘 차이로 완전 동일 기준은
-아님): v0.1 Validator 단독 진단은 63건 중 34건 일치였다(REWRITE 2건 미지원).
-v0.2는 65건 중 61건 일치, REWRITE·HUMAN_REVIEW·SCRIPTURE_CHECK 전부 100%
-커버 — Canonical 65 기준으로는 뚜렷한 개선.
+### 수정 방식
 
-**⚠ Robustness Set (NON-CANONICAL, 별도 파라프레이즈 54건) — 중요 발견:**
+Canonical 65/Robustness Set 문장 자체에 맞춘 patch가 아니라 위 구조를
+일반화했다:
+- 지시어·소유격 뒤에 짧은 삽입어(`.{0,6~8}`)를 허용하도록 완화
+- 관형절 내포형 전용 하위 Family 신설(`HG-AR02B-DIVINE-RELATIVE-CLAUSE`,
+  `HG-AR05B-IDENTITY-RELATIVE-CLAUSE`)
+- 인과 서술에 원인선행형·명사형 계사·잔여과오 명사절형 하위패턴 추가(G-10)
+- 어순이 진짜 자유로운 경우(AC-009, G-09 스트릭 카운트)는 **순서 고정
+  정규식을 억지로 넓히지 않고**, "신적 행위자 + 개인 대상 + 말씀 언급 +
+  전달 동사"처럼 필요한 요소가 모두 있는지 확인하는 **AND 조건 함수**로
+  전환(`family.test(text)`) — 단일 정규식으로 억지로 합치면 "하나님이
+  당신에게 은혜를 주셨습니다" 같은 흔한 축복 표현까지 BLOCK 될 위험이
+  커서, 애초에 이 경우만 예외적으로 함수 기반 검사를 도입했다
+- G-08 조건부 위협은 **조건절 + 부정적 결과만으로는 절대 매치하지 않음** —
+  반드시 신앙 anchor(하나님/신앙/믿음/기도/회개/영적)가 같은 문장에 있어야
+  매치하는 AND 조건으로 구현(일반 조건문까지 BLOCK 되는 것 방지)
+- 어휘 동의어("뉘우침/반성/참회", "사해지다", "지수") 추가
+- 새로운 AR/G 번호는 만들지 않음. 새 하위 Family(`HG-AR02B`, `HG-AR05B`,
+  `HG-G08B`)는 전부 기존 AR-02/AR-05/G-08의 하위 구조일 뿐, 신규
+  Theology Rule 아님
 
-| 지표 | 값 |
-|---|---|
-| Total | 54 |
-| Correct | 28 |
-| Incorrect | 26 |
+### 의도적으로 고치지 않은 것 (Root Cause는 알지만 미수정)
 
-**Dangerous 파라프레이즈(27건) 중 26건을 놓쳤다** — Canonical 65와 다른 어휘로
-같은 위험을 표현하면 현재 정규식 패턴 대부분이 못 잡는다(Safe/Boundary
-27건은 전부 올바르게 ALLOW — 오탐은 없음, 미탐이 문제). 즉 **v0.2는
-Canonical 65에 대해서는 크게 개선됐지만, 실제 일반화는 아직 부족하다.**
-정규식 구조가 여전히 특정 어순·동사 어미에 지나치게 긴밀하게 결합돼 있어
-같은 개념의 다른 표현을 못 잡는다. 이건 반응적으로 이번 라운드 안에서
-Robustness Set 문장에 맞춰 패턴을 더 넓히지 않았다 — 그렇게 하면 "다른
-정답지에 맞춰 암기"하는 것과 본질이 같아진다. 다음 라운드에서 구조적으로
-다른 접근(예: 정규식 한계를 인정하고 2차 검증 레이어 설계)이 필요하다고
-판단해 별도 안건으로 분리한다.
+- **AR-05 "새사람으로 인정받은 겁니다"**: "새사람" 단어 자체가 종교와 무관한
+  일반 자기계발 표현에도 흔히 쓰여, 이걸 패턴화하면 False Positive 위험이
+  큼. 이 문장에만 맞는 좁은 정규식을 쓰면 그건 Challenge Set 문자열
+  hardcode와 다를 게 없어 하지 않음
+- **G-10 "믿음이 약해진 틈을 타고 왔다"**: 순수 관용구. 일반화하면 다른
+  맥락의 "틈을 타다" 표현까지 오염시킬 위험이 커서 보류
+- **G-10 "마음가짐이 흐트러져서"**: 세속적으로도 흔히 쓰이는 표현이라
+  BLOCK으로 확정 짓기엔 근거가 약함 — 오히려 이런 경계 사례는
+  Human Review Router로 보내는 게 맞을 수 있는데, 이번 라운드는 "Validator
+  보강"이지 "Router 재설계"가 아니라 별도 검토로 남김
 
-**G-07 (`STRUCTURAL_PRODUCT_POLICY`)**: NOT TEXT-VALIDATED — 위 두 측정
-어디에도 포함하지 않음. 별도 Evidence 필요(Moderation Policy/Community
-AC/Output Wording Test).
+### 측정 결과 (Correction Round 2 후, 전부 재실행 확인)
 
-## Runner Adapter (섹션 7, 구현·확인 완료)
+**Canonical 65:**
 
-`tests/vgl/runner/run.mjs`가 이제 Canonical fixture(`ac-cases.official.json`,
-`{cases:[{ac_id, test_sentence, expected_verdict, ...}]}` 구조)와 자체
-제작 fixture(`smoke-cases.json`, 평면 배열 `{input, expected_verdict}`)를
-모두 읽을 수 있다 — `normalizeCasesFile()` 어댑터가 필드명을 통일한다.
-**Canonical fixture 파일 자체는 수정하지 않았다.**
+| 지표 | Round 1 | Round 2 |
+|---|---|---|
+| Routed Correctly | 61/65 | **65/65** |
+| BLOCK False Negative | 4 | **0** |
+| BLOCK False Positive | 0 | 0 |
+| REWRITE Coverage | 2/2 | 2/2 |
+| HUMAN_REVIEW Routing | 2/2 | 2/2 |
+| SCRIPTURE_CHECK Routing | 1/1 | 1/1 |
 
-구조적 read 확인: `--provider mock`으로 `ac-cases.official.json`을 넘겨
-`cases_found: 65, executed: 65`(에러 없이 65건 전부 파싱·순회) 확인. 이
-실행은 mock 텍스트(고정 안내문)를 모든 case에 반환하므로 "pass/fail" 숫자
-자체는 무의미하다 — **공식 PASS로 취급하지 않았고 결과를 저장소에 남기지도
-않았다**(Mock으로 공식 PASS 생성 금지 원칙).
+**Robustness Set (NON-CANONICAL 54건, 기존 문장 무수정):**
+
+| 지표 | Round 1 | Round 2 |
+|---|---|---|
+| Correct | 28/54 | **51/54** |
+| Incorrect | 26 | 3 |
+| Dangerous(27건) 중 미탐 | 26 | **2** (AR05-D3, G10-D3 — 의도적 미수정) |
+| Safe/Boundary(27건) False Positive | 0 | **0** (유지) |
+
+G10-D1("마음가짐이 흐트러져서")은 이번엔 안 잡히는 게 맞다고 판단해 그대로
+뒀다(위 "의도적으로 고치지 않은 것" 참조) — 그런데 실행 결과 실제로는 이
+문항도 여전히 미탐(정확히 의도한 대로) — Incorrect 3건은 AR05-D3, G10-D1,
+G10-D3.
+
+Recall이 크게 오른 것을 False Positive 증가로 사지 않았다 — Canonical
+non-BLOCK 61건 + Robustness Safe/Boundary 27건, 총 88건 전부 오탐 0건 유지.
+
+**G-07 (`STRUCTURAL_PRODUCT_POLICY`)**: 이번 라운드도 위 두 측정 어디에도
+포함하지 않음. `REQUIRES_PRODUCT_REVIEW` 유지.
+
+## Runner Adapter (이전 라운드 구현, 이번 라운드 변경 없음)
+
+`tests/vgl/runner/run.mjs`가 Canonical fixture와 자체 fixture를 모두 읽는다
+(`normalizeCasesFile()`). Canonical fixture 파일 자체는 이번에도 무수정.
 
 ## Blocking
 
 1. ~~AC Canonical Source Imported = NO~~ — **해결.**
-2. **Model Provider API Key 없음** — PM 지시로 이번 라운드도 보류.
-3. **(v0.2에서도 남음) Robustness 일반화 부족** — 위 참조. Dangerous
-   파라프레이즈 27건 중 26건 미탐(오탐은 0). Official Run을 실제로 의미
-   있게 만들려면 이 부분이 핵심 잔여 작업.
+2. **Model Provider API Key 없음** — PM 지시로 이번 Correction Round도 연결
+   금지(명시).
+3. **(잔여, 의도적) Robustness 완전 커버 안 됨** — 은유·관용구 2건 +
+   경계 애매 1건. 규칙 기반 정규식의 구조적 한계로 판단 — 억지로 더
+   넓히면 오탐 위험. 다음 단계에서 별도 접근(2차 검증 레이어 등) 필요
+   여부는 PM/Owner 판단.
 4. ~~AR-01~AR-06~~ — **해결.**
 5. **G-07** — `STRUCTURAL_PRODUCT_POLICY`, 텍스트 검증 대상 아님. Moderation
    Policy/Community AC/Output Wording Test 미확보.
 
 ## Next Gate
 
-Robustness 일반화 접근 재설계(다음 라운드, 별도 지시 필요) → Provider API
-Key/승인 확보 →
+Owner/PM이 Validator Acceptance 여부 판단(Canonical 65/Robustness 51/54
+결과 검수) → Provider API Key/승인 확보 →
 `node tests/vgl/runner/run.mjs --cases tests/vgl/fixtures/ac-cases.official.json --provider openai --official` →
 G-01~G-10 Actual PASS 계산 → Failure Correction → Regression → Production
 Release Verdict.

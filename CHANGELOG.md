@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## AI Runtime — Validator v0.2 Correction Round 2 (2026-09-05)
+- PM 지시(`VGL VALIDATOR CORRECTION ROUND 2`)로 Round 1의 Robustness 낮은
+  점수(28/54) 원인을 코드 수정 전에 먼저 Family별 실패 분석(Canonical 4건
+  + Robustness Dangerous 26건) — 상세는 `docs/ai-runtime/runtime-binding.md`
+- 근본 원인: 삽입어 미허용(강조어-명사 사이), 어순 스크램블 가정, 인과
+  서술 하위구조 누락, 간접 권위 선언(자기지칭 채널·사동), 관형절 내포형,
+  완곡·헤지 표현, 조건부 표현, 어휘 동의어 부족, 한국어 명시적 라벨 누락,
+  부정형/명사화 주어 미모델링 — 전부 구조적 원인이지 개별 문장 문제 아님
+- `runtime/validators/validator.v0.2.mjs` 보강: 하위 Family 신설
+  (`HG-AR02B-DIVINE-RELATIVE-CLAUSE`, `HG-AR05B-IDENTITY-RELATIVE-CLAUSE`,
+  `HG-G08B-CONDITIONAL-GUILT-PUSH`), 기존 Family에 어휘·구조 확장. 새 AR/G
+  번호 없음 — 전부 기존 AR-02/05/08의 하위 구조
+- 순서 고정 정규식으로 못 푸는 경우(AC-009 어순 스크램블, G-09 스트릭
+  카운트 순서)는 `family.test(text)` AND-조건 함수 도입 — 정규식 하나로
+  억지로 넓히면 "하나님이 당신에게 은혜를 주셨습니다" 같은 흔한 축복
+  표현까지 BLOCK 될 위험이 있어 신적 행위자/개인 대상/말씀 언급/전달 동사가
+  전부 있는지 확인하는 방식으로 전환. G-08 조건부 위협도 신앙 anchor
+  필수의 AND-조건으로 구현(일반 조건문 오탐 방지)
+- **의도적 미수정 3건**: AR-05 "새사람으로 인정받다"(일반 자기계발 표현과
+  혼동 위험), G-10 "믿음이 약해진 틈을 타고"(순수 관용구), G-10 "마음가짐이
+  흐트러져서"(세속적으로도 흔해 확정 BLOCK 근거 약함 — Human Review 재설계
+  검토 필요). Canonical/Robustness 문장에 맞춘 literal hardcode로 메우지
+  않음
+- **측정 결과**: Canonical 65 — 61/65→**65/65**(BLOCK False Negative
+  4→0, False Positive 0 유지). Robustness Set — 28/54→**51/54**(Dangerous
+  27건 중 미탐 26→2, Safe/Boundary 27건 False Positive 0 유지) — Recall
+  개선을 False Positive 증가로 얻지 않았음(Canonical+Robustness 합계 88건
+  전부 오탐 0)
+- Robustness Set(54건) 원본 문장 무수정 확인 — 기존 실패 문장을 정답에
+  맞게 고치는 방식 아님
+- G-07 `STRUCTURAL_PRODUCT_POLICY`/`REQUIRES_PRODUCT_REVIEW` 유지, 텍스트
+  판정 대상 아님
+- Official Model Run: 이번 Correction Round에서도 API Key 연결·Provider
+  Smoke Test·Official 65 Model Run 전부 금지 지시대로 미실행, **NOT RUN**
+  유지. Production Release = **HOLD** 유지
+- Canonical Sentence/Verdict/Reason Changed = 0 / New Theology Rule
+  Created = 0 / New Product Meaning Created = 0
+
 ## AI Runtime — Validator v0.2 Generalization Round (2026-09-05)
 - `runtime/validators/validator.v0.1.mjs` — v0.1 이름 변경(History 보존,
   삭제 안 함), `tests/vgl/runner/validator.v0.1.unit.mjs`도 동일하게 보존
