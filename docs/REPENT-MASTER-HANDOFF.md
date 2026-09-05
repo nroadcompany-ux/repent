@@ -1,6 +1,6 @@
 ---
-status: FINAL DOCUMENTATION LOCKED / VISUAL V1.0 QA PASS
-version: 1.3
+status: FINAL DOCUMENTATION LOCKED / VISUAL V1.0 WHITE-BLACK QA PASS
+version: 1.4
 updated: 2026-09-05
 owner: REPENT PM
 ---
@@ -35,8 +35,12 @@ Legacy Prototype은 Product Planning Source가 아니다.
 | Figma Base Screens | **23/23 BUILT** |
 | Figma State Variants | **49 BUILT** |
 | Total Visual Frames | **72** |
+| Visual Concept | **WHITE / BLACK / NEUTRAL GRAY — OWNER DIRECTED RESTORE** |
 | Screen Spec ↔ Figma Audit | **PASS — Missing 0 / Extra 0 / Duplicate 0** |
 | Product Lock Violation in Figma | **0** |
+| Overflow | **0** |
+| Small Touch Target | **0** |
+| Dark-on-Dark Center Contrast | **0** |
 | P0 UX Correction | **APPLIED** |
 | Visual QA | **PASS / OWNER VISUAL REVIEW NEXT** |
 | Figma Legacy | **OWNER 지시로 기존 페이지/화면 전부 삭제 완료** |
@@ -96,6 +100,27 @@ Canonical 65 수정 금지.
 - State Variant: **49**
 - Total Screen/State Frame: **72**
 
+### Visual Language Lock Candidate / 시각 언어 후보
+
+Owner가 기존 디자인 컨셉 복원을 명시함.
+
+- Background: Pure White
+- Primary Text / CTA: Black / Near Black
+- Secondary Text: Neutral Gray
+- Border / Divider: Light Gray
+- Warm Ivory / Navy Accent: 폐기
+- 과도한 Card/Color Accent 사용 금지
+- Editorial / Minimal / Quiet / Serious 톤 유지
+
+이 변경은 Product Meaning 변경이 아니라 **Visual Correction**이다.
+
+### UX / Accessibility Correction
+
+- 72 Frame 전체 White/Black/Neutral Gray로 동기화
+- Interactive Chip/Segment에 최소 44px Invisible Touch Target 추가: **37개**
+- Restore 과정의 Dark-on-Dark 실제 Label Contrast 6건 수정
+- Final Audit: Overflow 0 / Small Touch Target 0 / Dark-on-Dark Center 0
+
 ### P0 UX Review / Correction
 
 대상: Journey / Action Follow-up / Repentance / Confession Privacy / ShareCopy
@@ -127,8 +152,7 @@ Canonical 65 수정 금지.
 - Duplicate Base ID: 0
 - State Variant: 49
 - Forbidden Legacy Meaning Reintroduced: 0
-
-금지어 검색에서 발견된 문구는 `응답상태를 만들지 않습니다`, `진행률은 없습니다`, `실패원인을 분류하지 않습니다` 등의 **금지 선언 Copy 자체**이며 실제 기능/상태 재도입이 아니다.
+- Forbidden Product Lock Hit: 0
 
 ## 7. OPEN / CANDIDATE / HOLD
 
@@ -164,7 +188,7 @@ Canonical 65 수정 금지.
 
 **NEXT = OWNER VISUAL REVIEW → VISUAL LOCK → IMPLEMENTATION GATE**
 
-1. Owner가 Figma Current Page의 23 Base + 주요 State를 시각 검수
+1. Owner가 복원된 White/Black Figma Current Page의 23 Base + 주요 State를 시각 검수
 2. Owner Correction이 있으면 Screen Spec Meaning을 변경하지 않는 범위에서 Visual Correction
 3. Owner Visual PASS 시 `VISUAL LOCK`
 4. Visual Lock 후 `docs/final/10-wbs-development-handoff.md` 기준 Implementation Gate 판단
@@ -175,8 +199,10 @@ Canonical 65 수정 금지.
 - Final Documentation 01~10: **LOCKED**
 - Figma Base Screen: **23/23**
 - Figma State Coverage: **49 Variants / 72 Total Frames**
+- Visual Concept: **WHITE / BLACK / NEUTRAL GRAY RESTORED**
 - Screen Spec ↔ Figma: **TRACE PASS**
 - Product Lock Violation: **0**
+- Accessibility / Layout QA: **PASS**
 - Visual QA: **PASS**
 - Owner Visual Approval: **NEXT**
 - New Product Meaning Created: **0**
