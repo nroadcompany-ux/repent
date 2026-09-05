@@ -29,12 +29,12 @@ updated: 2026-09-05
 
 | 항목 | 값 |
 |---|---|
-| Last Update | 2026-09-05 (Planning Delta — 4 Product Decision 확정 + Figma Delta) |
-| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `fae4eae4201f0a1a395294f3481c39e468b05cb7` |
-| Changed Area | `docs/04-policy-business-rules.md`(4개 정책 LOCKED 추가), Planning Completion Status 재구성, Planning Audit 문서에 SUPERSEDED 배너 |
-| Status Delta | 이전 "Gate=C, Planning≈22%"는 **SUPERSEDED/REASSESSMENT PENDING**. Prayer Response Tracking·Journey"함께" REMOVED, Action Failure=Follow-up Action Choice화, Repentance 고정10단계 REMOVED 확정. Figma "v0.5 5-Tab IA" = OUTDATED/CORRECTION REQUIRED(PM 보고) |
-| Remaining Blocking | 신규: prototype `s-action-fail` Failure Cause Taxonomy 교정 필요, Figma Correction 필요. 기존 유지: Community/Moderation 기능 미정의, 4개 엔티티 데이터모델, 권한모델, Lifecycle State, API Binding/Privacy/Minor Safety/Scripture License(HOLD) |
-| Next P0 | PM 지정 체인 — "Current P0(Planning)" 섹션 참조(Requirements→Feature→Flow→Data/State/Permission→Story/Task/AC→Community Minimum Scope→Figma Correction Blueprint→Planning Gate 재평가) |
+| Last Update | 2026-09-05 (Product Planning Lock Cross Review) |
+| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `eb5e79857ed7d3e4ef52001d515a4155097c7a98` |
+| Changed Area | Cross Review 실행(문서 무변경 — read-only 검증), Master Handoff에 Cross Review Result 섹션 신규 |
+| Status Delta | Overall Verdict = **PASS WITH OPEN**(Canonical 문서 내 Product Meaning 위반 0건). Planning Gate = **C 유지**(변경 없음). 신규 발견 2건: prototype `s-repent` 진행률/스텝카운터가 Decision E와 구조적 충돌(Legacy Artifact, Doc Lock 비차단), Validator가 Decision H 금지 문구를 미차단(P1 Gap, 실행 검증 완료) |
+| Remaining Blocking | 변경 없음(Community 기능 미정의, 6개 엔티티 데이터모델, 권한모델, Lifecycle State 전무, API Binding/Privacy/Minor Safety/Scripture License HOLD) + 신규 P1(ShareCopy 3번째 규칙 미문서화, Validator 커버리지) |
+| Next P0 | PM 지정 체인 불변 — Requirements→Feature→Flow→Data/State/Permission→Story/Task/AC→Community Minimum Scope→Figma Correction Blueprint→Planning Gate 재평가(이번 라운드는 체인 착수 안 함, Cross Review만 수행) |
 
 이 커밋(이 문서를 포함해 새로 만드는 커밋)의 실제 SHA는 이번 라운드
 RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본문에는
@@ -126,6 +126,169 @@ Requirements → Feature → Flow → Data/State/Permission
 REASSESSMENT PENDING. 위 P0 체인이 진행되고 최소 Requirements~Data/
 State/Permission까지 진전된 뒤 Gate를 재산출한다. 그 전까지 최종 문서
 10종(01~10) 작성 미착수 원칙 유지.
+
+---
+
+## Cross Review Result (2026-09-05, Product Planning Lock Cross Review — 최신)
+
+PM 지시 `REPENT — PRODUCT PLANNING LOCK CROSS REVIEW REQUEST`에 따라
+실행. **이번 라운드는 순수 교차 검수다 — 검수 결과를 근거로 어떤
+Product Meaning도 직접 수정하지 않았다**(`docs/00~10` 무변경 확인,
+아래 git diff 참조). Source Priority 1번(실제 GitHub Remote)을 최우선
+근거로 실제 코드 실행·grep으로 검증했다.
+
+### Planning Lock Status
+
+**PASS WITH OPEN** — Canonical Source(`docs/00~10`) 내부에서는 최신
+Owner/PM Decision(A~H)과 모순되는 서술을 찾지 못했다(직전 라운드에서
+이미 A~D 상당 부분을 `docs/04`에 LOCKED로 반영해뒀기 때문). 단,
+**Canonical 문서가 아직 다루지 않는 항목(OPEN)과, Canonical이 아닌
+`prototype/index.html`(PM이 이번 지시에서 명시적으로 "Product
+Planning Source 아님"이라 규정한 Legacy Artifact)에서 발견된 실제
+충돌**이 남아 있다 — 이 둘을 섞지 않고 아래에서 분리 보고한다.
+
+### Resolved Decisions (Canonical Source에 이미 반영 확인됨)
+
+- A. Main Nav 5개 + Today=Journey 내부 좌표(독립 탭 아님) — `docs/01-ia.md`
+  기존 Owner Lock과 일치, 신규 반영 불필요
+- B. Prayer Response Tracking REMOVED — `docs/04` 기존 반영(직전 라운드)
+- C. Journey "함께" REMOVED — `docs/04` 기존 반영(직전 라운드)
+- D. Action Failure = Follow-up Action Choice, Taxonomy 금지 — `docs/04`
+  기존 반영(직전 라운드)
+- E. Repentance Fixed 10-Step REMOVED, Final CTA/Completed Copy — `docs/04`
+  기존 반영(직전 라운드)
+- H. Scripture 3-Category(Directly Relevant/Theme-related/Reflection
+  Candidate) — **`docs/06-ai-vgl-guardrail.md`에 이미 이 세 명칭 그대로
+  존재**(Notion Hub 출처로 사전에 반영돼 있었음, 이번에 실행 확인만 함).
+  License HOLD도 일치
+
+### Remaining OPEN (Canonical 문서가 아직 다루지 않음 — 모순은 아님)
+
+- F. ShareCopy 3원칙 중 **"Source 삭제 ≠ ShareCopy 자동 삭제"는
+  `docs/05-data-model.md`에 아직 없음**(기존 문서는 "Share Delete ≠
+  Source Delete" 한 방향만 명시) — 반대 방향 규칙이 이번 지시에서
+  처음 명문화됨. 문서 반영은 PM 승인 후
+- F. "Private Source → Select Fields → Mask/Named → Preview →
+  ShareCopy" 파이프라인 — 현재 `docs/05`·`docs/07`은 3단계 공개옵션만
+  정의, "필드 선택"·"미리보기" 단계는 문서에 없음(OPEN, 신규 세부화)
+- G. Community MVP 최소 범위(보기/공감/신고/운영검토/유지·숨김·삭제,
+  댓글·DM·팔로우·랭킹·인기순·영적배지·등급·횟수기반추천 제외) —
+  기존 Critical Gap("Community 기능 자체 미정의")의 **범위(Scope)는
+  이번 지시로 확정**됐으나, 이 범위를 담을 문서(화면·데이터·Review
+  Queue·상태)는 여전히 없음. PM 승인 후 `docs/04`/`docs/08`/`docs/05`
+  반영 필요
+- 6개 핵심 엔티티(Prayer/Promise/Action/RepentanceRecord/
+  ScriptureReference/TurningPoint) CRUD/Owner/Visibility/Lifecycle —
+  변경 없음, 여전히 OPEN
+- Permission Model 전체 — 변경 없음, 여전히 MISSING/OPEN(§8 Private=
+  Owner 중심, Moderator=공유분만 열람이라는 **원칙은 이번에 명시**됐지만
+  문서화·구현 전무)
+
+### ⚠ P0 CONFLICT — 실제 코드 실행으로 확인 (Canonical 문서 아님, Legacy Artifact)
+
+**PM 지시 1번(Figma/prototype은 현재 Product Planning Source가 아님)에
+따라, 아래 2건은 "Canonical Product Meaning 위반"이 아니라 "재설계
+대상 Legacy Artifact의 잔존 충돌"로 분류한다 — Documentation Lock을
+막지 않지만, 향후 재설계 시 반드시 제거해야 한다:**
+
+1. **`prototype/index.html` `s-action-fail` 화면(af1~af6, 6개 실패
+   원인 선택지)** = Decision D가 금지한 Failure Cause Taxonomy 그
+   자체(직전 라운드에 이미 발견, 재확인). 현재 버튼("다시 실천하기"/
+   "약속 수정하기"/"회개로 이어가기(선택)")은 Retry/Modify/Optional
+   Repent 3개만 대응, **Reschedule·Record Only는 아예 없음**
+2. **`prototype/index.html` `s-repent` 화면의 `step-fill`(퍼센트
+   진행바)+`step-counter`("1 / 2" 고정 카운터)** = Decision E가 금지한
+   "진행률/고정 스텝 카운터" 패턴과 **구조적으로 동일**(구체 숫자만
+   다름, "4/10"이 아니라 "1/2"). **신규 발견(이번 라운드)**. 실제
+   Step 구성도 2단계(central/next)뿐이라 Decision E의 4단계 명칭(돌아
+   보기/고백하기/말씀 앞에서 바라보기/돌이킴·삶으로 연결)과도 불일치
+   — 재설계 필요
+   - 대조 확인(일치, 정상): Final CTA 버튼 텍스트 "회개 기록 마치기"
+     와 완료 화면 문구 "하나님께 드린 회개를 기록했습니다"는 Decision
+     E와 **이미 정확히 일치**(교정 불필요)
+
+### AI/VGL Coverage Gap (실제 실행 검증, 신규 발견)
+
+`runtime/validators/validator.v0.2.mjs`를 Decision H의 금지 예문
+"하나님이 지금 이 말씀을 주셨습니다."에 대해 **실제로 실행**한 결과
+`verdict: "ALLOW"`(BLOCK 아님) — 현재 Validator가 이 특정 구조(개인
+대상 없이 "이 말씀을 주셨다"는 서술)를 잡지 못한다. `docs/06`의 AR-01/
+AR-06 취지와는 부합해야 하는 문장이지만 실제 Pattern/`test()` 조건이
+"당신/너(개인 대상)"를 요구해 이 문장을 통과시킨다. **Validator
+Verdict Logic은 이번 라운드에서 변경하지 않았다**(범위 밖) — Robustness
+Governance 잔여 항목(RS-AR05-D3/RS-G10-D1)과 같은 성격의 P1 Gap으로
+기록, PM 결정 후 별도 Correction 라운드에서 처리 권장
+
+### Domain Boundary Review
+
+Journey(시간축)/Prayer(개인 기도 기록)/Repentance(하나님 앞 고백)/
+Promise(결단)/Action(행동)/Confession(선택적 공유 Surface) — 6개
+Domain 정의를 현재 문서·prototype과 대조한 결과 **Owner 중복이나 기능
+중복 정의는 발견되지 않음**. Prayer는 Promise의 "기도" 모드(작성)와
+Confession의 "기도제목" 서브타입(공유)에 걸쳐 나타나지만, 이는 하나의
+Prayer 레코드에 대한 **작성 진입점과 공유 진입점의 분리**로 해석
+가능하며 상충 정의는 아님 — 단, Prayer 엔티티 자체가 아직 정의되지
+않아(위 OPEN 참조) 완전한 무충돌을 보증할 수는 없다(UNVERIFIED로 유보)
+
+### Theology / VGL Review — Product 문서·Data·State·AC 내 숨은 위반 검사
+
+`docs/00~10`, `docs/04`(신규 4개 정책 포함) 전체를 아래 금지 목록
+기준으로 grep + 육안 대조: Faith Score / Repentance Score / Prayer
+Response Rate / 하나님과 거리 / 영적 성장 점수 / Action Failure=Sin /
+Missed Promise=Sin / 회개 충분성·진정성 판정 / 개인 구원 상태 / 개인
+용서 선언 / 하나님의 개인적 뜻 확정 / AI 계시·예언 / FORGIVEN·SAVED·
+REPENTED·FAITHFUL·SPIRITUALLY_FAILED 상태값.
+
+**결과: 0건 검출.** 발견된 매치는 전부 "~하지 않는다/~금지"형 서술
+(금지 선언문 자체)이었고, 금지 대상이 실제로 채택된 사례는 없음.
+**단서**: 대부분의 Product 엔티티(Prayer/Promise/Action/
+RepentanceRecord 등)가 아직 데이터 모델 자체를 갖지 않아(OPEN) 검사
+대상 표면적이 작다는 점을 감안해야 한다 — "위반이 없다"는 "아직 위반할
+곳이 많지 않다"는 사실과 함께 읽어야 정확하다
+
+### P0 Conflict / P1 Gap / Non-blocking / HOLD / Owner Decision Required 요약
+
+- **P0 Conflict (Legacy Artifact, Doc Lock 비차단)**: prototype
+  `s-action-fail` Taxonomy, prototype `s-repent` 진행률/스텝카운터
+- **P1 Gap**: ShareCopy 3번째 규칙 문서화, Select Fields/Mask/Preview
+  파이프라인 문서화, Community MVP 범위의 문서 반영, Validator의
+  Decision H 문구 커버리지
+- **P0 Gap(기존 유지, 변경 없음)**: 6개 엔티티 데이터모델, Permission
+  Model, Lifecycle State 전무
+- **Non-blocking OPEN**: 없음(이번 라운드 신규 없음)
+- **HOLD(변경 없음)**: Privacy/Consent, Minor Safety, Scripture
+  License/Retrieval, OpenAI Runtime Binding, Actual Provider Model
+  Test, RS-AR05-D3/RS-G10-D1
+- **Unsupported Product Meaning**: 0건(Canonical 문서 내 위반 없음)
+- **Owner Decision Required**: Community MVP를 어느 문서(04 vs 08)에
+  담을지, ShareCopy 3번째 규칙·Select Fields 파이프라인 문서 반영
+  승인, prototype Correction(Action Failure/Repentance step-bar) 착수
+  시점, Validator Decision-H 커버리지 보강 착수 여부
+
+### Overall Verdict & Planning Gate Recommendation
+
+- **Requirement Trace**: OPEN (변경 없음)
+- **Feature Trace**: PARTIAL (Community 범위는 이번에 확정, 문서화·구현은 아직)
+- **Story/Task/AC Trace**: MISSING(Product) — 변경 없음
+- **Flow**: OPEN — `docs/02` 여전히 빈 스텁, prototype은 Source 아님
+- **Data**: OPEN/PARTIAL — 3개 엔티티 명칭만, ShareCopy 2/3 규칙만 문서화
+- **State**: MISSING — 변경 없음
+- **Permission**: MISSING — 원칙은 이번에 명시, 문서·구현은 없음
+- **Policy**: PARTIAL→개선 — `docs/04`에 4개 정책 추가로 밀도 상승,
+  Community/ShareCopy 세부는 아직 OPEN
+- **Domain Boundary**: PASS(중복/충돌 없음, 일부 UNVERIFIED)
+- **Theology/VGL**: PASS(Canonical 문서 내 0건), AI Validator 커버리지는 P1 Gap
+- **Privacy/Sharing**: PASS(원칙 일치) + P1 Gap(3번째 규칙 미문서화)
+
+**Overall Verdict: PASS WITH OPEN** — Canonical Source에서 발견된
+Product Meaning 위반 0건. 단 다수의 OPEN/P0 Gap이 여전히 남아 있어
+문서 그 자체의 완성도는 낮다.
+
+**Planning Gate Recommendation: C** — 변경 없음(이전 감사와 동일 판단
+유지). 이번 교차 검수는 "지금까지 나온 결정이 서로 모순되지 않는가"를
+확인한 것이지, "최종 문서 10종을 쓸 만큼 기획이 채워졌는가"를 바꾸지
+않는다. 6개 엔티티 데이터모델·Permission Model·Lifecycle State
+전무와 Community 기능 미구현이 여전히 C의 근거다.
 
 ---
 
