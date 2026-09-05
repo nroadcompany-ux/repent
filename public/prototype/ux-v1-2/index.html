@@ -65,8 +65,13 @@
     <div class="scroll">
       <div class="dots" id="q-dots"></div>
       <div class="head">
-        <p class="head__eyebrow">시작하기 전에</p>
+        <p class="head__eyebrow" id="q-eyebrow"></p>
         <h1 class="head__title" id="q-title"></h1>
+      </div>
+
+      <div class="why">
+        <span class="why__icon" aria-hidden="true">?</span>
+        <p class="why__text" id="q-why"></p>
       </div>
 
       <div class="field">
@@ -78,9 +83,7 @@
         <button class="cta cta--ghost" id="q-skip" type="button">건너뛰기</button>
       </div>
 
-      <p class="note" style="margin-top:20px">
-        답한 내용은 첫 기록으로 여정에 남습니다. 비워 두어도 됩니다.
-      </p>
+      <p class="note" style="margin-top:20px" id="q-foot"></p>
     </div>
   </section>
 
@@ -116,10 +119,29 @@
         <p class="head__sub">기록이 있는 날만 남습니다.</p>
       </div>
 
-      <div class="hero">
-        <div class="hero__head">
-          <span class="hero__title">지나온 시간</span>
+      <div class="life">
+        <div class="life__head">
+          <span class="life__title">인생 그래프</span>
           <span class="badge badge--sample" id="j-sample">예시</span>
+        </div>
+        <p class="life__hint">좌우로 밀어보세요. 지나온 시간이 순서대로 이어집니다.</p>
+        <div class="life__scroll" id="j-life-scroll"></div>
+        <p class="life__axis-note">
+          위아래 높낮이는 <b>그때의 마음</b>을 본인이 직접 표시한 것입니다.
+          신앙의 수준이나 점수가 아니며, 앱이 판단하지 않습니다.
+        </p>
+      </div>
+
+      <div class="section">
+        <p class="section__title">지나온 순간</p>
+        <p class="note" style="margin:-4px 0 12px">눌러보면 그날의 생각과 돌아봄이 나옵니다.</p>
+        <div class="life-list" id="j-life-list"></div>
+        <div id="j-life-detail"></div>
+      </div>
+
+      <div class="section hero">
+        <div class="hero__head">
+          <span class="hero__title">최근에 남긴 기록</span>
         </div>
         <div id="j-curve"></div>
         <div class="hero__legend" id="j-legend"></div>

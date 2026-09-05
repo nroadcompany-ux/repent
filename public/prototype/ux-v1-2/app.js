@@ -233,6 +233,190 @@
     target.innerHTML = svg.join('');
   }
 
+  /* ------------------------------------------------------- life curve */
+
+  /**
+   * Sample life history for review — a 40-year-old woman, per the Owner's brief.
+   *
+   * `mood` is the user's OWN marking of how that time felt. It is not a faith
+   * level, not a score and not something the app or AI decides. The axis is
+   * drawn without any numeric scale so it cannot be read as a measurement.
+   */
+  var LIFE_EVENTS = [
+    {
+      age: 7, era: '유년기', title: '초등학교 입학', mood: 1,
+      thought: '학교 가는 길이 멀어서 아침마다 뛰었어요. 엄마가 교문 앞까지 데려다주던 날이 아직 생각납니다.',
+      reflection: '그때는 몰랐는데, 누군가 늘 데려다주고 있었다는 게 지금 보면 참 고맙습니다.',
+    },
+    {
+      age: 12, era: '유년기', title: '아버지 사업이 어려워짐', mood: -2,
+      thought: '집 안 공기가 갑자기 달라졌어요. 어른들이 밤늦게까지 이야기하는 소리를 이불 속에서 들었습니다.',
+      reflection: '그 시기를 지나며 걱정이 많은 사람이 된 것 같아요. 지금도 미리 불안해하는 버릇이 남아 있습니다.',
+    },
+    {
+      age: 16, era: '청소년기', title: '수련회에서 처음 울며 기도함', mood: 2,
+      thought: '왜 우는지도 모르고 한참 울었습니다. 그날 처음으로 하나님이 계시는구나 싶었어요.',
+      reflection: '지금까지 붙잡고 있는 기억입니다. 힘들 때마다 그날로 돌아가 봅니다.',
+    },
+    {
+      age: 19, era: '대학·청년', title: '대학 입학, 집을 떠남', mood: 2,
+      thought: '처음으로 혼자 사는 방이 생겼습니다. 자유로우면서도 밤에는 무서웠어요.',
+      reflection: '혼자 있는 시간을 견디는 법을 그때 조금 배웠던 것 같습니다.',
+    },
+    {
+      age: 22, era: '대학·청년', title: '어머니 투병', mood: -2,
+      thought: '병원과 학교를 오갔습니다. 기도가 잘 안 나왔어요.',
+      reflection: '그때 하나님께 화가 났었다는 걸 한참 뒤에야 인정했습니다.',
+    },
+    {
+      age: 25, era: '대학·청년', title: '첫 직장', mood: 1,
+      thought: '첫 월급으로 어머니 내복을 샀습니다. 별것 아닌데 뿌듯했어요.',
+      reflection: '일에 파묻혀 지내면서 교회와는 조금 멀어졌던 시기이기도 합니다.',
+    },
+    {
+      age: 28, era: '결혼', title: '결혼', mood: 3,
+      thought: '앞으로는 혼자가 아니라는 게 가장 좋았습니다.',
+      reflection: '그때의 마음이 잘못된 건 아니었어요. 지금도 그날은 좋은 날로 남아 있습니다.',
+    },
+    {
+      age: 30, era: '결혼', title: '첫 아이', mood: 3,
+      thought: '작은 손이 제 손가락을 쥐던 순간을 잊지 못합니다.',
+      reflection: '이 아이 때문에 버틴 날이 정말 많습니다.',
+    },
+    {
+      age: 34, era: '결혼', title: '오래 다투던 시기', mood: -2,
+      thought: '같은 이야기를 반복했습니다. 서로 지쳐가는 게 보였어요.',
+      reflection: '그 시기에 아이에게 큰 소리를 냈던 일들이 지금도 마음에 남아 있습니다.',
+    },
+    {
+      age: 36, era: '이후', title: '이혼', mood: -3,
+      thought: '제 인생이 여기서 끝난 것 같았습니다. 한동안 아무에게도 말하지 못했어요.',
+      reflection: '오래 지나서야 이 일을 하나님 앞에 꺼내놓을 수 있었습니다. 아직 다 정리되지는 않았습니다.',
+    },
+    {
+      age: 38, era: '이후', title: '다시 교회에 나가기 시작함', mood: 0,
+      thought: '맨 뒷자리에 앉았다가 축도 전에 나왔습니다. 그래도 매주 갔어요.',
+      reflection: '돌아간 게 아니라 돌아가는 중이었다고 지금은 생각합니다.',
+    },
+    {
+      age: 39, era: '이후', title: '아이와 둘의 일상이 자리잡음', mood: 1,
+      thought: '저녁마다 같이 밥을 먹고 하루를 이야기합니다.',
+      reflection: '화려하지 않아도 이런 하루가 얼마나 귀한지 이제 압니다.',
+    },
+    {
+      age: 40, era: '이후', title: '지금', mood: 1,
+      thought: '조급한 마음이 아직 있지만, 예전보다는 덜합니다.',
+      reflection: '오늘부터 남기는 기록이 다음 점이 됩니다.',
+    },
+  ];
+
+  var selectedEvent = null;
+
+  function renderLifeCurve(scrollHost, listHost, detailHost, events) {
+    var STEP = 138, padL = 66, padR = 66, H = 214;
+    var W = padL + padR + STEP * (events.length - 1);
+    var baseY = 104, amp = 21;
+
+    function yFor(mood) { return baseY - mood * amp; }
+    function xFor(i) { return padL + STEP * i; }
+
+    var svg = ['<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="지나온 시간의 그래프">'];
+
+    // era bands
+    var eras = [];
+    events.forEach(function (e, i) {
+      var last = eras[eras.length - 1];
+      if (last && last.era === e.era) last.to = i;
+      else eras.push({ era: e.era, from: i, to: i });
+    });
+
+    eras.forEach(function (band, bi) {
+      if (bi % 2 === 0) {
+        var x0 = xFor(band.from) - STEP / 2;
+        var x1 = xFor(band.to) + STEP / 2;
+        svg.push('<rect class="lc-era-band" x="' + Math.max(0, x0) + '" y="0" width="' + (x1 - Math.max(0, x0)) + '" height="' + (H - 44) + '" />');
+      }
+      var cx = (xFor(band.from) + xFor(band.to)) / 2;
+      svg.push('<text class="lc-era" x="' + cx + '" y="16" text-anchor="middle">' + band.era + '</text>');
+    });
+
+    svg.push('<line class="lc-base" x1="0" y1="' + baseY + '" x2="' + W + '" y2="' + baseY + '" />');
+
+    // smooth path through the marked points
+    var pts = events.map(function (e, i) { return [xFor(i), yFor(e.mood)]; });
+    var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
+    for (var i = 1; i < pts.length; i++) {
+      var p0 = pts[i - 1], p1 = pts[i];
+      var cx1 = p0[0] + STEP / 2, cx2 = p1[0] - STEP / 2;
+      d += ' C ' + cx1 + ' ' + p0[1] + ', ' + cx2 + ' ' + p1[1] + ', ' + p1[0] + ' ' + p1[1];
+    }
+    svg.push('<path class="lc-area" d="' + d + ' L ' + pts[pts.length - 1][0] + ' ' + (H - 44) + ' L ' + pts[0][0] + ' ' + (H - 44) + ' Z" />');
+    svg.push('<path class="lc-line" d="' + d + '" />');
+
+    // today marker
+    var lastX = xFor(events.length - 1);
+    svg.push('<line class="lc-now" x1="' + lastX + '" y1="24" x2="' + lastX + '" y2="' + (H - 44) + '" />');
+
+    events.forEach(function (e, idx) {
+      var x = xFor(idx), y = yFor(e.mood);
+      var on = selectedEvent === idx;
+      svg.push('<circle class="lc-dot' + (on ? ' lc-dot--on' : '') + '" cx="' + x + '" cy="' + y + '" r="' + (on ? 8 : 6) + '" data-ev="' + idx + '" />');
+      // Alternate the label offset so neighbouring titles do not collide, and
+      // keep them short — the full title is always readable in the list below.
+      var stagger = idx % 2 === 0 ? 0 : (e.mood >= 0 ? -14 : 14);
+      var labelY = (e.mood >= 0 ? y - 17 : y + 25) + stagger;
+      var short = e.title.length > 9 ? e.title.slice(0, 8) + '…' : e.title;
+      svg.push('<text class="lc-label' + (on ? ' lc-label--on' : '') + '" x="' + x + '" y="' + labelY + '" text-anchor="middle" data-ev="' + idx + '">' + short + '</text>');
+      svg.push('<text class="lc-tick" x="' + x + '" y="' + (H - 22) + '" text-anchor="middle">' + e.age + '세</text>');
+    });
+
+    svg.push('</svg>');
+    scrollHost.innerHTML = svg.join('');
+
+    listHost.innerHTML = events
+      .map(function (e, idx) {
+        return (
+          '<button class="life-item" type="button" data-ev="' + idx + '"' +
+          ' aria-expanded="' + (selectedEvent === idx) + '">' +
+          '<span class="life-item__age">' + e.age + '세</span>' +
+          '<span><span class="life-item__title">' + e.title + '</span><br>' +
+          '<span class="life-item__era">' + e.era + '</span></span></button>'
+        );
+      })
+      .join('');
+
+    if (selectedEvent === null) {
+      detailHost.innerHTML = '';
+    } else {
+      var e = events[selectedEvent];
+      detailHost.innerHTML =
+        '<div class="life-detail">' +
+        '<p class="life-detail__when">' + e.age + '세 · ' + e.era + '</p>' +
+        '<p class="life-detail__title">' + e.title + '</p>' +
+        '<div class="life-detail__section"><p class="life-detail__label">그날의 생각</p>' +
+        '<p class="life-detail__body">' + e.thought + '</p></div>' +
+        '<div class="life-detail__section"><p class="life-detail__label">지금 돌아보면</p>' +
+        '<p class="life-detail__body">' + e.reflection + '</p></div>' +
+        '</div>';
+    }
+  }
+
+  /** Selecting an event from either the curve or the list below it. */
+  document.addEventListener('click', function (e) {
+    var hit = e.target.closest ? e.target.closest('[data-ev]') : null;
+    if (!hit) return;
+    var idx = Number(hit.dataset.ev);
+    selectedEvent = selectedEvent === idx ? null : idx;
+    var host = el('j-life-scroll');
+    var keep = host.scrollLeft;
+    renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
+    host.scrollLeft = keep;
+    if (selectedEvent !== null) {
+      var detail = el('j-life-detail');
+      if (detail.firstChild) detail.firstChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+
   function legendHtml() {
     return Object.keys(KINDS)
       .map(function (k) {
@@ -248,10 +432,35 @@
   /* 02 — three optional questions */
   var qIndex = 0;
   var qAnswers = ['', '', ''];
+  /**
+   * Each question states why it is being asked. A first-time user should never
+   * have to guess what the answer is for.
+   */
   var QUESTIONS = [
-    { q: '오늘 하나님께 드리고 싶은 기도가 있나요?', ph: '짧게 한 문장이어도 좋습니다.', type: 'prayer' },
-    { q: '마음에 남아 있는 약속이나 결단이 있나요?', ph: '지키지 못해도 괜찮습니다.', type: 'promise' },
-    { q: '오늘 실천하고 싶은 한 가지가 있나요?', ph: '아주 작은 것이어도 좋습니다.', type: 'action' },
+    {
+      q: '오늘 하나님께 드리고 싶은 기도가 있나요?',
+      ph: '짧게 한 문장이어도 좋습니다.',
+      type: 'prayer',
+      eyebrow: '세 가지만 여쭤볼게요 · 첫 번째',
+      why: '지금 마음에 있는 기도를 남겨두면 <b>여정의 첫 점</b>이 됩니다. 시간이 지나 다시 열어봤을 때, 그때 무엇을 구했는지 그대로 볼 수 있어요.',
+      foot: '답한 내용은 기도 기록으로 남습니다. 비워 두어도 됩니다.',
+    },
+    {
+      q: '마음에 남아 있는 약속이나 결단이 있나요?',
+      ph: '지키지 못해도 괜찮습니다.',
+      type: 'promise',
+      eyebrow: '세 가지만 여쭤볼게요 · 두 번째',
+      why: '적어두면 <b>잊지 않게 됩니다.</b> 나중에 이 약속을 어떻게 살아냈는지 돌아볼 수 있고, 지키지 못한 날이 있어도 그것을 잘못으로 기록하지 않습니다.',
+      foot: '약속 기록으로 남고, 나중에 실행을 이어 붙일 수 있습니다.',
+    },
+    {
+      q: '오늘 실천하고 싶은 한 가지가 있나요?',
+      ph: '아주 작은 것이어도 좋습니다.',
+      type: 'action',
+      eyebrow: '세 가지만 여쭤볼게요 · 마지막',
+      why: '작은 실천 하나가 <b>약속과 이어져</b> 여정에 남습니다. 오늘 못 해도 괜찮습니다. 다음에 어떻게 할지 직접 고르시면 됩니다.',
+      foot: '실행 기록으로 남습니다. 지금 떠오르지 않으면 건너뛰세요.',
+    },
   ];
 
   screens.questions = function () {
@@ -259,7 +468,10 @@
     el('q-dots').innerHTML = QUESTIONS.map(function (_, i) {
       return '<i class="' + (i <= qIndex ? 'is-on' : '') + '"></i>';
     }).join('');
+    el('q-eyebrow').textContent = q.eyebrow;
     el('q-title').textContent = q.q;
+    el('q-why').innerHTML = q.why;
+    el('q-foot').textContent = q.foot;
     el('q-input').placeholder = q.ph;
     el('q-input').value = qAnswers[qIndex];
     el('q-next').textContent = qIndex === QUESTIONS.length - 1 ? '기록하고 여정 시작하기' : '다음';
@@ -310,7 +522,14 @@
       c.setAttribute('aria-pressed', String(c.dataset.range === journeyRange));
     });
 
-    el('j-sample').style.display = has ? 'none' : 'inline-flex';
+    // The life history itself is always sample data in this prototype.
+    el('j-sample').style.display = 'inline-flex';
+
+    var lifeHost = el('j-life-scroll');
+    var firstPaint = !lifeHost.firstChild;
+    renderLifeCurve(lifeHost, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
+    if (firstPaint) lifeHost.scrollLeft = lifeHost.scrollWidth;
+
     el('j-caption').textContent = has
       ? '기록이 있는 날에만 점이 남습니다. 비어 있는 날은 표시되지 않아요.'
       : '기록이 쌓이면 이곳에서 나와 하나님 사이의 시간을 돌아볼 수 있어요. 아래는 예시입니다.';

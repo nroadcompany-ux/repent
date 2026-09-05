@@ -30,7 +30,11 @@ Next.js는 `public/`만 정적 파일로 서빙한다. Preview URL을 확보하�
 1. Main Nav 5개 후보 — 여정 / 기도 / 약속 / 회개 / 고백 (Action 독립 탭 제거)
 2. Action을 Promise 내부에서 추가·관리
 3. First Entry — Intro → 3개 질문 → 첫 기록 → Journey
-4. Journey Life Curve Hero
+4. **3개 질문마다 "왜 묻는지" 목적 설명** — 답을 왜 써야 하는지 화면에서 바로 보이게
+5. **인생 그래프** — 좌우 스크롤 생애 타임라인. 사건 점을 곡선으로 잇고, 아래에 사건
+   목록, 사건을 누르면 `그날의 생각` / `지금 돌아보면`이 열린다. 예시 데이터는 40세
+   여성 기준(유년기·청소년기·대학/청년·결혼·이후 13개 사건)
+6. Journey 기록 마커 (기도/약속/실행/회개/고백, 점만)
 5. Prayer / Promise / Repentance 상단 Record Count 대시보드 + 최근 맥락 한 줄
 6. Reflection Bridge (실행 실패 → 자동 회개 아님)
 7. Repentance 4영역 구체화 — 죄를 돌아보기 → 구체적으로 돌아보기 →
@@ -62,6 +66,25 @@ Prayer Response Tracking 없음 · Action Failure ≠ Sin · Failure Cause 질�
 Auto Repent 없음 · Repentance Fixed Step / Progress % / Score 없음 ·
 `회개 완료` 문구 없음 (Final CTA는 `회개 기록 마치기`) · Faith / Spiritual Score 없음 ·
 익명 게시 없음 (공개 범위 3옵션) · 인기순 / 랭킹 / 영적 비교 없음 ·
-Missing Day = No Point, 보간 없음.
+Missing Day = No Point, 보간 없음(기록 마커 레이어).
 
 상단 카운트는 **단순 기록 수**이며 응답률·점수가 아니다.
+
+## ⚠️ Canonical Lock과 충돌하는 CANDIDATE
+
+Owner가 직접 지시한 항목 중 현재 Canonical Lock과 충돌하는 것이 있다.
+Owner PASS 전까지 `docs/final/*`는 그대로 두며, 아래를 판단 대상으로 올린다.
+
+| 항목 | Canonical Lock | 이 프로토타입 |
+|---|---|---|
+| 인생 그래프의 선 | `docs/final/05` — Interpolation 금지, 성장 그래프처럼 보이게 금지 | 생애 사건 점을 곡선으로 연결 |
+| Main Nav | `여정 / 약속 / 실행 / 회개 / 고백` | `여정 / 기도 / 약속 / 회개 / 고백` (실행 탭 제거) |
+| Repentance 구성 | Optional Progressive Flow, Fixed Step 금지 | 4개 영역으로 구체화 (번호·진행률은 노출하지 않음) |
+
+인생 그래프에는 다음 방어선을 두었다.
+
+- y축에 **수치·눈금·점수 라벨이 없다.** 높낮이는 사용자가 직접 표시한 `그때의 마음`이다.
+- 화면에 "신앙의 수준이나 점수가 아니며, 앱이 판단하지 않습니다"를 명시했다.
+- 선으로 잇는 것은 **생애 사건 레이어**뿐이다. 기도·회개 등 **기록 마커 레이어는 여전히
+  점만** 찍고 보간하지 않는다(별도 영역으로 분리).
+- 사건과 높낮이는 전부 사용자 입력이며 AI가 생성하거나 평가하지 않는다.
