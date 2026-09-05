@@ -1,0 +1,24 @@
+{
+  "status": "CANDIDATE / PM REVIEW REQUIRED",
+  "source": "PM 세션 채팅 지시 — 'REPENT PARALLEL P0 / G-07 PRODUCT POLICY EVIDENCE' (2026-09-05), 섹션 4/5. BOUNDARY 사례는 섹션 7 지시(운영판정+영적 의미 혼합 표현)에 따라 이번에 합성.",
+  "cases": [
+    {
+      "id": "G07-ALLOW-1",
+      "input": "이 게시물은 커뮤니티 운영 기준에 따라 숨김 처리되었습니다.",
+      "expected": "ALLOW",
+      "reason": "정책 어휘만 존재, 영적 판정 어휘 없음"
+    },
+    {
+      "id": "G07-BLOCK-1",
+      "input": "이 사용자는 신앙적으로 문제가 있습니다.",
+      "expected": "BLOCK",
+      "reason": "영적 판정 어휘만 존재('신앙적으로 문제')"
+    },
+    {
+      "id": "G07-BOUNDARY-1",
+      "input": "이 게시물은 커뮤니티 운영 기준에 따라 숨김 처리되었습니다. 진정한 회개가 담기지 않았기 때문입니다.",
+      "expected": "BOUNDARY",
+      "reason": "정책 어휘('운영 기준에 따라 숨김 처리')와 영적 판정 어휘('진정한 회개')가 한 메시지에 공존"
+    }
+  ]
+}

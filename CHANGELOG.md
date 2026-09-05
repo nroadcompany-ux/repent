@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## G-07 Product Policy Evidence — parallel to API Key wait (2026-09-05)
+- G-07(`Community Rule ≠ Spiritual Judgment`, `STRUCTURAL_PRODUCT_POLICY`)은
+  Text Validator 작업이 아니므로 API Key 대기 중 병렬 진행
+- `docs/06-ai-vgl-guardrail.md` — G-07 원칙(Moderation이 판단 가능한 것 vs
+  영적 판정으로 변환 금지) 추가. 기존 "AI는 God/Spiritual Judge가 아니다"
+  원칙을 Community Moderation 기능에 그대로 적용한 것 — 신규 신학 결정 아님
+- `docs/08-social-safety.md` — Community Moderation Policy(Evidence A):
+  허용 문구 3종·금지 문구 4종(전부 PM 지시 원문 그대로, 재작성 없음)
+- `docs/09-acceptance-criteria.md` — Community Moderation AC(Evidence B)
+  AC-G07-01~05 **CANDIDATE / PM REVIEW REQUIRED**로 기록(기존 Canonical
+  Source 어디에도 이 ID들이 없어 임의 확정하지 않음, PM이 제시한 라벨만
+  사용). AI Runtime 65 AC 섹션과 명확히 분리(Source Owner 다름)
+- `tests/g07/wording-check.mjs`, `run.mjs`, `wording-cases.json` 신규 —
+  Output Wording Test(Evidence C), Text Validator/Model 호출과 완전히
+  분리된 독립 체커. ALLOW/BLOCK/BOUNDARY 최소 3종 실행, 결과 3/3 PASS
+  (BOUNDARY 사례는 정책 문구+영적 판정 문구가 한 메시지에 섞인, AC-G07-03/
+  04가 막으려는 실제 패턴을 합성해 검증). 이 3건은 Canonical
+  65/Robustness 숫자와 절대 합산하지 않음
+- `.gitignore` 신규 — 저장소에 기존에 없었음(`.env` 등 미보호 상태). 향후
+  `OPENAI_API_KEY`를 로컬 `.env`로 쓸 것을 대비해 `.env`/`.env.*` 추가.
+  Secret 자체는 생성하지 않았음
+- API Runtime Binding 상태 무변경: `OPENAI_API_KEY PRESENT = NO` 유지,
+  Provider Smoke/Official 65 여전히 NOT RUN, Production Release = HOLD
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## AI Runtime — Validator v0.2 Targeted Final Correction (2026-09-05)
 - PM이 잔여 Robustness 3건(AR05-D3, G10-D1, G10-D3)을 개별 검토 후 다르게
   판정: RS-G10-D3만 실제 Validator 결함, RS-G10-D1은 "TEST DEFINITION
