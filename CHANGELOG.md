@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## Visual Concept Restore — White / Black / Neutral Gray (2026-09-05)
+
+- Owner 확인: 기존 REPENT Visual Concept은 White Background + Black/Near-Black + Neutral Gray 기반 Minimal UI.
+- PM이 임의 적용했던 Warm Ivory / Navy Accent 컨셉은 폐기.
+- Figma Current Page `REPENT Final Lock — Visual v1.0`의 72개 Frame 전체를 기존 White/Black/Neutral Gray 컨셉으로 일괄 복원.
+- Product Structure / Screen ID / State Coverage는 변경하지 않음: Base 23 + State Variant 49 = Total 72.
+- Visual Correction 결과:
+  - Background = Pure White
+  - Primary Text / Primary CTA = Black / Near Black
+  - Secondary Text = Neutral Gray
+  - Border / Divider = Light Gray
+  - Warm Ivory / Navy Accent 제거
+  - 과도한 Color Accent 금지
+- Accessibility/UX 보정 지속:
+  - Interactive Chip/Segment 37개에 최소 44px Invisible Touch Target 적용.
+  - 복원 과정의 실제 Dark-on-Dark Label Contrast 6건 수정.
+- Final Automated QA:
+  - Overflow = 0
+  - Small Touch Target = 0
+  - Dark-on-Dark Center Contrast = 0
+  - Forbidden Product Lock Hit = 0
+  - Journey Social `함께` 재유입 = 0
+- Screen Spec ↔ Figma Trace 유지: Missing 0 / Extra 0 / Duplicate 0.
+- Visual QA = PASS.
+- Owner Visual Review = NEXT.
+- New Product Meaning Created = 0
+- New Theology Rule Created = 0
+
 ## Figma Visual QA — 23 Base + 49 State Variants (2026-09-05)
 
 - `docs/final/08-screen-specification.md`의 23개 Screen ID를 Figma Current Page와 1:1 대조.
@@ -19,7 +47,6 @@
   - Moderation Workflow/Action Detail = CANDIDATE 유지.
   - Export = OPEN / LOW PRIORITY 유지.
   - Minor Public Sharing / Scripture Full Text·Retrieval / AI Memory Longitudinal Consent = HOLD 유지.
-- 금지어 Audit에서 잡힌 `응답됨·응답대기·응답률 상태는 만들지 않습니다`, `진행률은 없습니다`, `실패 원인을 묻거나 분류하지 않습니다` 등은 기능 재도입이 아니라 금지 선언 Copy로 판정.
 - Forbidden Legacy Product Meaning Reintroduced = 0.
 - Visual QA = PASS.
 - Owner Visual Approval = NEXT.
