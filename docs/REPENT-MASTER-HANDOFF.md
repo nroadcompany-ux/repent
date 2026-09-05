@@ -29,12 +29,12 @@ updated: 2026-09-05
 
 | 항목 | 값 |
 |---|---|
-| Last Update | 2026-09-05 (Owner Decision Final Canonicalization + Missing Planning Audit) |
-| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `92ba27e1afb7ba2be0f20ea081f65e749b5d807d` |
-| Changed Area | `docs/00,01,02,04,05,06,07,08,09,10` — Notion TEMP Decision Queue Q1~Q12 반영(신규 Product Meaning 없음, 기존 Owner Lock 무변경) + Missing Planning Audit 15문항 수행 |
-| Status Delta | Owner Decision Queue **완전 종결**(DECIDED 11 / HOLD 1 / Missing 0). Trace Break 0건 유지(신규 Working ID 9건 추가에도). **Planning Gate = C → B로 상향**(Claude 판단, 근거: 남은 항목이 전부 정당한 HOLD이거나 Product Meaning 확정 후 절차만 남은 Non-blocking) |
-| Remaining Blocking | 없음(Blocking 항목 0) — 남은 것은 Non-blocking OPEN 6건(Moderation Workflow/Moderator Action Detail 등) + 기존 HOLD 7건뿐. Branch Integration Gap(P1)은 변경 없이 유지 |
-| Next P0 | PM 확인 대기 — Gate B 상향에 대한 PM 최종 동의, Moderation Workflow/Minor Public 공유 2개 화면군 착수 여부, Notion TEMP Decision Queue 폐기 승인(Section H) |
+| Last Update | 2026-09-05 (Master Handoff Current-State Cleanup) |
+| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `786e081ff86617bed1212974e1c5c2ae05c538a9` |
+| Changed Area | `docs/REPENT-MASTER-HANDOFF.md`만 정리(문서 구조 정리 — docs/00~10 의미 변경 없음, Figma/Prototype 작업 없음). 신규 "LATEST CURRENT STATE" 최상단 섹션 추가, 과거 3개 라운드 섹션에 SUPERSEDED/HISTORY ONLY 배너 부착, "Owner Decision Final Canonicalization" 섹션에 PM의 Gate B 명시 승인 반영 |
+| Status Delta | **Planning Gate = B, PM 명시 승인 확인**(이전까지는 "Claude 판단, PM 확인 대기"였음 — 이번 지시로 승인 확정). Final 10 Documents = READY. Missing Product Planning/Unresolved Owner Decision/Blocking 전부 0(재확인, 변경 아님) |
+| Remaining Blocking | 없음(변경 없음) — Moderation Workflow/Moderator Action Detail(CANDIDATE), Minor Confession Public 공유(HOLD) 2건만 각자 범위 내 개별 보류 |
+| Next P0 | Moderation Workflow/Minor Public 공유 2개 화면군의 CANDIDATE/HOLD 해소 시점, Notion TEMP Decision Queue 폐기(Section H — Canonical 반영+Handoff 갱신+Audit 완료 확인 후 PM이 폐기) |
 
 이 커밋(이 문서를 포함해 새로 만드는 커밋)의 실제 SHA는 이번 라운드
 RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본문에는
@@ -42,7 +42,45 @@ RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본�
 그 시점의 새 origin SHA로 교체한다(자기 자신의 커밋 SHA를 문서가 커밋
 되기 전에 알 수 없으므로 항상 "직전 확인된 SHA"를 남긴다).
 
-## Planning Completion Status (2026-09-05, PM Delta 반영 — 최신)
+## LATEST CURRENT STATE (Single Source of Truth — 2026-09-05, PM 승인)
+
+> **이 섹션이 REPENT Product Planning의 유일한 현재 상태 선언이다.**
+> 아래 "Planning Completion Status" / "Cross Review Result" /
+> "Canonicalization Batch Result" 3개 섹션은 이 상태에 이르는 과정의
+> **History이며 SUPERSEDED / HISTORY ONLY**로 표시돼 있다 — 그 안의
+> 개별 Gap 목록·Gate 판정("C 유지" 등)을 Current로 읽지 않는다.
+> "Owner Decision Final Canonicalization + Missing Planning Audit"
+> 섹션(바로 아래)이 이 상태의 실제 근거(Audit Return)를 담고 있다.
+
+| 항목 | 값 |
+|---|---|
+| **Planning Gate** | **B — APPROVED**(PM 승인, 2026-09-05) |
+| **Final 10 Documents** | **READY** — 착수 가능 |
+| Missing Product Planning | **0** |
+| Unresolved Owner Decision | **0** |
+| Blocking | **0** |
+| Gate 판정에 포함되지 않는 개별 예외(각자의 범위에서만 보류) | Moderation Workflow Detail·Moderator Action Detail(CANDIDATE), Minor Confession Public 공유(HOLD) — 이 2개 화면군만 자기 범위 안에서 보류, 나머지 Final 10 Documents 착수를 막지 않음 |
+| **Figma** | **NON-CANONICAL / NON-BLOCKING FOR PRODUCT PLANNING** — FINAL DOCUMENTATION LOCK 이후 새로 설계 |
+| **Prototype** | **LEGACY ARTIFACT / NON-CANONICAL** — Product Planning Blocking 아님 |
+| Production HOLD(변경 없음 — 해당 기능/Production 범위에서만 유지, Planning Gate와 무관) | Privacy/Longitudinal Consent 세부 동의, Minor Confession Public 공유, Scripture Full Text License/Retrieval, OpenAI Runtime Binding, Official Model Run, RS-AR05-D3, RS-G10-D1 |
+
+과거 아래 섹션들에 등장했던 다음 문구는 **더 이상 Current가 아니다**
+(섹션 자체가 SUPERSEDED로 표시됨 — 문구는 History 보존 목적으로
+삭제하지 않되, 위 표가 우선한다):
+- "Community 기능 자체 미정의 P0"
+- "핵심 Entity Data Model 부재"
+- "Permission 모델 전무"
+- "Lifecycle State 전무"
+- "Figma Correction = Planning P0"
+- "Figma Correction Blueprint → Planning Gate"
+
+## Planning Completion Status (2026-09-05, PM Delta 반영) — ⚠ SUPERSEDED / HISTORY ONLY
+
+> **이 섹션 전체는 SUPERSEDED다.** Gate 판정("C 유지" 등)과 Critical
+> Gap/Current P0 목록은 이후 라운드(Cross Review → Canonicalization
+> Batch → Owner Decision Final Canonicalization)로 전부 재검토·해소
+> 됐다. 최신 상태는 위 "LATEST CURRENT STATE" 표 참조. 이 섹션은
+> 그 시점의 실제 기록으로서 삭제하지 않고 보존한다.
 
 전체 감사 원문(History, SUPERSEDED 배너 포함 그대로 보존):
 `docs/PRODUCT-PLANNING-COMPLETION-AUDIT-2026-09-05.md`
@@ -129,7 +167,14 @@ State/Permission까지 진전된 뒤 Gate를 재산출한다. 그 전까지 최�
 
 ---
 
-## Cross Review Result (2026-09-05, Product Planning Lock Cross Review — 최신)
+## Cross Review Result (2026-09-05, Product Planning Lock Cross Review) — ⚠ SUPERSEDED / HISTORY ONLY
+
+> **이 섹션 전체는 SUPERSEDED다.** 여기서 식별된 P0 Conflict/Gap
+> (Community 기능 미정의, Permission 모델 전무 등)은 이후
+> Canonicalization Batch + Owner Decision Final Canonicalization
+> 라운드에서 대부분 해소되거나 정당한 HOLD/Non-blocking OPEN으로
+> 재분류됐다. 최신 상태는 위 "LATEST CURRENT STATE" 표 참조. 이
+> 섹션은 그 시점의 실제 검수 기록으로서 삭제하지 않고 보존한다.
 
 PM 지시 `REPENT — PRODUCT PLANNING LOCK CROSS REVIEW REQUEST`에 따라
 실행. **이번 라운드는 순수 교차 검수다 — 검수 결과를 근거로 어떤
@@ -292,7 +337,16 @@ Product Meaning 위반 0건. 단 다수의 OPEN/P0 Gap이 여전히 남아 있�
 
 ---
 
-## Canonicalization Batch Result (2026-09-05, Product Planning Canonicalization / Parallel Execution — 최신)
+## Canonicalization Batch Result (2026-09-05, Product Planning Canonicalization / Parallel Execution) — ⚠ SUPERSEDED / HISTORY ONLY
+
+> **이 섹션 전체는 SUPERSEDED다.** "Planning Gate Reassessment"
+> 하위섹션의 "Gate = C → 유지(상향 아님)" 판정은 다음 라운드(Owner
+> Decision Final Canonicalization + Missing Planning Audit)에서
+> **B로 상향되고 PM이 승인**했다. "Figma / Prototype (재확인)"
+> 하위섹션의 문구도 위 "LATEST CURRENT STATE"의 최신 문구
+> (NON-CANONICAL / NON-BLOCKING FOR PRODUCT PLANNING 등)로
+> 대체됐다. 최신 상태는 위 "LATEST CURRENT STATE" 표 참조. 이 섹션은
+> 그 시점의 실제 반영 기록으로서 삭제하지 않고 보존한다.
 
 PM 지시 `REPENT — PRODUCT PLANNING CANONICALIZATION / PARALLEL
 EXECUTION`에 따라, 이전 Cross Review에서 확인된 "Product Meaning
@@ -476,7 +530,7 @@ CANDIDATE 항목 착수 여부 ④ Lifecycle Enum 이름 확정 ⑤ Figma/Protot
 
 ---
 
-## Owner Decision Final Canonicalization + Missing Planning Audit (2026-09-05 — 최신)
+## Owner Decision Final Canonicalization + Missing Planning Audit (2026-09-05 — CURRENT)
 
 PM 지시 `REPENT — OWNER DECISION FINAL CANONICALIZATION + MISSING
 PLANNING AUDIT` 실행. Notion TEMP Decision Queue Q1~Q12를 Canonical
@@ -561,15 +615,15 @@ RS-G10-D1
   종결(12/12) 기준으로 **약 65~70%**로 재평가(정밀 계량 아님 — 남은
   30~35%는 Moderation/Minor Public 2개 화면군의 세부 설계와 Screen
   Spec 실작성 분량)
-- **Planning Gate: B — READY WITH NON-BLOCKING OPEN/HOLD**
-  (이전 C에서 상향). 근거: 남은 항목이 전부 (a) 정당하게 분리된
-  HOLD(Owner/Legal 영역) 또는 (b) Product Meaning은 확정됐고 구현
-  절차만 남은 Non-blocking OPEN이기 때문 — PM이 예고한 "구현 상세만
-  남은 것을 Product Meaning Gap으로 과장하지 않는다" 기준 적용
-- **Can Start Final 10 Documents: 조건부 YES** — Moderation
-  Workflow·Minor Public 공유를 다루는 2개 화면군을 제외한 나머지
-  전 영역은 착수 가능. 이 2개 화면군은 각각 CANDIDATE 해소·HOLD
-  해소 이후 별도로 진행 권장(전체를 다 막을 필요는 없음)
+- **Planning Gate: B — READY WITH NON-BLOCKING OPEN/HOLD — PM
+  APPROVED(2026-09-05, `REPENT — MASTER HANDOFF CURRENT-STATE
+  CLEANUP` 지시로 명시 승인 확인)**. 근거: 남은 항목이 전부 (a)
+  정당하게 분리된 HOLD(Owner/Legal 영역) 또는 (b) Product Meaning은
+  확정됐고 구현 절차만 남은 Non-blocking OPEN이기 때문
+- **Can Start Final 10 Documents: READY**(PM 승인) — Moderation
+  Workflow·Minor Public 공유를 다루는 2개 화면군만 각자의
+  CANDIDATE/HOLD 범위 안에서 개별 보류, 나머지 전 영역은 착수
+  가능(전체를 다 막지 않음 — 위 "LATEST CURRENT STATE" 표와 동일)
 
 ---
 
