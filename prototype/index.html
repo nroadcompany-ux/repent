@@ -657,11 +657,12 @@ textarea.fld::placeholder,input.fld::placeholder{color:var(--g200)}
       <div class="flex-row"><span style="font-size:13px">⊙</span><div><div style="font-size:12px;font-weight:600;color:var(--bk)">TODAY 지점에 연결</div><div class="caption">이 고백이 여정에 표시됩니다</div></div></div>
     </div>
 
-    <!-- 공개 설정 -->
+    <!-- 공개 설정 (3옵션 · Anonymous 금지) -->
     <div class="slbl mb8">공개</div>
-    <div style="display:flex;gap:7px;margin-bottom:12px">
-      <button class="btn-s" style="flex:1;font-size:11px;padding:9px;background:var(--bk);color:var(--w)">나만 보기</button>
-      <button class="btn-s" style="flex:1;font-size:11px;padding:9px">함께 나누기</button>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="btn-s" style="flex:1;font-size:10px;padding:9px 4px;white-space:normal;line-height:1.3;background:var(--bk);color:var(--w)">나만<br>보기</button>
+      <button class="btn-s" style="flex:1;font-size:10px;padding:9px 4px;white-space:normal;line-height:1.3">이름 가리고<br>나누기</button>
+      <button class="btn-s" style="flex:1;font-size:10px;padding:9px 4px;white-space:normal;line-height:1.3">이름 공개로<br>나누기</button>
     </div>
 
     <div class="guard"><div class="guard-text">직접 작성한 고백은 선택한 공개 설정으로 저장됩니다.<br>
@@ -731,10 +732,10 @@ textarea.fld::placeholder,input.fld::placeholder{color:var(--g200)}
     </div>
 
     <div style="background:var(--g50);border-radius:8px;padding:10px 12px">
-      <div class="slbl mb4">GPT PM 반환 항목</div>
+      <div class="slbl mb4">RESOLVED</div>
       <div style="font-size:10px;color:var(--g600);line-height:1.6">
-        3안 비교 완료. Owner 선택 후 Foundation Lock 반영.<br>
-        선택 없이 임의 확정하지 않습니다.
+        Owner Lock 완료 — A안 "삶의 사건"으로 확정.<br>
+        본 화면은 결정 근거 참고용으로 유지됩니다.
       </div>
     </div>
   </div>
@@ -839,11 +840,10 @@ textarea.fld::placeholder,input.fld::placeholder{color:var(--g200)}
     </div>
 
     <div style="background:var(--g50);border-radius:8px;padding:10px 12px">
-      <div class="slbl mb4">OWNER DECISION REQUIRED</div>
+      <div class="slbl mb4">RESOLVED</div>
       <div style="font-size:10px;color:var(--g600);line-height:1.6">
-        사용자-facing 명칭 확정 필요:<br>
-        Season → "시기" / StoryArc → "이야기 흐름"<br>
-        다른 후보가 있다면 Owner 검토 후 확정.
+        Owner Lock 완료 — Season → "시기" / StoryArc → "이야기 흐름".<br>
+        본 화면은 결정 근거 참고용으로 유지됩니다.
       </div>
     </div>
   </div>
@@ -901,13 +901,11 @@ textarea.fld::placeholder,input.fld::placeholder{color:var(--g200)}
     <div class="h1 mt4">세로 길</div><div class="sub mb16">살아갈 방향과 실행</div>
     <div class="vway-wrap">
       <div class="vway-line"></div>
-      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">LIFE DIRECTION</div><div class="vway-title">하나님 앞에서 온전한 사람</div><div class="vway-sub">기도 연결</div></div>
-      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">LONG-TERM</div><div class="vway-title">가족과의 관계 회복</div><div class="vway-sub">약속 연결됨</div></div>
-      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">YEAR (2026)</div><div class="vway-title">화를 내기 전에 멈추는 습관</div><div class="vway-sub">약속·실행 연결됨</div></div>
-      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">MONTH (9월)</div><div class="vway-title">대화 중 10초 멈추기</div><div class="vway-sub">실행 연결됨</div></div>
-      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">WEEK</div><div class="vway-title">팀 회의에서 실천하기</div></div>
+      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">DIRECTION</div><div class="vway-title">하나님 앞에서 온전한 사람</div><div class="vway-sub">기도 연결</div></div>
+      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">PROMISE</div><div class="vway-title">가족과의 관계 회복</div><div class="vway-sub">약속 연결됨</div></div>
+      <div class="vway-item"><div class="vway-dot done"></div><div class="vway-level">ACTION</div><div class="vway-title">화를 내기 전에 멈추는 습관</div><div class="vway-sub">약속·실행 연결됨</div></div>
       <div class="vway-item"><div class="vway-dot active"></div><div class="vway-level">TODAY</div><div class="vway-title" style="color:var(--bk)">오늘 동료와 대화 시 멈추기</div><div class="vway-sub">현재 지점</div></div>
-      <div class="vway-item"><div class="vway-dot" style="border-color:var(--bk)"></div><div class="vway-level">NOW ACTION</div><div class="vway-title" style="color:var(--g400)">10초 멈추기 · 말 끝까지 듣기</div><div style="margin-top:5px;font-size:10px;color:var(--bk);font-weight:600;cursor:pointer" onclick="go('action')">실행 보기 →</div></div>
+      <div class="vway-item"><div class="vway-dot" style="border-color:var(--bk)"></div><div class="vway-level">NOW</div><div class="vway-title" style="color:var(--g400)">10초 멈추기 · 말 끝까지 듣기</div><div style="margin-top:5px;font-size:10px;color:var(--bk);font-weight:600;cursor:pointer" onclick="go('action')">실행 보기 →</div></div>
     </div>
     <div class="guard"><div class="guard-text">TODAY에서 가로 여정과 세로 길이 교차합니다.</div></div>
   </div>
