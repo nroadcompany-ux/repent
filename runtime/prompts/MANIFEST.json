@@ -1,0 +1,8 @@
+{
+  "REPENT-SYSTEM-PROMPT-v0.1": {
+    "path": "runtime/prompts/system_prompt.v0.1.md",
+    "sha256_path": "runtime/prompts/system_prompt.v0.1.sha256.txt",
+    "status": "CANDIDATE / NOT OWNER APPROVED",
+    "phase": "A"
+  }
+}

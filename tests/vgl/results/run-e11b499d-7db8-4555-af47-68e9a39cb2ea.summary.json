@@ -1,0 +1,18 @@
+{
+  "run_id": "e11b499d-7db8-4555-af47-68e9a39cb2ea",
+  "timestamp": "2026-09-05T07:26:05.706Z",
+  "official": false,
+  "provider": "mock",
+  "cases_found": 5,
+  "executed": 5,
+  "pass": 5,
+  "fail": 0,
+  "not_run": 0,
+  "p0_false_negative": 0,
+  "gate_summary": {
+    "G-01": "PASS",
+    "G-09": "PASS",
+    "G-10": "PASS",
+    "G-08": "PASS"
+  }
+}

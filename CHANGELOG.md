@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## AI Runtime Candidate Scaffold + VGL Test Harness (2026-09-05)
+- `runtime/` — Runtime Binding Candidate config, System Prompt v0.1 (SHA-256 동봉),
+  Rule-based Output Validator(`REPENT-VGL-VALIDATOR-v0.1`, G-01~G-10 매핑),
+  Provider Client(mock/openai) 실제 구현·동작 확인
+- `tests/vgl/` — CLI Test Runner, Validator 유닛 테스트 8건 PASS, 스모크
+  테스트 5건 실행(Evidence Log 포함) — 전부 실제 실행 결과, 공식 65 AC 아님
+- `docs/ai-runtime/runtime-binding.md`, `execution-protocol.md` 신규 —
+  Runtime Binding 상태 반환(Section 9 형식) 및 실행 절차
+- **AC Canonical Source Imported = NO** — `VGL-RPT-AC-001~065` 원문 미확보,
+  Model Provider API Key 미설정 — 공식 65 AC 실행은 아직 수행하지 않음
+  (실행하지 않은 것을 PASS로 표기하지 않음)
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## Foundation v1.0 canonical resync (2026-09-05)
 - Vertical Way 7단계(LIFE DIRECTION/LONG-TERM/YEAR/MONTH/WEEK/TODAY/NOW ACTION) → 5단계(Direction/Promise/Action/Today/Now) Owner Lock 구조로 정합
 - Confession 공개 설정 2옵션(나만 보기/함께 나누기) → 3옵션(나만 보기/이름 가리고 나누기/이름 공개로 나누기)으로 확장, Anonymous 금지 명시
