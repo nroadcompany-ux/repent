@@ -47,3 +47,62 @@ Moderation 기능에도 동일하게 적용된 것일 뿐이다 — 새로운 �
 Moderation Action(숨김·삭제·거부 등)이 실행됐다는 사실 자체를
 "이 사람은 죄를 지었다/회개하지 않았다/용서받지 못했다" 같은 영적
 판정으로 변환해 표현하는 것을 금지한다.
+
+## Validator ≠ Full Governance (2026-09-05)
+
+**REPENT-VGL-VALIDATOR-v0.2(Text Validator) 하나가 전체 Governance가
+아니다.** Validator는 Runtime Output 텍스트만 보고 판정하는 한 개 층일
+뿐이고, 전체 Governance는 최소 아래 5개 층으로 구성된다 — Validator
+숫자(Canonical 65 Routing, Robustness Set 등)만으로 "Production 준비
+완료"라고 말하지 않는다:
+
+| 층 | 역할 | 현재 상태 |
+|---|---|---|
+| Text Validator (REPENT-VGL-VALIDATOR-v0.2) | BLOCK/REWRITE/SCRIPTURE_CHECK/HUMAN_REVIEW/ALLOW 텍스트 라우팅 | Canonical 65 = 65/65 (ENGINEERING PASS), Robustness = 52/54 |
+| Human Review Queue | HUMAN_REVIEW 라우팅된 건을 사람이 검토 | 아래 섹션 참조 — Queue 자체는 Validator 밖 |
+| Scripture Check Queue | SCRIPTURE_CHECK 라우팅된 건을 Source/License/Context 검증 | 아래 섹션 참조 |
+| Structural Product Gate (G-07 등) | 텍스트가 아니라 Product/Community 정책으로만 판정 | `REQUIRES_PRODUCT_REVIEW` |
+| Privacy/Consent·Minor Safety·Scripture License Gate | Owner/Legal 결정 필요 | `07-privacy-security.md`, `08-social-safety.md` 참조, 전부 HOLD |
+
+Validator가 Canonical 65에서 65/65를 내도 **Human Review Queue 미구현,
+Scripture Check Queue 미구현, Privacy/Consent 미결, G-07 CANDIDATE
+상태**면 Production Release 판단과는 무관하다 — Validator PASS와
+Governance PASS를 같은 것으로 보고하지 않는다.
+
+## Human Review Router (Queue Specification 요약)
+
+`HUMAN_REVIEW_ROUTER_FAMILIES`(`runtime/validators/validator.v0.2.mjs`)가
+문맥 의존적 개인 신적 관계 진술(예: 위로일 수도, 부적절한 개인 신적
+선언일 수도 있는 문장)을 HUMAN_REVIEW로 보낸다. 이 라우팅 자체는
+Validator 안에서 실행·확인됐지만(Canonical 65 HUMAN_REVIEW Routing =
+2/2), **그 뒤에 사람이 실제로 검토하는 Queue 시스템은 아직 없다** —
+Notion `REPENT PM Working Hub`에 명시된 원칙만 확정 상태:
+
+- **Auto approval = FORBIDDEN** — HUMAN_REVIEW로 라우팅된 건은 시스템이
+  자동으로 ALLOW/BLOCK 확정하지 않는다
+- **SLA(Candidate, 미확정)**: P0 4시간 이내 1차 검토 / P1 1영업일
+
+Queue 구현에 필요한 최소 필드(아직 미구현 — Candidate 스키마):
+`case_id`, `runtime_id`, `input_text`, `matched_rule`(HR-* family id),
+`routed_at`, `severity`(P0/P1), `reviewer`, `review_status`
+(pending/approved/rejected/escalated), `decision_at`, `decision_reason`.
+
+## Scripture Check Router (Queue Specification 요약)
+
+`SCRIPTURE_ROUTER_FAMILIES`가 (a) 명시적 성경 인용, (b) 출처 없는 일반
+신앙 진술을 SCRIPTURE_CHECK로 보낸다(Canonical 65 Routing = 1/1). Phase A
+에서는 Scripture Retrieval 자체가 OFF라 이 라우팅이 걸리면 항상 사람
+검토로 가야 하며 시스템이 확정 해석으로 바꾸지 않는다. Notion
+`REPENT PM Working Hub`의 Scripture Check Gate 검증 필드(확정, 재정의
+아님):
+
+`Canonical Verse ID → Translation → Source → Context → Approved Corpus
+→ License Status → Product Usage Permission → Recommendation Category →
+Interpretation Status`
+
+Recommendation Category 3종(확정): `Directly Relevant Scripture` /
+`Theme-related Scripture` / `Reflection Candidate`.
+
+**우리말성경 Full Text License 자체는 여전히 미확보(HOLD)** —
+`07-privacy-security.md`/`10-decision-open-hold-register.md` 참조. 이
+Queue 필드 정의는 라이선스 확보와 별개로 미리 준비해둔 것뿐이다.

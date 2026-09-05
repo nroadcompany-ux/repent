@@ -47,7 +47,39 @@ Moderation Action(숨김·삭제·거부·검토)을 사람의 다음 상태에 
 
 Moderation Action의 사유(신고 사유, 정책 위반 사유)와 영적 판정은 항상
 분리한다 — 같은 메시지 안에 정책 문구와 영적 판정 문구가 섞이는 것도
-금지(아래 Output Wording Test의 BOUNDARY 사례 참조).
+금지(`tests/g07/`의 BOUNDARY 사례 참조, Output Wording Test 결과는
+`09-acceptance-criteria.md`).
 
-(그 외 Social Safety 영역 — Minor Safety, 신고 처리 SLA 등은 추후
-업데이트)
+### Spiritual Judgment Boundary — 3단계 판정 (2026-09-05)
+
+`tests/g07/wording-check.mjs`가 실제 구현한 3단계 그대로, 이 문서의
+Canonical 정의로 삼는다:
+
+| 판정 | 의미 | 예 |
+|---|---|---|
+| ALLOW | 콘텐츠/행동 기준 어휘만 존재 | "커뮤니티 운영 기준에 따라 숨김 처리" |
+| BLOCK | 영적 판정 어휘가 존재 | "신앙적으로 문제가 있습니다" |
+| BOUNDARY | 정책 어휘와 영적 판정 어휘가 한 메시지에 공존 | "운영 기준에 따라 숨김 처리 + 진정한 회개가 아니라서" |
+
+BOUNDARY는 ALLOW도 BLOCK도 아니다 — Moderation 메시지 작성 시 정책
+사유만 남기고 영적 판정 문구를 제거해야 ALLOW가 된다(둘 중 하나를
+없애는 것이지 자동으로 어느 한쪽으로 판정되는 게 아님).
+
+## Minor Safety — OPEN/HOLD 구분 (2026-09-05)
+
+**이 섹션은 미결 상태를 명확히 기록하는 것이지, 정책을 확정하는 것이
+아니다.** Notion `REPENT PM Working Hub`(Foundation Lock 관련 여러
+라운드)에 반복적으로 명시된 상태를 그대로 옮긴다 — 이 세션에서 새로
+결정한 것 없음:
+
+- **Status = HOLD** (Production Backend Blocking)
+- 확정된 것: 없음(Minor-sensitive Context는 Runtime Directive에서도
+  "Privacy/Consent/Safety/License Gate 전 사용 금지" 대상으로 명시)
+- 미확정: 미성년 사용자 식별 방법, 미성년 대상 Confession 공개 제한
+  여부, 미성년 대상 Sensitive Memory 처리, 보호자 동의 흐름
+- **이 세션에서 결론 내지 않음** — Owner/Legal 판단이 필요한 영역이라
+  임의로 OPEN 항목을 HOLD로, 혹은 HOLD 항목을 확정으로 바꾸지 않았다
+- Production Release는 이 항목이 Owner에 의해 해소되기 전까지 계속
+  HOLD(`10-decision-open-hold-register.md` 참조)
+
+(그 외 Social Safety 영역 — 신고 처리 SLA 등은 추후 업데이트)

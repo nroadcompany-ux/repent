@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## Pre-API Parallel Package 2 — Governance Docs (2026-09-05)
+- `docs/06-ai-vgl-guardrail.md`: Human Review Router / Scripture Check
+  Router 요약 문서화(Notion Hub 확정 필드·SLA·Recommendation Category
+  그대로 인용, 재정의 없음) + "Validator ≠ Full Governance" 명시(Text
+  Validator PASS가 Governance PASS/Production Release 승인을 의미하지
+  않음을 5개 층 표로 정리)
+- `docs/08-social-safety.md`: Spiritual Judgment Boundary 3단계
+  (ALLOW/BLOCK/BOUNDARY, `tests/g07/wording-check.mjs` 구현 그대로) +
+  Minor Safety **OPEN/HOLD 구분** — 이 세션에서 어떤 결론도 내리지
+  않았음을 명시(Owner/Legal 결정 영역)
+- `docs/09-acceptance-criteria.md`: PASS/NOT RUN/HOLD 3상태 정의(문서
+  전역 공통 어휘로 확정), G-01~G-10 Acceptance(Canonical 매핑 AC 라우팅
+  기준, 전부 실행·확인 — G-07만 구조적이라 N/A), Router
+  Acceptance(HUMAN_REVIEW/SCRIPTURE_CHECK/REWRITE 전부 Canonical 기준
+  PASS), Privacy/Social/Runtime Gate Acceptance 표(HOLD 8건 정직하게
+  나열). Canonical 65 수치를 최신(65/65, Robustness 52/54)으로 갱신
+- `docs/10-decision-open-hold-register.md`: 빈 스텁이었던 문서를 실제
+  Register로 작성 — PM 지정 최소 11개 항목(Validator PASS/API
+  Binding/Provider Smoke/Official 65/G-07/Privacy/Minor Safety/
+  ShareCopy/Scripture License/Scripture Retrieval/Production Release)
+  + 이미 Resolved된 항목 별도 구획
+- `docs/07-privacy-security.md`: Longitudinal/Sensitive Repentance
+  Context가 왜 OFF인지(Phase A 확정 근거) 정리, Consent Gate가 Phase C
+  진입 전 확인해야 할 5개 항목 명세(결정은 안 함), "Memory OFF until
+  Approved" 재확인
+- `.env.example` 신규 — `OPENAI_API_KEY=` 자리만, 실제 값 없음
+- 이번 라운드는 문서 작업만 — Canonical AC 신규 생성/승격 없음(G-07의
+  5건은 이미 CANDIDATE 상태 유지, 승격 안 함), 코드 변경 없음, API 호출
+  없음, Production Release 상태 변경 없음
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## G-07 Product Policy Evidence — parallel to API Key wait (2026-09-05)
 - G-07(`Community Rule ≠ Spiritual Judgment`, `STRUCTURAL_PRODUCT_POLICY`)은
   Text Validator 작업이 아니므로 API Key 대기 중 병렬 진행

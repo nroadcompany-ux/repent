@@ -16,10 +16,65 @@ updated: 2026-09-05
 없어 Official Model Run은 아직 NOT RUN.
 
 Runtime/Test Runner 골격은 구현·동작 확인됨: `runtime/`, `tests/vgl/` 참조.
-Validator v0.2(Gate 기반)가 Canonical 65 Regression은 61/65지만
-Robustness Set(비Canonical 파라프레이즈)에서는 아직 일반화가 부족함
-(Dangerous 27건 중 26건 미탐) — 상세 현황·Blocking은
-`docs/ai-runtime/runtime-binding.md`.
+Validator v0.2(Gate 기반, Correction Round 2 + Targeted Correction까지
+반영)는 Canonical 65 Regression **65/65**, Robustness Set(비Canonical
+파라프레이즈) **52/54**(잔여 2건은 Validator 결함이 아니라 Governance
+검토 대상으로 별도 분류 — `docs/ai-runtime/runtime-binding.md` 참조).
+
+## PASS / NOT RUN / HOLD 기준 (2026-09-05, 문서 전역 공통 정의)
+
+이 저장소의 모든 문서·RETURN에서 이 세 상태는 다음 의미로만 쓴다 —
+혼용 금지:
+
+| 상태 | 의미 |
+|---|---|
+| **PASS** | 실제로 실행한 테스트/점검이 있고, 그 결과가 기대값과 일치함이 확인됨(재현 가능한 evidence 존재) |
+| **NOT RUN** | 메커니즘(코드·Runner)은 존재하나 아직 실행하지 않음(예: Official 65 Model Run — Runner는 있지만 API Key가 없어 안 돌림) |
+| **HOLD** | 실행 여부와 무관하게 Owner/PM/Legal의 결정이 먼저 필요해 의도적으로 시작하지 않음(예: Minor Safety, Scripture License) |
+
+"Validator PASS"는 Text Validator 라우팅이 맞았다는 뜻일 뿐 "Governance
+PASS"나 "Production Release 승인"을 의미하지 않는다
+(`06-ai-vgl-guardrail.md` "Validator ≠ Full Governance" 참조).
+
+## G-01~G-10 Acceptance (Canonical 65 부분집합 기준, 실행 확인)
+
+**범위 한정**: 아래는 "그 Gate에 매핑된 Canonical AC들에 대해 현재
+Text Validator가 맞게 라우팅하는가"만 확인한 것이다. Official Model
+Run(실제 Provider 호출)이 아니고, Robustness(일반화) 검증도 아니다 —
+이 표 하나로 Gate가 "완전히 통과됐다"고 말하지 않는다.
+
+| Gate | Validation Type | Canonical 매핑 AC 라우팅 |
+|---|---|---|
+| G-01 | TEXT_ONLY | PASS (1/1) |
+| G-02 | TEXT_ONLY | PASS (5/5) |
+| G-03 | TEXT_ONLY | PASS (4/4) |
+| G-04 | TEXT_ONLY | PASS (1/1) |
+| G-05 | TEXT_ONLY | PASS (3/3) |
+| G-06 | TEXT_ONLY | PASS (3/3) |
+| G-07 | STRUCTURAL_PRODUCT_POLICY | **N/A** — 텍스트 라우팅 자체는 매핑 AC 2/2 일치하지만, Gate 판정은 텍스트로 안 함(Product Review 필요, 아래 참조) |
+| G-08 | TEXT_ONLY | PASS (2/2) |
+| G-09 | TEXT_ONLY | PASS (3/3) |
+| G-10 | TEXT_ONLY | PASS (5/5) |
+
+## Router Acceptance (Canonical 65 기준, 실행 확인)
+
+| Router | 결과 |
+|---|---|
+| HUMAN_REVIEW Router | PASS — Canonical HUMAN_REVIEW 2/2 정확 라우팅. Queue 자체(사람이 실제 검토)는 미구현 — `06-ai-vgl-guardrail.md` 참조 |
+| SCRIPTURE_CHECK Router | PASS — Canonical SCRIPTURE_CHECK 1/1 정확 라우팅. Queue/License 검증은 미구현·HOLD |
+| REWRITE Router | PASS — Canonical REWRITE 2/2 정확 라우팅 |
+
+## Privacy / Social / Runtime Gate Acceptance
+
+| Gate | 상태 | 비고 |
+|---|---|---|
+| Privacy/Consent Gate | **HOLD** | `07-privacy-security.md` 참조 — Owner/Legal 결정 필요, 이 세션에서 미결정 |
+| Minor Safety Gate | **HOLD** | `08-social-safety.md` 참조 |
+| ShareCopy Source Delete Policy | **부분 확정 + 잔여 HOLD** | 원칙(Share Delete≠Source Delete, Soft30일→Hard Delete)은 `05-data-model.md` Owner Lock. Production 상세 구현 확인은 HOLD |
+| Scripture License/Retrieval Gate | **HOLD** | 우리말성경 Full Text License 미확보 |
+| API Runtime Binding | **HOLD** | `OPENAI_API_KEY` 없음 |
+| Official 65 Model Run | **NOT RUN** | Runner는 존재(`tests/vgl/runner/run.mjs --official`), 미실행 |
+| Production Release | **HOLD** | 위 전부 해소 전까지 유지 |
 
 ## Community Moderation AC (G-07) — CANDIDATE / PM REVIEW REQUIRED
 
