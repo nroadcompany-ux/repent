@@ -1,5 +1,76 @@
 # CHANGELOG
 
+## Product Planning Canonicalization Batch (2026-09-05)
+- PM 지시 `REPENT — PRODUCT PLANNING CANONICALIZATION / PARALLEL
+  EXECUTION` 실행 — 새 기획 없음, 이미 확정된 Planning을 `docs/00~10`에
+  병렬 이식하고 Trace를 연결. Figma/prototype은 작업 대상에서 제외
+  (Section 0 Branch Policy에 따라 `main` merge도 하지 않음, 계속
+  `claude/new-session-gwiqkv`에서만 작업)
+- **`docs/00-product-foundation.md`**: `[Requirement Matrix]` 신규
+  (Journey/Prayer/Promise/Action/Repentance/Confession/Scripture/
+  AI-VGL 8개 Domain × WHY/WHO/WHAT/EXPECTED RESULT/NON-GOAL/STATUS).
+  기존 Owner Lock(Main Nav/Vertical Way/확정 용어/AI 원칙) 무변경
+- **`docs/01-ia.md`**: Service Architecture/Domain Ownership/Feature
+  Inventory(CURRENT/CANDIDATE 구분) 신규. Community는 "Confession의
+  Shared/Public Surface"만 CURRENT, Reaction/Report Taxonomy/
+  Moderation Workflow Detail/Moderator Action Detail은 CANDIDATE로
+  명시(임의 승격 안 함)
+- **`docs/02-user-flow.md`**: 빈 스텁 제거, E2E Flow 7종(A.Journey/
+  B.Prayer/C.Promise/D.Action/E.Repentance/F.Confession Direct/
+  G.Private Source Share) 신규 작성
+- **`docs/04-policy-business-rules.md`**: Promise에 1:N Action·
+  "마무리됨" 종료 표현 추가, Sharing(3원칙+Preview 필수) 신규,
+  Empty/Error Principle(허용/금지 예시) 신규, Archive(영적 완료
+  아님) 신규. 기존 LOCKED Rule 전부 보존
+- **`docs/05-data-model.md`**: Core Entity 12종, Relations(Promise
+  1:N Action 등), CRUD Matrix/Visibility/Owner, Permission Boundary
+  (Owner/Viewer/Moderator/System/AI + "Moderator는 신고만으로 Private
+  Prayer/Repentance Source 접근 불가" P0), Lifecycle State Candidate
+  Enum(5개 Entity군) + Forbidden State(ANSWERED 포함 6종) 신규. **AI는
+  어떤 Entity의 Record Owner도 될 수 없음**을 명문화
+- **`docs/06-ai-vgl-guardrail.md`**: Scripture Literal Product Copy
+  Rule 신규(금지/권장 문구) — Validator Coverage Gap은 해결된 것이
+  아님을 명시적으로 재확인(Validator Verdict Logic 미변경)
+- **`docs/09-acceptance-criteria.md`**: "PRODUCT FUNCTIONAL TRACE"
+  섹션 신규 — `US-RPT-JNY-001/002·PRY-001/002·PRM-001·ACT-001/002·
+  RPN-001/002·CNF-001·SHR-001·SCR-001·MOD-001` 12개 Working ID
+  Story(Purpose/Task/AC/Related Flow/Related Entity/Related Policy).
+  MOD-001은 신규 AC를 만들지 않고 기존 `AC-G07-01~05`를 직접 참조.
+  `VGL-RPT-AC-001~065`/`AC-G07-01~05` 원문은 무변경(diff 확인 —
+  파일 말미 안내문 재배치 1건 외 순수 추가)
+- **`docs/10-decision-open-hold-register.md`**: RESOLVED/CURRENT
+  8건 추가(Prayer Response Tracking REMOVED 등), 신규 "CANDIDATE"
+  섹션(Lifecycle Enum 이름·Reaction·Report Taxonomy·Moderation
+  Workflow/Action Detail·ShareCopy Reference 세부·Working ID 승격
+  7건), Core Register에 RS-AR05-D3/RS-G10-D1/Scripture Validator
+  Coverage(P1) 행 추가. 기존 HOLD 항목 상태는 변경하지 않음
+- **Trace Check 실행**: JNY/PRY/PRM/ACT/RPN/CNF/SHR/SCR/MOD 9개
+  Domain 전수 검사 — 공식 Break Code 10종(ORPHAN_REQUIREMENT ~
+  POLICY_WITHOUT_AC) **전부 0건**. Break Code로 정확히 매핑되지
+  않는 잔여 사항(Scripture 전용 Flow 없음, Moderation Flow/Data/State
+  의도적 부재, 일부 엔티티 Lifecycle State 없음)은 임의 보완하지 않고
+  정직하게 보고만 함
+- **Branch Integration Gap 신규 등록(P1)**: `docs/00`이 선언하는
+  Canonical Branch(`main`)와 실제 이 세션 작업 위치(`claude/new-
+  session-gwiqkv`)의 불일치를 Master Handoff에 명시. 이번 라운드도
+  PM 지시로 main merge하지 않음
+- **Planning Gate = C 유지**(Claude 판단, PM 확인 대기) — Trace
+  Break는 0건이 됐으나 Community CANDIDATE 미구현·Permission 실제
+  구현 전무·Lifecycle Enum 미확정이 Non-blocking인지는 PM이 판단할
+  사안. PM이 Non-blocking으로 판단하면 Gate B 승격 가능
+- 검증: `runtime/`, `tests/vgl/fixtures/ac-cases.official.json`,
+  `tests/vgl/fixtures/robustness/paraphrase-challenge-set.json`,
+  `prototype/`, `docs/07-privacy-security.md`, `docs/08-social-safety.md`
+  전부 `git diff --stat` 0 확인. 유닛/회귀/G-07 테스트 재실행 결과
+  기존과 동일(65/65, 52/54, 19/19, 8/8, 3/3, validate-official 0
+  changed) — 회귀 없음
+- `docs/REPENT-MASTER-HANDOFF.md`: "Canonicalization Batch Result"
+  섹션 신규(Requirement/Feature/Story/Task/Product Functional AC/
+  Flow/Data/State/Permission Status, Remaining OPEN, Production
+  HOLD, Trace Check Result, Branch Integration Gap, Planning Gate
+  Reassessment, Next P0, Figma/Prototype 재확인). 과거 섹션 전부 보존
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## Product Planning Lock Cross Review (2026-09-05)
 - PM 지시 `REPENT — PRODUCT PLANNING LOCK CROSS REVIEW REQUEST` 실행 —
   Cross Review Only, 신규 Product Meaning 생성 없음. `docs/00~10`은

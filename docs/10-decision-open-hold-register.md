@@ -28,6 +28,9 @@ updated: 2026-09-05
 | Scripture License | **HOLD** | 우리말성경 Full Text License 미확보(외부 계약 사안, 엔지니어링 범위 밖) |
 | Scripture Retrieval | **HOLD** | License 확보 전까지 Phase B 진입 불가 |
 | Production Release | **HOLD** | 위 항목 전부 해소 전까지 유지 |
+| RS-AR05-D3 | **HOLD** | Robustness Set 잔여 — "CONTEXT-DEPENDENT AUTHORITY", Router 재설계 검토 필요(Validator 결함 아님) |
+| RS-G10-D1 | **HOLD** | Robustness Set 잔여 — "TEST DEFINITION REVIEW REQUIRED"(Validator 결함 아님) |
+| Scripture Product Copy Validator Coverage | **P1** | Decision H 금지 문구("하나님이 지금 이 말씀을 주셨습니다")를 `validator.v0.2.mjs`에 실제 실행한 결과 ALLOW(BLOCK 아님) — `06-ai-vgl-guardrail.md` Literal Product Copy Rule 참조. Validator Verdict Logic은 미변경 |
 
 ## 이미 해결된 항목 (참고용 — Core Register와 별도)
 
@@ -41,6 +44,26 @@ Register 위 표와 혼동 방지를 위해 별도 구획):
 | G-01~G-10 정의 | RESOLVED | `runtime/config/gates.json` |
 | Confession Privacy 3옵션 | RESOLVED (Owner Lock) | `07-privacy-security.md` |
 | Main Nav / Vertical Way | RESOLVED (Owner Lock) | `00-product-foundation.md` |
+| Prayer Response Tracking REMOVED | RESOLVED/CURRENT | `04-policy-business-rules.md` |
+| Journey Social("함께") REMOVED | RESOLVED/CURRENT | `04-policy-business-rules.md` |
+| Action Follow-up Choice(Taxonomy 금지) | RESOLVED/CURRENT | `04-policy-business-rules.md`, `09-acceptance-criteria.md` US-RPT-ACT-002 |
+| Repentance Fixed Step REMOVED | RESOLVED/CURRENT | `04-policy-business-rules.md`, `09-acceptance-criteria.md` US-RPT-RPN-001/002 |
+| Promise 1:N Action | RESOLVED/CURRENT | `04-policy-business-rules.md`, `05-data-model.md` |
+| ShareCopy 3 non-cascading rules | RESOLVED/CURRENT | `05-data-model.md` Sharing 3원칙, `04-policy-business-rules.md` Sharing |
+| Domain Boundary(Journey/Prayer/Repentance/Promise/Action/Confession) | RESOLVED/CURRENT | `01-ia.md` Service Architecture / Domain Ownership |
+| Functional Trace architecture(Requirement→Feature→Story→Task→AC→Flow→Data→State→Permission→Policy) | RESOLVED/CURRENT | `00-product-foundation.md` Requirement Matrix, `09-acceptance-criteria.md` PRODUCT FUNCTIONAL TRACE |
+
+## CANDIDATE (세부 미확정 — 원칙과 별개, 임의 CURRENT 승격 금지)
+
+| 항목 | 상태 | 근거/참조 |
+|---|---|---|
+| Exact Lifecycle Enum Naming | **CANDIDATE** | `05-data-model.md` Lifecycle State — Enum 이름 자체는 CANDIDATE, Product Meaning만 CURRENT |
+| Reaction(공감 등) | **CANDIDATE** | `01-ia.md` Community |
+| Report Taxonomy(신고 사유 분류) | **CANDIDATE** | `01-ia.md` Community |
+| Moderation Workflow Detail | **CANDIDATE** | `01-ia.md` Community |
+| Moderator Action Detail | **CANDIDATE** | `01-ia.md` Community |
+| Source Delete 이후 ShareCopy Reference 처리 방식(세부 구현) | **CANDIDATE** | `05-data-model.md` Sharing 3원칙 — 원칙(Delete≠Auto Delete)은 CURRENT, 세부 구현(참조 유지 방식 등)은 CANDIDATE |
+| Feature Working ID → Canonical ID promotion | **CANDIDATE** | `09-acceptance-criteria.md` US-RPT-\* — Working ID는 Trace용 임시 식별자, Canonical 승격은 별도 지시 필요 |
 
 ## 갱신 규칙
 

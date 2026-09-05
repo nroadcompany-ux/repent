@@ -29,12 +29,12 @@ updated: 2026-09-05
 
 | 항목 | 값 |
 |---|---|
-| Last Update | 2026-09-05 (Product Planning Lock Cross Review) |
-| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `eb5e79857ed7d3e4ef52001d515a4155097c7a98` |
-| Changed Area | Cross Review 실행(문서 무변경 — read-only 검증), Master Handoff에 Cross Review Result 섹션 신규 |
-| Status Delta | Overall Verdict = **PASS WITH OPEN**(Canonical 문서 내 Product Meaning 위반 0건). Planning Gate = **C 유지**(변경 없음). 신규 발견 2건: prototype `s-repent` 진행률/스텝카운터가 Decision E와 구조적 충돌(Legacy Artifact, Doc Lock 비차단), Validator가 Decision H 금지 문구를 미차단(P1 Gap, 실행 검증 완료) |
-| Remaining Blocking | 변경 없음(Community 기능 미정의, 6개 엔티티 데이터모델, 권한모델, Lifecycle State 전무, API Binding/Privacy/Minor Safety/Scripture License HOLD) + 신규 P1(ShareCopy 3번째 규칙 미문서화, Validator 커버리지) |
-| Next P0 | PM 지정 체인 불변 — Requirements→Feature→Flow→Data/State/Permission→Story/Task/AC→Community Minimum Scope→Figma Correction Blueprint→Planning Gate 재평가(이번 라운드는 체인 착수 안 함, Cross Review만 수행) |
+| Last Update | 2026-09-05 (Product Planning Canonicalization Batch) |
+| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `fd1d8739a1d2bbd45a7b9c995097756d9a2ca53b` |
+| Changed Area | `docs/00,01,02,04,05,06,09,10` 병렬 이식(Requirement Matrix, Feature Inventory, E2E Flow 7종, Data/Permission/State, Product Functional Trace 12 Story, Register 갱신) — 신규 Product Meaning 없음, 기존 Owner Lock 무변경(순수 추가) |
+| Status Delta | 공식 Trace Break Code 10종 전부 **0건**(JNY/PRY/PRM/ACT/RPN/CNF/SHR/SCR/MOD 9개 Domain 전수 검사). Planning Gate = **C 유지**(Claude 판단 — Community CANDIDATE 미구현·Permission 미구현·Lifecycle Enum 미확정이 Non-blocking인지는 PM 확인 필요, B 승격 가능성 있음) |
+| Remaining Blocking | Community 상세 4종 CANDIDATE(미구현), Permission 실제 구현(DB/API) 전무, Lifecycle Enum 이름 미확정. 신규 P1: Branch Integration Gap(`docs/00` 선언 main ↔ 실제 브랜치 불일치). 기존 HOLD 변경 없음 |
+| Next P0 | PM 승인 대기 — Planning Gate B 승격 여부, Branch Integration 처리 시점, Community CANDIDATE 착수 여부, Lifecycle Enum 확정, Figma/Prototype 재설계 착수 시점(둘 다 Non-blocking으로 재확인) |
 
 이 커밋(이 문서를 포함해 새로 만드는 커밋)의 실제 SHA는 이번 라운드
 RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본문에는
@@ -289,6 +289,190 @@ Product Meaning 위반 0건. 단 다수의 OPEN/P0 Gap이 여전히 남아 있�
 확인한 것이지, "최종 문서 10종을 쓸 만큼 기획이 채워졌는가"를 바꾸지
 않는다. 6개 엔티티 데이터모델·Permission Model·Lifecycle State
 전무와 Community 기능 미구현이 여전히 C의 근거다.
+
+---
+
+## Canonicalization Batch Result (2026-09-05, Product Planning Canonicalization / Parallel Execution — 최신)
+
+PM 지시 `REPENT — PRODUCT PLANNING CANONICALIZATION / PARALLEL
+EXECUTION`에 따라, 이전 Cross Review에서 확인된 "Product Meaning
+Conflict는 없으나 Canonical docs에 아직 반영 안 됨" 상태를 실제로
+반영했다. **새 기획 없음** — 지금까지 PM/Owner가 채팅으로 확정한
+내용을 `docs/00~10`에 병렬 이식하고 Trace를 연결한 것뿐이다. 기존
+Owner Lock 내용(Main Nav, Vertical Way, VGL-RPT-AC-001~065,
+AC-G07-01~05 등)은 삭제·변경 없이 보존(`git diff` 확인 — 순수 추가만,
+`docs/09` 삭제 라인 1건은 파일 말미 안내문 재배치일 뿐 내용 손실
+아님).
+
+### Requirement Status
+
+**CURRENT** — `docs/00-product-foundation.md`에 `[Requirement Matrix]`
+신규(Journey/Prayer/Promise/Action/Repentance/Confession/Scripture/
+AI-VGL 8개 Domain × WHY/WHO/WHAT/EXPECTED RESULT/NON-GOAL/STATUS).
+ShareCopy·TurningPoint 등 Cross-cutting 항목은 관련 Main Domain 행에
+접힘(의도적 — Cross-cutting은 별도 Requirement 행을 갖지 않음).
+
+### Feature Status
+
+**CURRENT(핵심 8개) / CANDIDATE(Community 세부 4개)** —
+`docs/01-ia.md`에 Service Architecture / Domain Ownership / Feature
+Inventory 신규. Community는 "Confession의 Shared/Public Surface"만
+CURRENT, Reaction/Report Taxonomy/Moderation Workflow Detail/
+Moderator Action Detail은 CANDIDATE로 명시(임의 승격 안 함).
+
+### Story Status
+
+**CURRENT(Working ID)** — `docs/09-acceptance-criteria.md`에 "PRODUCT
+FUNCTIONAL TRACE" 섹션 신규, `US-RPT-JNY-001/002·PRY-001/002·PRM-001·
+ACT-001/002·RPN-001/002·CNF-001·SHR-001·SCR-001·MOD-001` 12건. Working
+ID는 Trace용 임시 식별자 — Canonical Feature ID 승격은 별도 지시 필요
+(CANDIDATE로 Register에 기록).
+
+### Task Status
+
+**CURRENT** — 위 12개 Story 전부에 Task 항목 기재 완료(MOD-001은
+Task 자체가 "CANDIDATE — Feature 미구현"으로 정직하게 표기, 억지로
+채우지 않음).
+
+### Product Functional AC Status
+
+**CURRENT** — 12개 Story 전부에 AC 기재. `VGL-RPT-AC-001~065`,
+`AC-G07-01~05`와는 계속 분리 트랙(MOD-001은 새 AC를 만들지 않고
+기존 AC-G07-01~05를 직접 참조).
+
+### Flow Status
+
+**CURRENT(7종) / 의도적 미정의(2종)** — `docs/02-user-flow.md` Stub
+제거, E2E Flow A~G(Journey/Prayer/Promise/Action/Repentance/
+Confession Direct/Private Source Share) 신규 작성. **Scripture는
+전용 Flow 없음**(각 Domain Flow의 Optional Scripture 단계로만 존재 —
+Cross-cutting 특성상 의도적), **Moderation은 Flow 없음**(Feature 자체가
+CANDIDATE라 Flow를 만들면 새 설계가 되므로 의도적으로 비워둠 — 결함
+아님).
+
+### Data Status
+
+**CURRENT(원칙) / CANDIDATE(Enum 이름)** — `docs/05-data-model.md`에
+Core Entity 12종(User 포함), Relations(Promise 1:N Action 등), CRUD
+Matrix, Visibility/Owner, Permission Boundary(Owner/Viewer/Moderator/
+System/AI), Lifecycle State 신규. **AI는 어떤 Entity의 Record Owner도
+될 수 없음**을 명문화. Forbidden State(ANSWERED/FORGIVEN/SAVED/
+REPENTED/FAITHFUL/SPIRITUALLY_FAILED) 명문화.
+
+### State Status
+
+**CURRENT(Product Meaning) / CANDIDATE(Enum 이름)** — Prayer/
+RepentanceRecord/Promise/Action/Confession·ShareCopy 5개 Entity군에
+Lifecycle State Candidate Enum 부여. **LifeEvent/Season/StoryArc/
+TurningPoint/ScriptureReference는 Lifecycle State 항목 자체가 없음**
+— 기록형 마커/참조 데이터 특성상 Draft-Published류 상태가 불필요할
+수 있어 의도적으로 비워둠(오류로 재보완하지 않음, PM 판단 필요 시
+Owner Decision Required로 별도 명시)
+
+### Permission Status
+
+**CURRENT(원칙) / 세부 구현 OPEN** — `docs/05`에 5-Role(Owner/Viewer/
+Moderator/System/AI) 정의 + **P0 원칙**("Moderator는 신고된 공유
+콘텐츠가 있다는 이유만으로 Private Prayer/Repentance Source에 접근
+불가") 명문화. 실제 접근제어 구현(DB/API 레벨)은 여전히 미착수(문서
+원칙만 CURRENT, 구현은 OPEN)
+
+### Remaining Product OPEN
+
+- Community 상세 4종(CANDIDATE, 위 참조) 구현 및 문서 세부화
+- Lifecycle Enum 정확한 이름 확정(Product Meaning은 CURRENT, 이름은
+  CANDIDATE)
+- Source Delete 이후 ShareCopy Reference 처리 방식 세부 구현
+- Scripture 전용 Flow 필요 여부(현재 Cross-cutting으로 각 Flow에
+  내장 — 별도 Flow가 필요한지는 Owner 판단 필요)
+- LifeEvent/Season/StoryArc/TurningPoint/ScriptureReference의
+  Lifecycle State 필요 여부
+
+### Production HOLD (변경 없음)
+
+Privacy/Longitudinal Consent, Minor Safety, Scripture Full Text
+License, Scripture Retrieval, OpenAI Runtime Binding, Official Model
+Run, RS-AR05-D3, RS-G10-D1 — `docs/10-decision-open-hold-register.md`
+Core Register 그대로 유지, 이번 라운드에서 어느 것도 임의로 해결
+처리하지 않음. **Scripture Product Copy Validator Coverage Gap**을
+P1로 신규 등록(HOLD 아님 — Governance OPEN)
+
+### Trace Check Result (`Requirement→Feature→Story→Task→AC→Flow→Data→State→Permission→Policy`)
+
+9개 Domain Code(JNY/PRY/PRM/ACT/RPN/CNF/SHR/SCR/MOD) 전수 검사 —
+**공식 Break Code 10종 전부 0건**:
+
+```
+ORPHAN_REQUIREMENT: 0
+ORPHAN_FEATURE: 0
+ORPHAN_STORY: 0
+MISSING_TASK: 0
+MISSING_AC: 0
+FLOW_WITHOUT_DATA: 0
+DATA_WITHOUT_OWNER: 0
+STATE_WITHOUT_TRANSITION: 0
+PERMISSION_WITHOUT_POLICY: 0
+POLICY_WITHOUT_AC: 0
+```
+
+**Break Code로 정확히 분류되진 않지만 정직하게 남겨두는 잔여 사항**
+(임의 보완하지 않고 보고만 함):
+- SCR: 전용 Flow 없음(Cross-cutting, 각 Domain Flow에 내장 — 위
+  Flow Status 참조)
+- MOD: Flow/Data/State가 의도적으로 없음(Feature 자체가 CANDIDATE —
+  Policy/AC만 존재하는 역전 구조, G-07 제약이 대상 기능보다 먼저
+  성숙한 상태는 여전함. **이것을 "고쳐야 할 결함"으로 임의 보완하지
+  않았다** — Community 상세가 CANDIDATE로 남아있는 것 자체가 이번
+  지시의 명시적 요구사항)
+- JNY/SCR 일부 엔티티(LifeEvent/Season/StoryArc/TurningPoint/
+  ScriptureReference)에 Lifecycle State 없음(위 State Status 참조)
+
+### Branch Integration Gap (P1, 신규 — Owner/PM 확인 필요)
+
+**`docs/00-product-foundation.md`의 Canonical Baseline은 `Repository:
+nroadcompany-ux/repent / Branch: main`을 선언한다.** 그러나 AI
+Runtime/Validator/G-07 Canonicalization/이번 Product Planning
+Canonicalization Batch를 포함한 이 세션의 모든 확정 작업은 **오직
+`claude/new-session-gwiqkv`에만 존재**하고 `main`에는 없다(직전
+Cross Review에서 `git log origin/main..origin/claude/new-session-gwiqkv`
+로 실측: `main`은 merge-base 대비 prototype 폰트 크기 조정 커밋 1개만
+더 있고, 이 브랜치는 9개 이상의 Governance/Runtime 커밋을 앞서 있음).
+**이번 라운드도 PM 지시(Section 0 Branch Policy)에 따라 main Merge를
+하지 않았다** — Planning Lock + Cross Review 완료 후 별도 Merge/PR
+Gate에서 정합 예정. 그 전까지 `docs/00`의 선언(main)과 Branch
+Reality(claude/new-session-gwiqkv)의 불일치는 **P1 Integration Gap**
+으로 유지한다.
+
+### Planning Gate Reassessment
+
+**Planning Gate = C → 유지(재확인, 상향 아님)**. 이번 배치로 Trace
+Break는 0건이 됐지만, PM의 Gate 정의(A=Final 10종 작성 가능,
+B=Non-blocking OPEN/HOLD만 남고 작성 가능, C=Product Planning Gap
+잔존)에 비추어 볼 때, 아래가 Non-blocking으로 보기엔 아직 이르다고
+판단(Claude 자체 판단 — PM 최종 확인 필요):
+- Community 4개 CANDIDATE 항목(신고·모더레이션은 G-07이 이미 규율하는
+  실제 위험 영역이라 구현 없이 Non-blocking으로 보기 어려움)
+- Lifecycle Enum 이름 미확정(Product Meaning은 CURRENT라 Blocking은
+  아니나, 실제 스키마 작업 착수에는 필요)
+- Permission 실제 구현(DB/API) 전무
+
+**PM이 위를 Non-blocking으로 판단하면 Gate B로 재승격 가능** — 이
+판단은 Claude가 임의로 내리지 않는다.
+
+### Next P0
+
+PM 승인 대기: ① 위 Planning Gate Reassessment(B 승격 여부) ② Branch
+Integration Gap 처리 방향(언제 main과 정합할지) ③ Community 4개
+CANDIDATE 항목 착수 여부 ④ Lifecycle Enum 이름 확정 ⑤ Figma/Prototype
+재설계 착수 시점(아래 참조)
+
+### Figma / Prototype (재확인)
+
+- **Figma**: POST-DOCUMENT DESIGN PHASE — Product Documentation Lock
+  이후에 새로 설계. Planning 진행의 Non-blocking 항목
+- **Prototype**: NON-CANONICAL LEGACY ARTIFACT — `s-action-fail`
+  Taxonomy, `s-repent` 진행률/스텝카운터 등 기존 발견 사항은 재설계
+  시 참고만, Planning Gate 판정에 포함하지 않음(Non-blocking)
 
 ---
 

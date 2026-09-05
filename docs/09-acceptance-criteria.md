@@ -119,4 +119,155 @@ Text Validator와 완전히 분리된 별도 점검 — `tests/g07/wording-check
 참조). 이 3건의 PASS/FAIL은 Canonical 65/Robustness Set 어떤 숫자와도
 합산하지 않는다.
 
+## PRODUCT FUNCTIONAL TRACE (2026-09-05, Owner/PM 확정 — Canonicalization Batch)
+
+**분리 원칙(재확인)**: 아래 Working ID(US-RPT-\*)는 **Product
+Functional AC**다. `VGL-RPT-AC-001~065`·`AC-G07-01~05`와 **수정·합산
+금지** — 각자 독립 트랙으로 유지한다. Working ID는 Trace 목적의
+임시 식별자이며, Canonical Feature ID로의 승격은 별도 PM/Owner
+지시가 있을 때만 진행한다.
+
+### US-RPT-JNY-001 — 시간 범위별 Journey 조회
+
+- **Purpose**: 사용자가 자신의 삶/신앙 기록을 시간 위에서 확인한다
+- **Task**: Time Range(Today/Week/Month/Year/All) 선택, Life Curve +
+  Faith Record Marker 렌더링, Missing Day 처리
+- **AC**: No Input = No Point / Interpolation(보간) 금지 / Faith
+  Score 생성 금지
+- **Related Flow**: `02-user-flow.md` A. Journey
+- **Related Entity**: LifeEvent, Season, StoryArc
+- **Related Policy**: `04-policy-business-rules.md` Missing Day Rule, LCI
+
+### US-RPT-JNY-002 — Turning Point 표시
+
+- **Purpose**: 사용자가 삶의 중요한 시점을 직접 확정한다
+- **Task**: AI 후보 제안 UI + User Confirm 액션
+- **AC**: TurningPoint는 User Confirm이 있어야 확정됨(AI는 후보만 제안)
+- **Related Flow**: `02-user-flow.md` A. Journey
+- **Related Entity**: TurningPoint
+- **Related Policy**: `04-policy-business-rules.md` Turning Point
+
+### US-RPT-PRY-001 — 기도 기록(Prayer Only 종료 포함)
+
+- **Purpose**: 사용자가 하나님께 드리는 기도를 기록한다
+- **Task**: Prayer 작성 + Optional Reflection/Scripture/Surrender/
+  Promise/Action 단계 + Prayer Only Exit 경로
+- **AC**: Prayer Only로 종료 가능(다른 단계 강제 없음)
+- **Related Flow**: `02-user-flow.md` B. Prayer
+- **Related Entity**: Prayer
+- **Related Policy**: `00-product-foundation.md` Requirement Matrix(Prayer)
+
+### US-RPT-PRY-002 — 기도 응답 추적 금지
+
+- **Purpose**: AI/System이 기도의 응답 여부를 판정·집계하지 않음을
+  보장한다
+- **Task**: 응답 상태(Answered/Pending) 필드·통계 화면 자체를 만들지
+  않음(Negative Requirement)
+- **AC**: Answered/Pending/Response Rate 기능 없음
+- **Related Flow**: `02-user-flow.md` B. Prayer
+- **Related Entity**: Prayer
+- **Related Policy**: `04-policy-business-rules.md` Prayer Response Tracking
+
+### US-RPT-PRM-001 — 약속 기록 및 사용자 종료
+
+- **Purpose**: 사용자가 스스로 결단을 기록하고 실행과 연결한다
+- **Task**: Promise 작성, Action 1:N 연결, 사용자 종료 액션("마무리됨")
+- **AC**: Promise 1:N Action / Miss ≠ Sin / Streak 금지 / 종료 표현
+  = "마무리됨"
+- **Related Flow**: `02-user-flow.md` C. Promise
+- **Related Entity**: Promise, Action
+- **Related Policy**: `04-policy-business-rules.md` Promise
+
+### US-RPT-ACT-001 — 실행 기록 및 완료
+
+- **Purpose**: 결단을 실제 삶의 행동으로 옮긴 것을 기록한다
+- **Task**: Action 작성, Done 처리
+- **AC**: Action Failure ≠ Sin(완료 경로에서도 실패를 죄로 판단하지 않음)
+- **Related Flow**: `02-user-flow.md` D. Action
+- **Related Entity**: Action
+- **Related Policy**: `04-policy-business-rules.md` Action Failure
+
+### US-RPT-ACT-002 — 실행 실패 후속 선택
+
+- **Purpose**: 실행이 계획과 달랐을 때 사용자가 다음 행동을 스스로
+  선택하게 한다
+- **Task**: Follow-up Action Choice 5종(Retry/Modify/Reschedule/
+  Record Only/Optional Repent) 제시, Failure Cause 질문 UI 미생성
+- **AC**: Auto Repent 금지(Optional Repent만 허용) / 5 Follow-up
+  Choice 제공 / Failure Cause Taxonomy 생성 금지
+- **Related Flow**: `02-user-flow.md` D. Action
+- **Related Entity**: Action, RepentanceRecord(Optional Repent 선택 시)
+- **Related Policy**: `04-policy-business-rules.md` Action Failure
+
+### US-RPT-RPN-001 — 회개 Optional Progressive Flow
+
+- **Purpose**: 하나님 앞에서 돌아보고 고백하는 기록을 남긴다
+- **Task**: 돌아보기 → 고백하기 → Optional Scripture/돌이킴/Promise/
+  Action 단계 구현(고정 스텝 UI·진행률 바 금지)
+- **AC**: Fixed Steps 없음 / Progress(진행률) 표시 없음 / 점수 없음
+- **Related Flow**: `02-user-flow.md` E. Repentance
+- **Related Entity**: RepentanceRecord
+- **Related Policy**: `04-policy-business-rules.md` Repentance Fixed 10-Step
+
+### US-RPT-RPN-002 — 회개 기록 마치기
+
+- **Purpose**: 회개 기록을 사용자 스스로 종료한다
+- **Task**: Final CTA "회개 기록 마치기" 제공, 완료 문구 "하나님께
+  드린 회개를 기록했습니다" 표시
+- **AC**: Sincerity/Sufficiency(진정성/충분성) 판단 없음 / CTA =
+  "회개 기록 마치기"
+- **Related Flow**: `02-user-flow.md` E. Repentance
+- **Related Entity**: RepentanceRecord
+- **Related Policy**: `04-policy-business-rules.md` Repentance Fixed
+  10-Step, `06-ai-vgl-guardrail.md` AR-04/G-04
+
+### US-RPT-CNF-001 — 고백 작성 및 공개(Direct)
+
+- **Purpose**: 개인 기록을 선택적으로 타인과 나눈다
+- **Task**: Group/Type 선택, Privacy 3옵션 선택, Preview, Publish
+- **AC**: Anonymous 게시 금지 / Privacy 3옵션(나만 보기 / 이름 가리고
+  나누기 / 이름 공개로 나누기)
+- **Related Flow**: `02-user-flow.md` F. Confession Direct
+- **Related Entity**: Confession
+- **Related Policy**: `07-privacy-security.md` Confession Privacy
+
+### US-RPT-SHR-001 — Private Source 공유(ShareCopy)
+
+- **Purpose**: Prayer/RepentanceRecord 등 비공개 기록을 선택적으로
+  공유한다
+- **Task**: Select Fields → Mask/Named → Preview → ShareCopy 생성
+- **AC**: ShareCopy = Snapshot / Delete 방향 3원칙 분리(Source
+  Edit/Delete ≠ ShareCopy 자동 반영, ShareCopy Delete ≠ Source Delete)
+- **Related Flow**: `02-user-flow.md` G. Private Source Share
+- **Related Entity**: ShareCopy
+- **Related Policy**: `05-data-model.md` Sharing 3원칙
+
+### US-RPT-SCR-001 — 말씀 참고 제시(Reflection Reference)
+
+- **Purpose**: 사용자 상황에 참고할 말씀을 제시한다(확정 계시 아님)
+- **Task**: 3-Category(Directly Relevant/Theme-related/Reflection
+  Candidate) 분류 제시, 리터럴 문구 규칙 적용
+- **AC**: Reference Category로만 제시 / "하나님이 이 말씀을 당신에게
+  주셨습니다" 류 Divine Voice wording 금지 / Full Text Production은
+  License HOLD
+- **Related Flow**: 각 Domain Flow의 Optional Scripture 단계(전용
+  Flow 미정의 — Cross-cutting)
+- **Related Entity**: ScriptureReference
+- **Related Policy**: `06-ai-vgl-guardrail.md` Scripture Check
+  Router, Literal Product Copy Rule
+
+### US-RPT-MOD-001 — 커뮤니티 운영 검토(Moderation)
+
+- **Purpose**: Confession의 공유 Surface에서 신고·운영 검토를 수행한다
+- **Task**: **CANDIDATE** — Reaction/Report Taxonomy/Moderation
+  Workflow Detail/Moderator Action Detail 전부 미확정, Feature 자체
+  미구현(`01-ia.md` Community 참조)
+- **AC**: **기존 `AC-G07-01~05`를 그대로 참조한다 — 중복 AC를 새로
+  만들지 않는다.**
+- **Related Flow**: 미정(Feature가 CANDIDATE 단계)
+- **Related Entity**: Confession, ShareCopy(Moderator는 이 둘만 열람
+  가능 — Private Prayer/RepentanceRecord Source 접근 불가)
+- **Related Policy**: `06-ai-vgl-guardrail.md` G-07, `08-social-safety.md`
+  Community Moderation Policy, 위 "Community Moderation AC (G-07)" 섹션
+
 (그 외 Product/화면 단위 AC는 추후 업데이트)

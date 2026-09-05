@@ -106,3 +106,23 @@ Recommendation Category 3종(확정): `Directly Relevant Scripture` /
 **우리말성경 Full Text License 자체는 여전히 미확보(HOLD)** —
 `07-privacy-security.md`/`10-decision-open-hold-register.md` 참조. 이
 Queue 필드 정의는 라이선스 확보와 별개로 미리 준비해둔 것뿐이다.
+
+## Literal Product Copy Rule — Scripture (2026-09-05, Owner/PM 확정)
+
+위 Recommendation Category 3종을 실제 제품 문구로 표현할 때 지켜야
+할 리터럴 규칙(신규 신학 규칙 아님 — 위 3종 정의를 문구 레벨로
+구체화한 것):
+
+- **금지**: "하나님이 지금 이 말씀을 당신에게 주셨습니다."(AI/System이
+  특정 구절을 하나님의 확정된 개인 메시지로 선언하는 표현)
+- **권장 방향**: "이 상황과 함께 살펴볼 수 있는 말씀입니다."(참고
+  자료로서의 제시 — Reflection Reference 원칙과 일치)
+
+**주의 — 이 문서 반영이 Validator 문제를 해결한 것은 아니다.**
+`runtime/validators/validator.v0.2.mjs`를 위 금지 문구로 실제 실행한
+결과(2026-09-05 Cross Review) `verdict: ALLOW`가 나왔다 — 즉 이
+Product Copy Rule은 **제품 문서상의 금지 규정**일 뿐, AI Validator가
+이 패턴을 자동으로 차단하는 것을 보장하지 않는다. Validator Coverage
+Gap은 `10-decision-open-hold-register.md`에 별도 P1 Governance OPEN
+항목으로 유지하며, 이 문서에서 Validator Verdict Logic을 임의로
+수정하지 않는다.
