@@ -1,30 +1,38 @@
 # VGL AC Fixtures
 
-**AC Canonical Source Imported = NO**
+**AC Canonical Source Imported = YES** (2026-09-05, `REPENT_VGL_Runtime_Canonical_Import_Pack.zip` 실제 첨부·확인)
 
-`VGL-RPT-AC-001~065`의 실제 Input/Expected Verdict 원문은 이 세션에서 접근
-가능한 어떤 소스(Repository, 연결된 Notion Workspace)에도 존재하지 않는다.
-Notion의 `REPENT PM Working Hub`에는 "65 AC Execution Prep = READY 65/65"라는
-상태값과 G-Gate ↔ AC 번호 매핑(`runtime/config/gates.json` 참조), Human Review
-대상 2건의 제목만 있고 65건 전체 본문은 없다.
+`ac-cases.official.json` — `VGL-RPT-AC-001~065` 원문(문장/판정/이유), Red-Team
+No.1~65와 순서 그대로 매핑됨. **원본과 byte-identical 복사본**이며, 이 세션에서
+직접 독립 재검증했다(제공된 `source_integrity` 메타데이터를 그대로 믿지
+않고 `tests/vgl/runner/validate-official.mjs`로 원본 `source/` 마크다운과
+diff): 65/65 건 전부 문장·판정·이유 변경 0건 확인.
 
-PM이 `VGL_for_REPENT_Upper_Session_Report_Package_v0.3.zip`
-(`Evidence_v0.2/02_VGL_for_REPENT_RedTeam_65_v0.2.md`)에 원문이 있다고
-2026-09-05에 전달했으나, **이 zip은 세션 업로드 디렉토리에 실제로 존재하지
-않음**(검색 확인 완료) — 채팅에서 설명된 파일 경로/내용을 근거로 65건을
-재구성하지 않았다. 실제 파일이 이 대화에 첨부돼야 한다.
+- `ac-cases.official.json` — 공식 65 AC 원문 (수정 금지)
+- `source/02_VGL_for_REPENT_RedTeam_65_v0.2.md` — 원본 Evidence 문서 (수정 금지)
+- `ac-cases.schema.json` — 위 파일의 실제 구조에 맞춰 갱신된 스키마
+- `smoke-cases.json` — 자체 제작 스모크 테스트 5건 (여전히 공식 AC 아님 — 별도 목적)
 
-**기억으로 재작성하지 않는다.** 아래 파일들은 원문이 아니다:
+## 검증 스크립트
 
-- `ac-cases.schema.json` — 원문이 들어올 스키마 정의
-- `smoke-cases.json` — Runner/Validator 배선을 검증하기 위한 자체 제작
-  스모크 테스트 5건 (`SMOKE-01`~`SMOKE-05`, `VGL-RPT-AC-` 접두어 사용 안 함 —
-  공식 65 AC와 혼동 금지)
+```bash
+# 구조·건수·ID·Verdict 어휘·원본 대조 (API Key 불필요)
+node tests/vgl/runner/validate-official.mjs
 
-## 원문 확보 후 절차
+# Validator 단독 진단 — 공식 Model Run 아님, Runtime Output(모델 호출) 생략
+# (test_sentence를 후보 출력으로 간주해 Validator에 직접 투입)
+node tests/vgl/runner/validator-dryrun.mjs
+```
 
-1. PM이 `VGL-RPT-AC-001~065` 원문을 이 폴더에 `ac-cases.official.json`
-   (스키마 준수, 각 항목 `source` 필드 필수)으로 전달.
-2. `node tests/vgl/runner/run.mjs --cases tests/vgl/fixtures/ac-cases.official.json --provider openai --official`
-   로 실제 실행 (`OPENAI_API_KEY` 필요).
-3. 결과는 `tests/vgl/results/`에 JSONL로 남는다.
+`validator-dryrun.mjs` 결과(2026-09-05 실행): 65건 중 REWRITE 2건은 Validator가
+아예 모델링하지 않은 verdict라 미지원 처리, 나머지 63건 중 **34건만 일치, 29건
+불일치**(대부분 실제 Red-Team 문장을 현재 정규식이 못 잡음). 이건 "Official
+65 AC Actual Test Run"이 아니라 Validator 자체의 현재 취약점을 보여주는
+진단이다 — Validator 패턴 보강이 별도 작업으로 필요함을 뜻한다.
+
+## 남은 것
+
+- Model Provider API Key 없음 → 진짜 Runtime Output(Provider 실제 호출) 포함한
+  Official 65 AC Actual Test Run은 아직 NOT RUN
+- Validator 패턴이 실제 Red-Team 65건 상당수를 못 잡음 → 정규식 보강 필요
+  (이번 라운드 범위 밖, 별도 작업으로 진행 예정)

@@ -1,22 +1,51 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "REPENT VGL-RPT-AC Case",
-  "description": "VGL-RPT-AC-001~065 공식 원문이 들어올 자리의 스키마. 이 파일 자체는 스키마 정의일 뿐 실제 65 AC 콘텐츠가 아니다 (AC Canonical Source Imported = NO).",
-  "type": "array",
-  "items": {
-    "type": "object",
-    "required": ["ac_id", "input", "expected_verdict", "severity"],
-    "properties": {
-      "ac_id": { "type": "string", "pattern": "^VGL-RPT-AC-\\d{3}$" },
-      "input": { "type": "string", "description": "사용자 발화/시나리오 입력" },
-      "expected_verdict": {
-        "type": "string",
-        "enum": ["PASS", "FAIL", "HUMAN_REVIEW", "SCRIPTURE_CHECK"]
-      },
-      "rule_id": { "type": "string", "description": "위반 시 매칭되어야 할 Validator rule id (선택)" },
-      "gate": { "type": "string", "pattern": "^G-(0[1-9]|10)$" },
-      "severity": { "type": "string", "enum": ["P0", "P1"] },
-      "source": { "type": "string", "description": "이 case의 원본 출처(Notion 페이지 등) — 반드시 기입" }
+  "title": "REPENT VGL-RPT-AC Case (Official Import Format)",
+  "description": "VGL-RPT-AC-001~065 공식 원문 파일(ac-cases.official.json)이 실제로 따르는 구조. 2026-09-05 REPENT_VGL_Runtime_Canonical_Import_Pack.zip 반입 후 실제 파일 구조에 맞춰 갱신함 — 이전 버전(input/expected_verdict enum PASS·FAIL 등)은 추측이었고 실제와 달랐다.",
+  "type": "object",
+  "required": ["schema_version", "case_count", "source_integrity", "cases"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "canonical_status": { "type": "string" },
+    "case_count": { "type": "integer", "const": 65 },
+    "id_mapping": { "type": "string" },
+    "source_integrity": {
+      "type": "object",
+      "required": ["test_sentence_changed_count", "verdict_changed_count", "reason_changed_count"],
+      "properties": {
+        "test_sentence_changed_count": { "type": "integer", "const": 0 },
+        "verdict_changed_count": { "type": "integer", "const": 0 },
+        "reason_changed_count": { "type": "integer", "const": 0 }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 65,
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "required": ["ac_id", "redteam_no", "test_sentence", "expected_verdict", "reason", "source"],
+        "properties": {
+          "ac_id": { "type": "string", "pattern": "^VGL-RPT-AC-\\d{3}$" },
+          "redteam_no": { "type": "integer", "minimum": 1, "maximum": 65 },
+          "test_sentence": { "type": "string" },
+          "expected_verdict": {
+            "type": "string",
+            "enum": ["ALLOW", "REWRITE", "SCRIPTURE_CHECK", "HUMAN_REVIEW", "BLOCK"],
+            "description": "02_VGL_for_REPENT_RedTeam_65_v0.2.md '판정 코드' 섹션 그대로 — REPENT-VGL-VALIDATOR-v0.1의 PASS/FAIL 어휘와 다르다. 임의로 서로 변환해 저장하지 않는다."
+          },
+          "reason": { "type": "string" },
+          "source": {
+            "type": "object",
+            "required": ["package", "path", "document"],
+            "properties": {
+              "package": { "type": "string" },
+              "path": { "type": "string" },
+              "document": { "type": "string" }
+            }
+          }
+        }
+      }
     }
   }
 }

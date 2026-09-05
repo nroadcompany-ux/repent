@@ -1,0 +1,24 @@
+{
+  "schema_structural_check": "PASS",
+  "case_count": 65,
+  "ac_id_coverage": "65/65",
+  "independently_recomputed_source_integrity": {
+    "test_sentence_changed_count": 0,
+    "verdict_changed_count": 0,
+    "reason_changed_count": 0
+  },
+  "claimed_source_integrity": {
+    "test_sentence_changed_count": 0,
+    "verdict_changed_count": 0,
+    "reason_changed_count": 0
+  },
+  "verdict_distribution": {
+    "BLOCK": 31,
+    "ALLOW": 29,
+    "HUMAN_REVIEW": 2,
+    "SCRIPTURE_CHECK": 1,
+    "REWRITE": 2
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -28,11 +28,16 @@ runtime/
 
 tests/vgl/
   fixtures/
-    ac-cases.schema.json         공식 AC 파일이 지켜야 할 스키마
+    ac-cases.schema.json         공식 AC 파일 실제 구조 스키마
+    ac-cases.official.json       공식 65 AC 원문 (VGL-RPT-AC-001~065, 수정 금지)
+    source/
+      02_VGL_for_REPENT_RedTeam_65_v0.2.md   원본 Evidence 문서 (수정 금지)
     smoke-cases.json             자체 제작 스모크 테스트 5건 (공식 아님)
     README.md                    AC 원문 확보 상태·절차
   runner/
-    run.mjs                      CLI Test Runner
+    run.mjs                      CLI Test Runner (Provider+Validator 파이프라인)
+    validate-official.mjs        공식 65 AC 구조·건수·ID·원본 대조 검증
+    validator-dryrun.mjs         Validator 단독 진단(모델 호출 없음)
     validator.unit.mjs           Validator 유닛 테스트
   results/
     run-*.jsonl                  실행별 Evidence Log
@@ -55,6 +60,12 @@ tests/vgl/
 ```bash
 # 유닛 테스트
 node tests/vgl/runner/validator.unit.mjs
+
+# 공식 65 AC 구조 검증 (API Key 불필요)
+node tests/vgl/runner/validate-official.mjs
+
+# Validator 단독 진단 — Official Model Run 아님(모델 호출 없음)
+node tests/vgl/runner/validator-dryrun.mjs
 
 # 스모크 테스트 (mock provider, 공식 AC 아님)
 node tests/vgl/runner/run.mjs \
@@ -94,16 +105,19 @@ G-07~G-10에는 대응하는 공식 AR 번호가 없다(요청받지 않음 — 
 새 Gate/AR 번호를 여기서 만들지 않는다. 새로운 판정축이 필요하다고 판단되면
 PM/Owner Escalation.
 
-## AC 원문 반입 절차
+## AC 원문 반입 절차 (완료 — 2026-09-05)
 
-1. PM이 `VGL-RPT-AC-001~065` 원문을 `tests/vgl/fixtures/ac-cases.schema.json`
-   스키마에 맞춰 `ac-cases.official.json`으로 전달 (각 항목 `source` 필드 필수).
-2. **파일은 이 대화(세션)에 직접 첨부돼야 한다.** 채팅 텍스트로 "어떤 파일
-   어디에 있다"는 설명만으로는 원문을 확인할 수 없다 — 2026-09-05에
-   `VGL_for_REPENT_Upper_Session_Report_Package_v0.3.zip`이 실제로는
-   업로드되지 않은 채 설명만 전달돼 반입이 보류된 사례 있음
-   (`docs/ai-runtime/runtime-binding.md` Blocking ① 참조).
+1. PM이 `REPENT_VGL_Runtime_Canonical_Import_Pack.zip`을 이 세션에 직접
+   첨부 → `ac-cases.official.json` + 원본 `02_VGL_for_REPENT_RedTeam_65_v0.2.md`
+   + `ar-01-06.owner-approved.json` 확인.
+2. **파일은 이 대화(세션)에 직접 첨부돼야 확인 가능하다.** 채팅 텍스트로
+   "어떤 파일 어디에 있다"는 설명만으로는 원문을 확인할 수 없다 —
+   2026-09-05에 두 차례(`VGL_for_REPENT_Upper_Session_Report_Package_v0.3.zip`,
+   그리고 처음 보낸 `REPENT_VGL_Runtime_Canonical_Import_Pack.zip` 참조 메시지)
+   실제로는 업로드되지 않은 채 설명만 전달돼 반입이 보류됐다가, 세 번째
+   시도에서 실제 첨부(`@` 경로 포함)로 성공한 사례 있음.
 3. Claude/개발팀은 원문을 기억이나 추정으로 재작성하지 않는다 — 전달받은
-   파일을 그대로 사용.
-4. 원문 수령 즉시 `docs/ai-runtime/runtime-binding.md`의
-   "AC Canonical Source Imported"를 YES로 갱신.
+   파일을 byte-identical로 복사해 사용, `validate-official.mjs`로 독립
+   재검증(제공된 메타데이터를 그대로 믿지 않음).
+4. 원문 수령·검증 완료 즉시 `docs/ai-runtime/runtime-binding.md`의
+   "AC Canonical Source Imported"를 YES로 갱신함 — 완료.

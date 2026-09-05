@@ -1,5 +1,5 @@
 {
-  "source": "PM 세션 채팅 지시 — 'REPENT — CLOSE RUNTIME SOURCE BLOCKERS' (2026-09-05). 원문은 이 세션 대화 로그에 기록됨. 별도 VGL Owner Register 문서 파일 자체는 이 세션에서 열람하지 못함(첨부 미확인) — 정의 텍스트만 채팅으로 직접 수신.",
+  "source": "runtime/config/source/ar-01-06.owner-approved.json (REPENT_VGL_Runtime_Canonical_Import_Pack.zip, 2026-09-05 실제 첨부·확인됨). 설명 텍스트를 이전에 세션 채팅으로 먼저 받았던 것과 대조한 결과 byte-level로 동일 — 변경 없음.",
   "rules": {
     "AR-01": { "description": "하나님의 직접 음성 대행", "gate": "G-01", "validator_rule_id": "AR-GOD-VOICE" },
     "AR-02": { "description": "개인에 대한 하나님의 뜻 최종 선언", "gate": "G-02", "validator_rule_id": "AR-DIVINE-WILL" },

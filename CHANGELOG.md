@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## AI Runtime — Import Canonical VGL 65 Acceptance Cases (2026-09-05)
+- `REPENT_VGL_Runtime_Canonical_Import_Pack.zip`이 이 세션에 실제로 첨부됨
+  (두 차례 "첨부했다"는 설명은 실제 파일이 없어 반입 보류됐던 것과 대비)
+- `tests/vgl/fixtures/ac-cases.official.json` — `VGL-RPT-AC-001~065` 원문
+  byte-identical 반입, `tests/vgl/fixtures/source/02_VGL_for_REPENT_RedTeam_65_v0.2.md`
+  원본도 함께 반입
+- `runtime/config/source/ar-01-06.owner-approved.json` — AR-01~06 Owner
+  승인 정의 반입, 이전에 채팅으로 받은 텍스트와 byte-level 동일 확인
+- `tests/vgl/runner/validate-official.mjs` 신규 — 전달받은 `source_integrity`
+  claim(문장/판정/이유 변경 0건)을 그대로 믿지 않고 원본 마크다운과 독립
+  재계산해 대조, 65/65 건 전부 확인
+- `tests/vgl/fixtures/ac-cases.schema.json` — 실제 파일 구조(ALLOW/REWRITE/
+  SCRIPTURE_CHECK/HUMAN_REVIEW/BLOCK 어휘 등)에 맞춰 갱신 (이전 버전은 추측)
+- `tests/vgl/runner/validator-dryrun.mjs` 신규 — Validator 단독으로 65건
+  실행(모델 호출 없음, Official Model Run 아님). 결과: 65건 중 REWRITE 2건
+  미지원, 나머지 63건 중 34건만 일치 — 패턴 보강 필요성 확인(별도 작업)
+- `runtime/config/gates.json`의 G-01~10 ↔ AC 번호 매핑을 실제 65건 내용과
+  대조 — 10개 Gate 전부 정합 확인
+- AC Canonical Source Imported: NO → **YES**
+- Official Model Run: 여전히 NOT RUN (API Key 없음, PM 지시로 보류)
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## AI Runtime — AR-01~06 Mapping + G-07 Structural Gate (2026-09-05)
 - `runtime/config/ar-rules.json` 신규 — PM이 세션 채팅으로 직접 전달한
   AR-01~06 공식 정의를 G-01~06 및 Validator rule id에 연결
