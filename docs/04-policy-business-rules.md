@@ -87,6 +87,21 @@ updated: 2026-09-05
   것으로 읽히는 어떤 문구도 사용하지 않는다(AR-04/G-04, 회개 진정성
   판정 금지 원칙과 정합)
 
+## Onboarding (2026-09-05, Owner 확정 — Q1)
+
+- 가입 직후 3개 진입 질문만 제공(내용은 `02-user-flow.md` H. Onboarding
+  참조), 응답은 선택(건너뛰기 가능)
+- **5개 메뉴 전체를 도는 Tutorial을 강제하지 않는다**
+
+## Notification (2026-09-05, Owner 확정 — Q3, MVP)
+
+- MVP 범위 = **Promise / Action 사용자 설정 Reminder만**
+- **Prayer / Repentance에 대한 재촉(Nudge) Push는 기본 제공하지
+  않는다**
+- **죄책감·영적 압박으로 읽히는 문구를 알림에 쓰지 않는다**(예: "기도한
+  지 오래됐습니다", "회개할 시간입니다" 류 금지 — Empty/Error
+  Principle과 동일한 원칙을 알림에도 적용)
+
 ## Sharing (2026-09-05, Owner/PM 확정)
 
 - Source Edit ≠ ShareCopy Auto Edit — Source를 수정해도 이미 만들어진

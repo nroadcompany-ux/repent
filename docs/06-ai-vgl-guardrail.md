@@ -107,6 +107,15 @@ Recommendation Category 3종(확정): `Directly Relevant Scripture` /
 `07-privacy-security.md`/`10-decision-open-hold-register.md` 참조. 이
 Queue 필드 정의는 라이선스 확보와 별개로 미리 준비해둔 것뿐이다.
 
+## Scripture MVP Scope (2026-09-05, Owner 확정 — Q10)
+
+- **MVP = Book / Chapter / Verse Reference 중심**(예: "요한복음 3장
+  16절") — 구절 인용 표시가 기본
+- **Full Text 제공은 License 확보 후**(우리말성경 Full Text License는
+  여전히 HOLD — 위 참조)
+- **AI는 관련 말씀 "후보"만 제시**한다 — 확정 해석·확정 계시로
+  제시하지 않는다(Recommendation Category 3종과 동일 원칙)
+
 ## Literal Product Copy Rule — Scripture (2026-09-05, Owner/PM 확정)
 
 위 Recommendation Category 3종을 실제 제품 문구로 표현할 때 지켜야

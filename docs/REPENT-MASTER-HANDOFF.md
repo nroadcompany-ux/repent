@@ -29,12 +29,12 @@ updated: 2026-09-05
 
 | 항목 | 값 |
 |---|---|
-| Last Update | 2026-09-05 (Product Planning Canonicalization Batch) |
-| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `fd1d8739a1d2bbd45a7b9c995097756d9a2ca53b` |
-| Changed Area | `docs/00,01,02,04,05,06,09,10` 병렬 이식(Requirement Matrix, Feature Inventory, E2E Flow 7종, Data/Permission/State, Product Functional Trace 12 Story, Register 갱신) — 신규 Product Meaning 없음, 기존 Owner Lock 무변경(순수 추가) |
-| Status Delta | 공식 Trace Break Code 10종 전부 **0건**(JNY/PRY/PRM/ACT/RPN/CNF/SHR/SCR/MOD 9개 Domain 전수 검사). Planning Gate = **C 유지**(Claude 판단 — Community CANDIDATE 미구현·Permission 미구현·Lifecycle Enum 미확정이 Non-blocking인지는 PM 확인 필요, B 승격 가능성 있음) |
-| Remaining Blocking | Community 상세 4종 CANDIDATE(미구현), Permission 실제 구현(DB/API) 전무, Lifecycle Enum 이름 미확정. 신규 P1: Branch Integration Gap(`docs/00` 선언 main ↔ 실제 브랜치 불일치). 기존 HOLD 변경 없음 |
-| Next P0 | PM 승인 대기 — Planning Gate B 승격 여부, Branch Integration 처리 시점, Community CANDIDATE 착수 여부, Lifecycle Enum 확정, Figma/Prototype 재설계 착수 시점(둘 다 Non-blocking으로 재확인) |
+| Last Update | 2026-09-05 (Owner Decision Final Canonicalization + Missing Planning Audit) |
+| Last Verified Commit SHA (이 갱신 시점 origin 기준, 이 문서 반영 전) | `92ba27e1afb7ba2be0f20ea081f65e749b5d807d` |
+| Changed Area | `docs/00,01,02,04,05,06,07,08,09,10` — Notion TEMP Decision Queue Q1~Q12 반영(신규 Product Meaning 없음, 기존 Owner Lock 무변경) + Missing Planning Audit 15문항 수행 |
+| Status Delta | Owner Decision Queue **완전 종결**(DECIDED 11 / HOLD 1 / Missing 0). Trace Break 0건 유지(신규 Working ID 9건 추가에도). **Planning Gate = C → B로 상향**(Claude 판단, 근거: 남은 항목이 전부 정당한 HOLD이거나 Product Meaning 확정 후 절차만 남은 Non-blocking) |
+| Remaining Blocking | 없음(Blocking 항목 0) — 남은 것은 Non-blocking OPEN 6건(Moderation Workflow/Moderator Action Detail 등) + 기존 HOLD 7건뿐. Branch Integration Gap(P1)은 변경 없이 유지 |
+| Next P0 | PM 확인 대기 — Gate B 상향에 대한 PM 최종 동의, Moderation Workflow/Minor Public 공유 2개 화면군 착수 여부, Notion TEMP Decision Queue 폐기 승인(Section H) |
 
 이 커밋(이 문서를 포함해 새로 만드는 커밋)의 실제 SHA는 이번 라운드
 RETURN의 `Commit SHA` / `Remote SHA` 필드에 기록한다 — 이 문서 본문에는
@@ -473,6 +473,103 @@ CANDIDATE 항목 착수 여부 ④ Lifecycle Enum 이름 확정 ⑤ Figma/Protot
 - **Prototype**: NON-CANONICAL LEGACY ARTIFACT — `s-action-fail`
   Taxonomy, `s-repent` 진행률/스텝카운터 등 기존 발견 사항은 재설계
   시 참고만, Planning Gate 판정에 포함하지 않음(Non-blocking)
+
+---
+
+## Owner Decision Final Canonicalization + Missing Planning Audit (2026-09-05 — 최신)
+
+PM 지시 `REPENT — OWNER DECISION FINAL CANONICALIZATION + MISSING
+PLANNING AUDIT` 실행. Notion TEMP Decision Queue Q1~Q12를 Canonical
+docs에 반영하고, REPENT 전체 Product Planning의 미기획 영역을 15개
+질문 기준으로 전수 감사했다. **신규 Product Meaning 없음** — 이미
+Owner가 확정한 내용만 반영. Figma/Prototype 미사용, `main` merge
+없음(계속 `claude/new-session-gwiqkv`).
+
+### Owner Decision Queue Closed
+
+**DECIDED = 11 / HOLD = 1 / Owner Decision Missing = 0**
+
+| Q | 항목 | 결과 | 반영 위치 |
+|---|---|---|---|
+| Q1 | Onboarding | DECIDED | `02-user-flow.md` H, `04-policy-business-rules.md` |
+| Q2 | Search | DECIDED | `01-ia.md`, `09-acceptance-criteria.md` US-RPT-SEA-001 |
+| Q3 | Notification | DECIDED | `04-policy-business-rules.md` |
+| Q4 | Account Delete | DECIDED | `07-privacy-security.md` |
+| Q5 | Export | DECIDED(우선순위 낮음) | `00-product-foundation.md` |
+| Q6 | AI Memory | DECIDED | `07-privacy-security.md` |
+| Q7 | Community Reaction | DECIDED | `08-social-safety.md` |
+| Q8 | Report Taxonomy | DECIDED | `08-social-safety.md` |
+| Q9 | Minor Confession Sharing | **HOLD**(Default=Private만 확정) | `08-social-safety.md` |
+| Q10 | Scripture | DECIDED | `06-ai-vgl-guardrail.md` |
+| Q11 | Source Delete / ShareCopy | DECIDED | `05-data-model.md` |
+| Q12 | State Enum | DECIDED(절차 확정, 이름은 Dev Documentation 단계) | `05-data-model.md` |
+
+### Latest Remaining OPEN/HOLD (재산출)
+
+**Non-blocking OPEN**: Moderation Workflow Detail·Moderator Action
+Detail(CANDIDATE — Community 핵심 의미는 이미 확정, 절차만 미정),
+Lifecycle Enum 정확한 이름(Q12로 "지금 정하지 않는다"는 절차 자체는
+확정), Export 구현 상세(Q5로 "포함하되 후순위"는 확정), CRUD Matrix가
+Entity별 단일 서술 컬럼이라 C/R/U/D 개별 컬럼 세분화는 남음(문서
+포맷 수준), Recovery Flow가 Empty/Error 문구 수준을 넘는 상세(재시도
+UX 등)는 없음, Scripture 전용 Flow 없음(Cross-cutting 설계상 의도적)
+
+**HOLD(변경 없음)**: Privacy/Longitudinal Consent 세부 동의 범위,
+Minor Confession Public 공유(Q9), Scripture Full Text License/
+Retrieval, OpenAI Runtime Binding, Official Model Run, RS-AR05-D3,
+RS-G10-D1
+
+### Missing Planning Audit (15개 질문, 2026-09-05)
+
+| # | 질문 | 답변 |
+|---|---|---|
+| 1 | 가입→첫 기록 Flow 완전한가 | **결정 수준 YES**(3질문+미강제 확정) / UX 상세(전부 건너뛰면 어느 화면 착지 등)는 Screen 단계에서 확정 필요 |
+| 2 | 5 Main Nav 각 Entry/Core/Exit/Return 정의됐는가 | **YES**(재확인 중 Action·Confession Flow에 Return 누락 발견 → 이번 라운드에서 즉시 보완, `02-user-flow.md` D/F) |
+| 3 | Prayer/Scripture/ShareCopy 완전한가 | Prayer·ShareCopy는 YES, **Scripture는 전용 Flow 없음**(Cross-cutting 설계상 의도적 — Non-blocking) |
+| 4 | CRUD/Archive/Share 정의됐는가 | 원칙 수준 YES(`05-data-model.md`) — Entity별 C/R/U/D 개별 컬럼 세분화는 미완(문서 포맷 수준, Non-blocking) |
+| 5 | Search/Retrieval 정의됐는가 | **YES**(Q2, Scripture Retrieval은 License-gated HOLD로 명확 분리) |
+| 6 | Reminder/Notification 정의됐는가 | **YES**(Q3) |
+| 7 | Account/Delete/Export 정의됐는가 | **YES**(Q4/Q5) |
+| 8 | Privacy/Consent/Memory 정의됐는가 | Confession Privacy·AI Memory 기본 정책 YES, **Longitudinal Consent 세부 동의 메커니즘은 HOLD**(정상 — Owner/Legal 결정 필요 영역) |
+| 9 | Community/Report/Moderation 정의됐는가 | Surface·Reaction·Report Taxonomy **YES**, Moderation Workflow/Moderator Action Detail은 **CANDIDATE**(Product Meaning은 있음, 절차만 미정 — Non-blocking) |
+| 10 | Minor Safety HOLD로 명확히 분리됐는가 | **YES**(Q9, Default=Private 확정 + Public만 HOLD로 정밀 분리) |
+| 11 | Empty/Error/Recovery 정의됐는가 | Empty/Error 문구 원칙 **YES**(`04`), Recovery 상세 UX는 없음(Non-blocking) |
+| 12 | Data/State/Permission에 미정 Owner 있는가 | **없음** — CRUD Matrix 전 Entity에 Owner 또는 System 명시(`05-data-model.md` 확인) |
+| 13 | 모든 CURRENT Requirement에 Story/Task/AC 있는가 | **YES** — 8 Domain + 6 System-Level Capability 전부 `09-acceptance-criteria.md`에 Working ID Story 보유(AI/VGL은 Canonical 65/G-07 트랙으로 별도 커버) |
+| 14 | Screen Planning 전 추가 Product Decision 필요한가 | 핵심 5 Main Nav + Confession/ShareCopy/Onboarding은 **불필요**. Moderation Workflow 화면, Minor Public 공유 화면 2건만 추가 결정/HOLD 해소 필요 |
+| 15 | Figma 없이 Screen Spec 작성 가능한 만큼 Product Meaning 충분한가 | **핵심 영역 YES** — `docs/00,01,02,04,05`만으로 대부분의 Screen Spec 착수 가능. Moderation·Minor Public 공유 2개 화면군만 보류 |
+
+### Audit Return
+
+- **Planning Areas Checked**: 15/15
+- **Missing Product Planning**: **없음**(Product Meaning이 정의되지
+  않은 항목 0건 — 남은 것은 전부 구현 상세 또는 정당한 HOLD)
+- **Unresolved Owner Decision**: **없음**(Q1~Q12 전부 DECIDED 또는
+  명시적 HOLD로 종결, 미결 없음)
+- **Non-blocking OPEN**: 6건(위 목록 — Moderation Workflow/Moderator
+  Action Detail, Lifecycle Enum 이름, Export 구현 상세, CRUD Matrix
+  컬럼 세분화, Recovery Flow 상세, Scripture 전용 Flow 부재)
+- **HOLD**: 7건(Longitudinal Consent 세부, Minor Public 공유,
+  Scripture License/Retrieval, OpenAI Binding, Official Model Run,
+  RS-AR05-D3, RS-G10-D1)
+- **Trace Break**: 0(공식 10종 Break Code 전부 0 — 재확인)
+- **Product Meaning Conflict**: **0**(이번 라운드 신규 반영분 전체를
+  금지 어휘 목록으로 재검사 — 발견 매치 전부 금지 선언문/예시 맥락,
+  실제 위반 없음)
+- **Planning Completion**: **정성적 추정 상향 — 이전 라운드(22%)
+  대비 크게 개선.** Trace Break 0건 + Owner Decision Queue 완전
+  종결(12/12) 기준으로 **약 65~70%**로 재평가(정밀 계량 아님 — 남은
+  30~35%는 Moderation/Minor Public 2개 화면군의 세부 설계와 Screen
+  Spec 실작성 분량)
+- **Planning Gate: B — READY WITH NON-BLOCKING OPEN/HOLD**
+  (이전 C에서 상향). 근거: 남은 항목이 전부 (a) 정당하게 분리된
+  HOLD(Owner/Legal 영역) 또는 (b) Product Meaning은 확정됐고 구현
+  절차만 남은 Non-blocking OPEN이기 때문 — PM이 예고한 "구현 상세만
+  남은 것을 Product Meaning Gap으로 과장하지 않는다" 기준 적용
+- **Can Start Final 10 Documents: 조건부 YES** — Moderation
+  Workflow·Minor Public 공유를 다루는 2개 화면군을 제외한 나머지
+  전 영역은 착수 가능. 이 2개 화면군은 각각 CANDIDATE 해소·HOLD
+  해소 이후 별도로 진행 권장(전체를 다 막을 필요는 없음)
 
 ---
 

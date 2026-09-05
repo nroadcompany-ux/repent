@@ -51,4 +51,19 @@ TRACE" 섹션 참조.
 | Scripture | 상황에 참고할 말씀을 제시하기 위해 | User(열람) / System(제시) | 성경 구절을 **Reflection Reference**로 제시 | 사용자가 참고용으로 말씀을 확인한다 | Revelation/Confirmation Engine(하나님이 이 말씀을 확정해 주셨다는 선언) | CURRENT |
 | AI/VGL | AI가 안전한 범위 안에서 사용자의 성찰을 돕기 위해 | System(AI) | 판단을 대신하지 않는 **Reflection Assist** 제공 | 사용자가 스스로 판단하도록 돕는 응답이 제공된다 | Spiritual Authority(신적 음성·뜻·판정·계시/예언) 행사 | CURRENT |
 
+## System-Level Capabilities (2026-09-05, Owner Final Decision — Notion TEMP Decision Queue Q1~Q12)
+
+Main/Cross-cutting Domain이 아니라 시스템 전반에 걸친 캐패빌리티.
+세부 Story/Task/AC는 `09-acceptance-criteria.md`, Feature 상태는
+`01-ia.md` 참조 — 여기서는 WHY/WHAT만 요약한다.
+
+| 항목 | WHY | WHAT | STATUS |
+|---|---|---|---|
+| Onboarding | 가입 직후 부담 없이 첫 기록을 시작하게 하기 위해 | 3개 진입 질문 제공(오늘 하나님께 듣고 싶은 말씀 / 하나님께 마음을 드리는지 / 하나님과 약속한 것) — 5개 메뉴 전체 Tutorial 강제 안 함 | CURRENT |
+| Search | Journey 기록을 빠르게 다시 찾기 위해 | Journey 내부 Search+Filter(기간/기록종류/키워드/LifeEvent/Season/StoryArc) — 독립 Bottom Tab 아님 | CURRENT |
+| Notification | 사용자가 스스로 설정한 리마인더만 받게 하기 위해 | Promise/Action 사용자 설정 Reminder만 제공 | CURRENT |
+| Account Delete | 탈퇴 시 개인 기록과 공유본을 사용자 의사대로 정리하기 위해 | Private Source 삭제 절차 + ShareCopy 유지/삭제 사용자 선택 | CURRENT |
+| Export | 사용자가 자신의 기록을 가져갈 수 있게 하기 위해 | Product Planning에는 포함, MVP 구현 우선순위는 후순위 | CURRENT(우선순위 낮음) |
+| AI Memory | AI가 사용자 동의 없이 민감 기록을 재사용하지 않게 하기 위해 | Default OFF, Explicit Opt-in 후에만 사용, 중지/삭제 가능 | CURRENT |
+
 (그 외 세부 항목은 추후 업데이트)

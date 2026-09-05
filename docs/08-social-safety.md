@@ -71,6 +71,26 @@ BOUNDARY는 ALLOW도 BLOCK도 아니다 — Moderation 메시지 작성 시 정�
 사유만 남기고 영적 판정 문구를 제거해야 ALLOW가 된다(둘 중 하나를
 없애는 것이지 자동으로 어느 한쪽으로 판정되는 게 아님).
 
+## Community Reaction (2026-09-05, Owner 확정 — Q7)
+
+- **MVP = 공감(1종)만** 제공
+- **금지**: 인기순 노출, 랭킹, 영적 비교(reaction 수로 신앙 수준을
+  암시), **Reaction 기반 Faith Signal**(reaction 수를 신앙 지표로
+  환산·표시)
+
+## Report Taxonomy (2026-09-05, Owner 확정 — Q8)
+
+**4종**만 사용한다:
+1. 개인정보 노출
+2. 괴롭힘·혐오
+3. 스팸·광고
+4. 기타 안전 문제
+
+**금지**: "신앙이 잘못됨", "회개가 부족함" 등 **Spiritual Judgment
+신고사유** — 신고 사유는 항상 콘텐츠/행동 기준이어야 한다(위
+Community Moderation Policy·AC-G07-04 "신고 사유와 Spiritual
+Judgment를 분리한다"와 동일 원칙).
+
 ## Minor Safety — OPEN/HOLD 구분 (2026-09-05)
 
 **이 섹션은 미결 상태를 명확히 기록하는 것이지, 정책을 확정하는 것이
@@ -87,5 +107,22 @@ BOUNDARY는 ALLOW도 BLOCK도 아니다 — Moderation 메시지 작성 시 정�
   임의로 OPEN 항목을 HOLD로, 혹은 HOLD 항목을 확정으로 바꾸지 않았다
 - Production Release는 이 항목이 Owner에 의해 해소되기 전까지 계속
   HOLD(`10-decision-open-hold-register.md` 참조)
+
+### Minor Confession Sharing (2026-09-05, Owner 확정 — Q9, **여전히 HOLD**)
+
+**Default 자체는 확정됐다 — Public 공유 허용 여부만 HOLD로 남는다**:
+
+- **Default = Private**(미성년 사용자의 Confession은 기본적으로
+  비공개) — 이 Default는 확정
+- **Public Confession = Age/Protection/Legal Policy 확정 전까지
+  HOLD** — 미성년 사용자가 Confession을 Public(이름 공개/이름 가리고
+  나누기 포함 공유 범위)으로 게시하는 것을 허용할지는 여전히 결정되지
+  않음
+- **민감한 죄·회개·상담성 내용은 더 엄격한 제한이 필요**하다는 방향만
+  확정 — 구체적 제한 기준(연령 확인 방법, 내용 판정 방법 등)은 여전히
+  미정
+- 위 "확정된 것: 없음" 서술은 이 세션 이전 상태였고, **이번 라운드로
+  'Default=Private'라는 최소한의 확정은 생겼다** — 그 외 미성년 식별
+  방법·보호자 동의 흐름 등은 여전히 미확정(Owner/Legal 판단 필요)
 
 (그 외 Social Safety 영역 — 신고 처리 SLA 등은 추후 업데이트)

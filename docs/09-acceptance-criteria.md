@@ -270,4 +270,117 @@ Functional AC**다. `VGL-RPT-AC-001~065`·`AC-G07-01~05`와 **수정·합산
 - **Related Policy**: `06-ai-vgl-guardrail.md` G-07, `08-social-safety.md`
   Community Moderation Policy, 위 "Community Moderation AC (G-07)" 섹션
 
+### US-RPT-ONB-001 — 가입 온보딩(3개 진입 질문)
+
+- **Purpose**: 가입 직후 부담 없이 첫 기록을 시작하게 한다
+- **Task**: 3개 진입 질문 제시(선택 응답), 첫 기록으로 자연스럽게 연결
+- **AC**: 5개 메뉴 전체 Tutorial 강제 없음 / 질문 응답은 건너뛰기 가능
+- **Related Flow**: `02-user-flow.md` H. Onboarding
+- **Related Entity**: 없음(온보딩 자체는 Record를 강제 생성하지 않음)
+- **Related Policy**: `04-policy-business-rules.md` Onboarding
+
+### US-RPT-SEA-001 — Journey 내부 검색/필터
+
+- **Purpose**: 사용자가 자신의 Journey 기록을 빠르게 다시 찾는다
+- **Task**: 기간/기록종류/키워드/LifeEvent/Season/StoryArc 기준 검색+필터 제공
+- **AC**: Journey 내부 기능으로만 존재 / 독립 Bottom Tab 생성 금지
+- **Related Flow**: `02-user-flow.md` A. Journey
+- **Related Entity**: LifeEvent, Season, StoryArc
+- **Related Policy**: `00-product-foundation.md` System-Level Capabilities(Search)
+
+### US-RPT-NOT-001 — Promise/Action Reminder
+
+- **Purpose**: 사용자가 스스로 설정한 리마인더만 받게 한다
+- **Task**: Promise/Action에 대한 사용자 설정 Reminder 발송
+- **AC**: Prayer/Repentance 재촉 Push 기본 제공 금지 / 죄책감·영적
+  압박 문구 금지
+- **Related Flow**: `02-user-flow.md` C. Promise, D. Action(임베드된
+  부가 기능 — 전용 Flow 아님)
+- **Related Entity**: Promise, Action
+- **Related Policy**: `04-policy-business-rules.md` Notification
+
+### US-RPT-ACC-001 — 계정 삭제(탈퇴)
+
+- **Purpose**: 탈퇴 시 개인 기록과 공유본을 사용자 의사대로 정리한다
+- **Task**: Private Source 삭제 절차 진입, ShareCopy 유지/삭제 선택
+  UI 제공, 법적/운영 로그를 Content와 분리해 최소 범위·최대 6개월
+  보관
+- **AC**: ShareCopy는 자동 일괄 삭제·자동 일괄 유지 둘 다 아님(사용자
+  선택 필수) / 로그 보관 상한 6개월
+- **Related Flow**: 전용 Flow 미정의(Product Documentation Lock 이후
+  진행)
+- **Related Entity**: User, 전 Private Entity, ShareCopy
+- **Related Policy**: `07-privacy-security.md` Account Delete
+
+### US-RPT-ACC-002 — 기록 Export
+
+- **Purpose**: 사용자가 자신의 기록을 내보낼 수 있게 한다
+- **Task**: **우선순위 낮음(MVP 이후)** — Product Planning 범위에는
+  포함, 구현 순서는 후순위
+- **AC**: (구현 상세는 착수 시점에 확정 — 현재는 "포함됨"만 AC)
+- **Related Flow**: 미정
+- **Related Entity**: User, 전 Entity(Export 대상)
+- **Related Policy**: `00-product-foundation.md` System-Level Capabilities(Export)
+
+### US-RPT-MEM-001 — AI Memory Opt-in
+
+- **Purpose**: AI가 사용자 동의 없이 민감 기록을 재사용하지 않게 한다
+- **Task**: Default OFF 유지, Explicit Opt-in UI 제공, 중지/삭제 기능
+  제공
+- **AC**: Prayer/Repentance 등 민감 기록은 동의 없이 AI Context로
+  재사용 금지 / 사용자가 언제든 중지·삭제 가능
+- **Related Flow**: 전용 Flow 미정의(Phase C 진입 전까지는 기능
+  비활성 — `runtime/config/runtime.candidate.json` memory: OFF)
+- **Related Entity**: 전 Private Entity(재사용 대상 후보)
+- **Related Policy**: `07-privacy-security.md` AI Memory — Opt-in Policy
+
+### US-RPT-MOD-002 — Community Reaction(공감)
+
+- **Purpose**: 공유된 콘텐츠에 최소한의 긍정 반응을 표현하게 한다
+- **Task**: 공감 1종 Reaction 버튼 제공
+- **AC**: 인기순/랭킹/영적 비교/Reaction 기반 Faith Signal 생성 금지
+- **Related Flow**: `02-user-flow.md` F. Confession Direct(공유 후
+  열람 화면에 부가 — 전용 Flow 아님)
+- **Related Entity**: Confession, ShareCopy
+- **Related Policy**: `08-social-safety.md` Community Reaction
+
+### US-RPT-MOD-003 — Report(신고) 접수
+
+- **Purpose**: 공유된 콘텐츠에 대한 신고를 콘텐츠/행동 기준으로만
+  접수한다
+- **Task**: 신고 사유 4종(개인정보 노출/괴롭힘·혐오/스팸·광고/기타
+  안전 문제) 선택 UI 제공
+- **AC**: Spiritual Judgment 신고사유(예: "신앙이 잘못됨") 생성 금지 —
+  **기존 `AC-G07-04`(신고 사유와 Spiritual Judgment 분리)를 참조,
+  중복 AC 생성 안 함**
+- **Related Flow**: 전용 Flow 미정의(Moderation Workflow Detail이
+  CANDIDATE인 동안 신고 접수 UI만 우선 정의됨)
+- **Related Entity**: Confession, ShareCopy
+- **Related Policy**: `08-social-safety.md` Report Taxonomy, `06-ai-vgl-guardrail.md` G-07
+
+### US-RPT-SCR-002 — Scripture MVP(Book/Chapter/Verse 중심)
+
+- **Purpose**: 확정 계시가 아닌 참고 자료로 말씀을 제시한다
+- **Task**: Book/Chapter/Verse Reference 표시를 기본으로 구현, Full
+  Text는 License 확보 후로 지연
+- **AC**: AI는 관련 말씀 "후보"만 제시(확정 해석 금지) / Full Text
+  Production은 License HOLD 유지
+- **Related Flow**: 각 Domain Flow의 Optional Scripture 단계(SCR-001과
+  동일 — Cross-cutting)
+- **Related Entity**: ScriptureReference
+- **Related Policy**: `06-ai-vgl-guardrail.md` Scripture MVP Scope
+
+### US-RPT-SHR-002 — Source Delete 시 ShareCopy 처리
+
+- **Purpose**: 원본 삭제 시 이미 공유된 ShareCopy를 사용자 의사대로
+  정리한다
+- **Task**: Source 삭제 액션 시 기존 ShareCopy 목록 제시, 함께 삭제
+  여부를 사용자가 선택
+- **AC**: Source Delete가 ShareCopy를 자동으로 지우거나 자동으로
+  남기지 않음(사용자 선택 필수)
+- **Related Flow**: `02-user-flow.md` G. Private Source Share(역방향
+  — 삭제 시점의 절차)
+- **Related Entity**: ShareCopy
+- **Related Policy**: `05-data-model.md` Source Delete 절차
+
 (그 외 Product/화면 단위 AC는 추후 업데이트)

@@ -1,5 +1,72 @@
 # CHANGELOG
 
+## Owner Decision Final Canonicalization + Missing Planning Audit (2026-09-05)
+- PM 지시 `REPENT — OWNER DECISION FINAL CANONICALIZATION + MISSING
+  PLANNING AUDIT` 실행. Notion TEMP Decision Queue Q1~Q12(Owner 최종
+  확정 12개 기획 결정)를 `docs/00,01,02,04,05,06,07,08,09,10`에 반영.
+  신규 Product Meaning 없음, Figma/Prototype 미사용, `main` merge 없음
+- **Q1 Onboarding**: 가입 후 3개 진입 질문(선택 응답), 5개 메뉴 전체
+  Tutorial 강제 금지 — `02-user-flow.md` H, `04-policy-business-rules.md`
+- **Q2 Search**: Journey 내부 Search+Filter(기간/기록종류/키워드/
+  LifeEvent/Season/StoryArc), 독립 Bottom Tab 금지 — `01-ia.md`
+- **Q3 Notification**: MVP=Promise/Action 사용자 설정 Reminder만,
+  Prayer/Repentance 재촉 Push 및 죄책감·영적 압박 문구 금지 —
+  `04-policy-business-rules.md`
+- **Q4 Account Delete**: Private Source 탈퇴 시 삭제 절차, ShareCopy
+  탈퇴 전 유지/삭제 사용자 선택, 법적/운영 로그 Content 분리+최소
+  범위+최대 6개월 보관 — `07-privacy-security.md`
+- **Q5 Export**: Product Planning 포함, MVP 구현 우선순위는 후순위 —
+  `00-product-foundation.md`
+- **Q6 AI Memory**: Default OFF, Explicit Opt-in 후 사용, Prayer/
+  Repentance 등 민감기록 동의 없는 재사용 금지, 중지/삭제 가능 —
+  `07-privacy-security.md`
+- **Q7 Community Reaction**: MVP=공감 1종만, 인기순/랭킹/영적 비교/
+  Reaction 기반 Faith Signal 금지 — `08-social-safety.md`, `01-ia.md`
+  Community CANDIDATE→CURRENT 승격
+- **Q8 Report Taxonomy**: 4종(개인정보 노출/괴롭힘·혐오/스팸·광고/
+  기타 안전 문제), Spiritual Judgment 신고사유 금지 —
+  `08-social-safety.md`, `01-ia.md` CANDIDATE→CURRENT 승격
+- **Q9 Minor Confession Sharing = HOLD 유지, Default만 확정**:
+  Default=Private는 확정, Public 공유는 Age/Protection/Legal Policy
+  확정 전까지 여전히 HOLD — `08-social-safety.md`
+- **Q10 Scripture**: MVP=Book/Chapter/Verse Reference 중심, Full
+  Text는 License 확보 후, AI는 후보만 제시 — `06-ai-vgl-guardrail.md`
+- **Q11 Source Delete/ShareCopy**: Source 삭제 시 기존 ShareCopy
+  목록 제시 후 함께 삭제 여부 사용자 선택 절차로 확정(CANDIDATE
+  해소) — `05-data-model.md`
+- **Q12 State Enum**: Product Meaning=LOCK, 정확한 Enum 이름은
+  Development Documentation 단계에서 확정한다는 절차 자체가 Owner
+  확정(이름 값만 CANDIDATE 유지) — `05-data-model.md`
+- **Trace Update**: 신규 Working ID Story 9건 추가(`US-RPT-ONB-001·
+  SEA-001·NOT-001·ACC-001/002·MEM-001·MOD-002/003·SCR-002·SHR-002`),
+  각각 Purpose/Task/AC/Related Flow/Related Entity/Related Policy
+  연결. HOLD인 Q9(Minor Confession Sharing)는 지시대로 억지 AC/Flow
+  생성하지 않음
+- **문서 완성도 보완(신규 결정 아님)**: Missing Planning Audit
+  진행 중 `02-user-flow.md` D.Action/F.Confession Direct에 `→ Return`
+  단계가 누락된 것을 발견해 즉시 보완(신규 Product Meaning 아님 —
+  이미 확정된 원칙을 flow 표기에 반영한 것)
+- **`docs/10-decision-open-hold-register.md`**: RESOLVED/CURRENT
+  11건 신규 추가, CANDIDATE 목록에서 Reaction/Report Taxonomy/Source
+  Delete ShareCopy Reference 처리 방식 제거(RESOLVED로 이동),
+  Minor Safety·Privacy/Consent·ShareCopy Delete 행 갱신
+- **Missing Planning Audit(15문항) 수행** — 전 문항 답변,
+  Master Handoff에 표로 기록. 핵심 발견: Missing Product Planning
+  0건, Unresolved Owner Decision 0건, Trace Break 0건(공식 10종),
+  Product Meaning Conflict 0건(신규 반영분 전체 재검사)
+- **Planning Gate: C → B로 상향**(Claude 판단, PM 최종 확인 요청) —
+  남은 항목이 전부 정당한 HOLD 또는 Product Meaning 확정 후 절차만
+  남은 Non-blocking OPEN이라는 근거. Planning Completion 정성적
+  추정 22%→약 65~70%로 상향
+- 검증: `runtime/`, `prototype/`, Canonical 65 fixture, Robustness
+  Set fixture 전부 `git diff --stat` 0 확인. 유닛/회귀/G-07 테스트
+  재실행 결과 기존과 동일 — 회귀 없음
+- `docs/REPENT-MASTER-HANDOFF.md`: "Owner Decision Final
+  Canonicalization + Missing Planning Audit" 섹션 신규(Owner Decision
+  Queue Closed 표, Latest Remaining OPEN/HOLD, Missing Planning Audit
+  15문항 표, Audit Return). 과거 섹션 전부 보존
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## Product Planning Canonicalization Batch (2026-09-05)
 - PM 지시 `REPENT — PRODUCT PLANNING CANONICALIZATION / PARALLEL
   EXECUTION` 실행 — 새 기획 없음, 이미 확정된 Planning을 `docs/00~10`에

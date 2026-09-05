@@ -65,6 +65,7 @@ Promise Miss(약속 미이행)는 Sin 판정이 아니다. Streak(연속 기록)
 Entry
 → Action
 → Done
+→ Return
 ```
 
 또는:
@@ -75,6 +76,7 @@ Modify
 Reschedule
 Record Only
 Optional Repent
+→ Return
 ```
 
 **Failure Cause(실패 원인) 질문 금지** — 시스템이 "왜 실패했는가"를
@@ -107,6 +109,7 @@ Draft
 → Privacy(3옵션 — 나만 보기 / 이름 가리고 나누기 / 이름 공개로 나누기)
 → Preview
 → Publish
+→ Return
 ```
 
 Anonymous(익명) 게시는 금지 — Masked Display(이름 가리기)만 허용.
@@ -125,5 +128,21 @@ Private Source (Prayer / RepentanceRecord 등)
 ShareCopy = Snapshot. Source 수정은 ShareCopy를 자동 수정하지 않고,
 Source 삭제는 ShareCopy를 자동 삭제하지 않으며, ShareCopy 삭제는
 Source를 삭제하지 않는다(`05-data-model.md` 참조).
+
+## H. Onboarding (2026-09-05, Owner 확정 — Q1)
+
+```
+가입 완료
+→ 3개 진입 질문 제시
+  1. 오늘 하나님께 듣고 싶은 말씀이 있나요? 또 하고 싶은 말은요?
+  2. 하나님께 마음을 드리고 있나요? 어떤 동행을 꿈꾸세요?
+  3. 하나님과 약속한 것이 있나요? 그 약속은 잘 지켜지고 있나요?
+→ (답변은 선택 — 건너뛰기 가능, 강제 아님)
+→ 첫 기록으로 자연스럽게 연결 (예: 3번 질문 응답 → Promise 작성 유도)
+→ 5 Main Nav 진입
+```
+
+**5개 메뉴 전체를 훑는 Tutorial을 강제하지 않는다** — 3개 질문이
+온보딩의 전부이며, 그 이상의 화면별 안내 투어는 만들지 않는다.
 
 (화면 단위 상세 Flow는 Product Documentation Lock 이후 별도 진행)

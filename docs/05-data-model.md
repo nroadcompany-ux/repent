@@ -29,6 +29,14 @@ updated: 2026-09-05
   이미 만들어진 ShareCopy는 자동 삭제되지 않는다)
 - ShareCopy Delete ≠ Source Delete
 
+### Source Delete 절차 (2026-09-05, Owner 확정 — Q11)
+
+Source를 삭제할 때 시스템이 자동으로 ShareCopy를 지우거나 자동으로
+남기지 않는다 — **기존 ShareCopy 목록을 사용자에게 제시하고, 함께
+삭제할지 여부를 사용자가 직접 선택**한다(CANDIDATE였던 "Source Delete
+이후 ShareCopy Reference 처리 방식"이 이 절차로 확정됨 —
+`10-decision-open-hold-register.md` 참조).
+
 ## Core Entity (2026-09-05, Owner/PM 확정 — Canonicalization Batch)
 
 User, LifeEvent, Season, StoryArc, TurningPoint, Prayer, Promise,
@@ -98,6 +106,14 @@ Enum 이름 자체는 CANDIDATE다** — Product Meaning(무엇을 하면 안
 | Promise | ACTIVE / CLOSED / ARCHIVED |
 | Action | PLANNED / DONE / RETRY / MODIFIED / RESCHEDULED / RECORDED_ONLY |
 | Confession / ShareCopy | DRAFT / PUBLISHED / HIDDEN / REMOVED |
+
+**Enum 확정 절차(2026-09-05, Owner 확정 — Q12)**: 위 표의 "Product
+Meaning"(무엇을 하면 안 되는지, 몇 가지 상태가 필요한지)은 **LOCK**
+이다. **정확한 Enum 이름 자체는 Development Documentation 단계에서
+확정**하며, 지금 이 단계에서 이름을 확정하지 않는 것 자체가 Owner의
+결정이다(Claude의 임의 유보가 아님). User-facing 표현은 이미 Lock된
+것을 그대로 쓴다(예: Promise 종료 = "마무리됨" — `04-policy-business-rules.md`
+참조, Internal Enum 이름과 무관하게 고정).
 
 ### Forbidden State (모든 Entity 공통 — 영적 상태값 생성 금지)
 

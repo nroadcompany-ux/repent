@@ -21,6 +21,33 @@ updated: 2026-09-05
 
 - Direct Confession = Live Reference / ShareCopy = Snapshot 규칙은 `05-data-model.md` 참조
 
+## Account Delete (2026-09-05, Owner 확정 — Q4)
+
+- **Private Source**: 탈퇴 시 삭제 절차에 진입한다(Private Prayer/
+  RepentanceRecord/Promise/Action 등 본인 소유 비공개 기록)
+- **ShareCopy**: 탈퇴 **전** 사용자에게 유지/삭제 여부를 선택하게
+  한다(자동 일괄 삭제·자동 일괄 유지 둘 다 아님 — `05-data-model.md`
+  Sharing 3원칙과 동일한 "사용자 선택" 원칙)
+- **법적/운영 로그**: Content(고백·기도·회개 등 사용자 콘텐츠)와
+  **분리 보관**, **최소 범위**만, **최대 6개월** 보관 가능(그 이상
+  보관은 별도 Owner/Legal 결정 필요 — 이 세션에서 6개월 상한만 확정)
+
+## AI Memory — Opt-in Policy (2026-09-05, Owner 확정 — Q6)
+
+- **Default = OFF** — 아무 설정 없이 AI가 과거 기록을 기억·재사용하지
+  않는다
+- **Explicit Opt-in 후에만 사용** — 사용자가 명시적으로 켜야 동작한다
+- **Prayer / Repentance 등 민감 기록은 동의 없이 AI Context로 재사용
+  금지** — Opt-in을 켰더라도 민감 기록 재사용에는 **별도** 동의가
+  필요할 수 있음(세부 동의 범위는 아래 Consent Gate Specification의
+  미결 항목과 연동 — 이 Opt-in 정책이 Consent Gate 세부를 전부 대체하는
+  것은 아님)
+- **사용자는 Memory 사용을 언제든 중지·삭제할 수 있다**
+- 이 정책은 **Runtime이 Phase C(+ Approved Memory Context)로 진입할
+  때 지켜야 할 최소 요건**이며, 아래 "Memory OFF until Approved"
+  원칙(Phase A는 여전히 OFF)을 대체하지 않는다 — Phase 전환 자체는
+  Consent Gate Specification의 나머지 미결 항목이 해소된 뒤에만 이뤄짐
+
 ## Longitudinal Context / Sensitive Repentance Context — HOLD (2026-09-05)
 
 **이 세션에서 결정한 것 없음 — 기존에 이미 OFF/HOLD였던 상태를 정리해

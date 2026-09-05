@@ -22,9 +22,9 @@ updated: 2026-09-05
 | Provider Smoke | **NOT RUN** | Runner 존재, API Key 대기 |
 | Official 65 | **NOT RUN** | 위와 동일 사유 |
 | G-07 | **EVIDENCE COMPLETE / PRODUCT POLICY PASS** | 2026-09-05 PM 승인 — AC-G07-01~05가 CANDIDATE→CURRENT/CANONICAL PRODUCT POLICY AC로 전환됨(`09-acceptance-criteria.md`). VGL-RPT-AC-001~065와는 계속 별도 집계 |
-| Privacy/Consent | **HOLD** | Longitudinal/Sensitive Memory Owner 결정 필요 — `07-privacy-security.md` |
-| Minor Safety | **HOLD** | Owner/Legal 결정 필요 — `08-social-safety.md` |
-| ShareCopy Delete | **HOLD** | 원칙(Delete≠Source Delete)은 Owner Lock 기확정(`05-data-model.md`), Production 구현 확인은 HOLD |
+| Privacy/Consent | **HOLD** | Longitudinal/Sensitive Memory 세부 동의 범위 여전히 미확정(AI Memory Opt-in 기본 정책 자체는 2026-09-05 RESOLVED — 아래 참조) — `07-privacy-security.md` |
+| Minor Safety | **HOLD** (Default=Private는 확정, Public 공유 여부만 HOLD — 2026-09-05 Q9) | Owner/Legal 결정 필요 — `08-social-safety.md` Minor Confession Sharing 참조 |
+| ShareCopy Delete | **RESOLVED(원칙+절차)** | 원칙(Delete≠Source Delete)과 Source Delete 시 ShareCopy 목록 제시+사용자 선택 절차 모두 확정(`05-data-model.md`). Production 구현 확인만 잔여 HOLD |
 | Scripture License | **HOLD** | 우리말성경 Full Text License 미확보(외부 계약 사안, 엔지니어링 범위 밖) |
 | Scripture Retrieval | **HOLD** | License 확보 전까지 Phase B 진입 불가 |
 | Production Release | **HOLD** | 위 항목 전부 해소 전까지 유지 |
@@ -52,17 +52,25 @@ Register 위 표와 혼동 방지를 위해 별도 구획):
 | ShareCopy 3 non-cascading rules | RESOLVED/CURRENT | `05-data-model.md` Sharing 3원칙, `04-policy-business-rules.md` Sharing |
 | Domain Boundary(Journey/Prayer/Repentance/Promise/Action/Confession) | RESOLVED/CURRENT | `01-ia.md` Service Architecture / Domain Ownership |
 | Functional Trace architecture(Requirement→Feature→Story→Task→AC→Flow→Data→State→Permission→Policy) | RESOLVED/CURRENT | `00-product-foundation.md` Requirement Matrix, `09-acceptance-criteria.md` PRODUCT FUNCTIONAL TRACE |
+| Onboarding(3개 진입 질문, Tutorial 강제 아님) | RESOLVED/CURRENT (Owner Final, Q1) | `02-user-flow.md` H. Onboarding, `04-policy-business-rules.md` Onboarding |
+| Search(Journey 내부, 독립 탭 아님) | RESOLVED/CURRENT (Owner Final, Q2) | `01-ia.md`, `09-acceptance-criteria.md` US-RPT-SEA-001 |
+| Notification MVP(Promise/Action Reminder만) | RESOLVED/CURRENT (Owner Final, Q3) | `04-policy-business-rules.md` Notification |
+| Account Delete 절차 | RESOLVED/CURRENT (Owner Final, Q4) | `07-privacy-security.md` Account Delete |
+| Export(Planning 포함, 구현 후순위) | RESOLVED/CURRENT (Owner Final, Q5) | `00-product-foundation.md` System-Level Capabilities |
+| AI Memory Opt-in 기본 정책(Default OFF+Explicit Opt-in) | RESOLVED/CURRENT (Owner Final, Q6) | `07-privacy-security.md` AI Memory — Opt-in Policy |
+| Community Reaction(공감 1종) | RESOLVED/CURRENT (Owner Final, Q7) | `08-social-safety.md` Community Reaction |
+| Report Taxonomy(4종) | RESOLVED/CURRENT (Owner Final, Q8) | `08-social-safety.md` Report Taxonomy |
+| Scripture MVP(Book/Chapter/Verse 중심) | RESOLVED/CURRENT (Owner Final, Q10) | `06-ai-vgl-guardrail.md` Scripture MVP Scope |
+| Source Delete → ShareCopy 처리 절차(목록 제시+사용자 선택) | RESOLVED/CURRENT (Owner Final, Q11) | `05-data-model.md` Source Delete 절차 |
+| State Enum 확정 절차(Product Meaning=LOCK, 이름은 Dev Documentation 단계) | RESOLVED/CURRENT (Owner Final, Q12) | `05-data-model.md` Enum 확정 절차 |
 
 ## CANDIDATE (세부 미확정 — 원칙과 별개, 임의 CURRENT 승격 금지)
 
 | 항목 | 상태 | 근거/참조 |
 |---|---|---|
-| Exact Lifecycle Enum Naming | **CANDIDATE** | `05-data-model.md` Lifecycle State — Enum 이름 자체는 CANDIDATE, Product Meaning만 CURRENT |
-| Reaction(공감 등) | **CANDIDATE** | `01-ia.md` Community |
-| Report Taxonomy(신고 사유 분류) | **CANDIDATE** | `01-ia.md` Community |
+| Exact Lifecycle Enum Naming(정확한 이름 그 자체) | **CANDIDATE** | `05-data-model.md` Lifecycle State — **"이름을 지금 정하지 않는다"는 절차 자체는 2026-09-05 Owner 확정(Q12, RESOLVED)**, 이름 값 자체만 CANDIDATE |
 | Moderation Workflow Detail | **CANDIDATE** | `01-ia.md` Community |
 | Moderator Action Detail | **CANDIDATE** | `01-ia.md` Community |
-| Source Delete 이후 ShareCopy Reference 처리 방식(세부 구현) | **CANDIDATE** | `05-data-model.md` Sharing 3원칙 — 원칙(Delete≠Auto Delete)은 CURRENT, 세부 구현(참조 유지 방식 등)은 CANDIDATE |
 | Feature Working ID → Canonical ID promotion | **CANDIDATE** | `09-acceptance-criteria.md` US-RPT-\* — Working ID는 Trace용 임시 식별자, Canonical 승격은 별도 지시 필요 |
 
 ## 갱신 규칙
