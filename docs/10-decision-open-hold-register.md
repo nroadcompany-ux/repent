@@ -21,7 +21,7 @@ updated: 2026-09-05
 | API Binding | **HOLD** | `OPENAI_API_KEY` 미설정(확인 완료, 값 미기록) |
 | Provider Smoke | **NOT RUN** | Runner 존재, API Key 대기 |
 | Official 65 | **NOT RUN** | 위와 동일 사유 |
-| G-07 | **OPEN** | Evidence(Policy/AC/Wording Test) 작성 완료, AC-G07-01~05는 CANDIDATE — PM 확정 전까지 OPEN 유지 |
+| G-07 | **EVIDENCE COMPLETE / PRODUCT POLICY PASS** | 2026-09-05 PM 승인 — AC-G07-01~05가 CANDIDATE→CURRENT/CANONICAL PRODUCT POLICY AC로 전환됨(`09-acceptance-criteria.md`). VGL-RPT-AC-001~065와는 계속 별도 집계 |
 | Privacy/Consent | **HOLD** | Longitudinal/Sensitive Memory Owner 결정 필요 — `07-privacy-security.md` |
 | Minor Safety | **HOLD** | Owner/Legal 결정 필요 — `08-social-safety.md` |
 | ShareCopy Delete | **HOLD** | 원칙(Delete≠Source Delete)은 Owner Lock 기확정(`05-data-model.md`), Production 구현 확인은 HOLD |

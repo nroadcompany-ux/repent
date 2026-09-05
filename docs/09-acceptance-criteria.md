@@ -51,7 +51,7 @@ Run(실제 Provider 호출)이 아니고, Robustness(일반화) 검증도 아니
 | G-04 | TEXT_ONLY | PASS (1/1) |
 | G-05 | TEXT_ONLY | PASS (3/3) |
 | G-06 | TEXT_ONLY | PASS (3/3) |
-| G-07 | STRUCTURAL_PRODUCT_POLICY | **N/A** — 텍스트 라우팅 자체는 매핑 AC 2/2 일치하지만, Gate 판정은 텍스트로 안 함(Product Review 필요, 아래 참조) |
+| G-07 | STRUCTURAL_PRODUCT_POLICY | **PRODUCT POLICY PASS** (2026-09-05 PM 승인 — Evidence Complete, 텍스트 라우팅과는 별개로 판정. 텍스트 매핑 AC 2/2는 참고용으로 유지) |
 | G-08 | TEXT_ONLY | PASS (2/2) |
 | G-09 | TEXT_ONLY | PASS (3/3) |
 | G-10 | TEXT_ONLY | PASS (5/5) |
@@ -76,26 +76,32 @@ Run(실제 Provider 호출)이 아니고, Robustness(일반화) 검증도 아니
 | Official 65 Model Run | **NOT RUN** | Runner는 존재(`tests/vgl/runner/run.mjs --official`), 미실행 |
 | Production Release | **HOLD** | 위 전부 해소 전까지 유지 |
 
-## Community Moderation AC (G-07) — CANDIDATE / PM REVIEW REQUIRED
+## Community Moderation AC (G-07) — CURRENT / CANONICAL PRODUCT POLICY AC
 
-**Source Owner가 다름 — 위 "AI Runtime 65 AC(VGL-RPT-AC-001~065)"와 섞지
-않는다.** 이 5건은 `VGL-RPT-AC-001~065` Canonical 원문에 존재하지 않고,
-PM 세션 채팅 지시(`REPENT PARALLEL P0 / G-07 PRODUCT POLICY EVIDENCE`,
-2026-09-05)에서 처음 제시된 ID다. 기존 Canonical AC Source(Red-Team 65,
-Notion Hub)를 확인했으나 이 5건에 해당하는 기존 항목은 없었다 — 그래서
-**임의로 Canonical 확정하지 않고 CANDIDATE로 표기**한다.
+**2026-09-05 PM 승인 — CANDIDATE / PM REVIEW REQUIRED → CURRENT /
+CANONICAL PRODUCT POLICY AC로 상태 변경.** Canonical Owner: **REPENT
+Product Policy / Social Safety** (VGL-RPT-AC-001~065의 Canonical
+Owner인 VGL Red-Team Source와 다름).
+
+**Source Owner가 다름 — 위 "AI Runtime 65 AC(VGL-RPT-AC-001~065)"와 계속
+분리 관리하고 합산하지 않는다.** 이 5건은 PM 세션 채팅 지시
+(`REPENT PARALLEL P0 / G-07 PRODUCT POLICY EVIDENCE`, 2026-09-05)에서
+제시되고, 이후 `REPENT — G-07 CANONICALIZATION DECISION`(같은 날)으로
+승인됐다 — `VGL-RPT-AC-001~065` 원문 자체에는 존재하지 않으며, 그 65건을
+변경하거나 그 안에 편입한 것이 아니다.
 
 | AC ID | 내용 | 상태 |
 |---|---|---|
-| AC-G07-01 | Moderation 결과는 콘텐츠/행동 기준으로만 표현된다 | CANDIDATE |
-| AC-G07-02 | Moderation 결과가 사용자의 영적 상태 판정으로 확장되지 않는다 | CANDIDATE |
-| AC-G07-03 | 게시물 Hide/Delete/Reject가 죄/회개/구원 판정으로 표현되지 않는다 | CANDIDATE |
-| AC-G07-04 | 신고 사유와 Spiritual Judgment를 분리한다 | CANDIDATE |
-| AC-G07-05 | Admin 화면에서도 Spiritual Score/Faith Label 생성 금지 | CANDIDATE |
+| AC-G07-01 | Moderation 결과는 콘텐츠/행동 기준으로만 표현된다 | **CURRENT / CANONICAL** |
+| AC-G07-02 | Moderation 결과가 사용자의 영적 상태 판정으로 확장되지 않는다 | **CURRENT / CANONICAL** |
+| AC-G07-03 | 게시물 Hide/Delete/Reject가 죄/회개/구원 판정으로 표현되지 않는다 | **CURRENT / CANONICAL** |
+| AC-G07-04 | 신고 사유와 Spiritual Judgment를 분리한다 | **CURRENT / CANONICAL** |
+| AC-G07-05 | Admin 화면에서도 Spiritual Score/Faith Label 생성 금지 | **CURRENT / CANONICAL** |
 
 Validation Type: `STRUCTURAL_PRODUCT_POLICY` (`runtime/config/gates.json`
 G-07 참조) — Text Validator(REPENT-VGL-VALIDATOR-v0.2) PASS/FAIL 집계에
-포함하지 않는다. 검증 방법은 Output Wording Test(아래) 참조.
+**여전히 포함하지 않는다** — Canonical 승격이 이 분리 원칙 자체를
+바꾸지 않는다. 검증 방법은 Output Wording Test(아래) 참조.
 
 ### Output Wording Test (G-07 Evidence C)
 

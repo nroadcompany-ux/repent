@@ -50,6 +50,12 @@ Moderation Action의 사유(신고 사유, 정책 위반 사유)와 영적 판�
 금지(`tests/g07/`의 BOUNDARY 사례 참조, Output Wording Test 결과는
 `09-acceptance-criteria.md`).
 
+**상태 참조(2026-09-05)**: 이 정책을 근거로 만든 AC-G07-01~05는
+`09-acceptance-criteria.md`에서 CANDIDATE → **CURRENT / CANONICAL
+PRODUCT POLICY AC**로 PM 승인됐다(`10-decision-open-hold-register.md`
+G-07 행 참조). 이 문서(정책 원문) 자체의 내용은 변경되지 않았다 — 상태
+전환은 AC 문서 쪽에서만 일어났다.
+
 ### Spiritual Judgment Boundary — 3단계 판정 (2026-09-05)
 
 `tests/g07/wording-check.mjs`가 실제 구현한 3단계 그대로, 이 문서의

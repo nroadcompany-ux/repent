@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## G-07 Canonicalization + Master Handoff (2026-09-05)
+- **G-07 Canonicalization Decision (PM 승인)**: `docs/09-acceptance-criteria.md`의
+  AC-G07-01~05를 "CANDIDATE / PM REVIEW REQUIRED" → "**CURRENT /
+  CANONICAL PRODUCT POLICY AC**"로 전환(G-01~G-10 Acceptance 표의 G-07
+  행도 "N/A" → "PRODUCT POLICY PASS"로 갱신). Canonical Owner를
+  "REPENT Product Policy / Social Safety"로 명시해 `VGL-RPT-AC-001~065`
+  (VGL Red-Team Source Owner)와 계속 분리 관리·별도 집계함을 재확인
+- `docs/10-decision-open-hold-register.md` G-07 행: `OPEN` →
+  `EVIDENCE COMPLETE / PRODUCT POLICY PASS`
+- `docs/08-social-safety.md`: Community Moderation Policy 섹션에 상태
+  참조 각주 추가(AC-G07 승격 사실만 링크, 정책 원문 자체는 미변경)
+- **범위 밖 확인(변경 없음, 실행으로 재검증)**: `VGL-RPT-AC-001~065`
+  원문(`tests/vgl/fixtures/ac-cases.official.json`), Robustness Set
+  (`tests/vgl/fixtures/robustness/paraphrase-challenge-set.json`),
+  `runtime/`(Validator Verdict Logic 포함) — `git diff --stat`으로 diff
+  0 확인. Canonical 65 = 65/65, Robustness = 52/54, G-07 Output Wording
+  Test = 3/3, `validate-official.mjs` 독립 재검증 0 changed — 전부
+  재실행하여 기존과 동일함을 확인(회귀 없음)
+- **Master Handoff 신설**: `docs/REPENT-MASTER-HANDOFF.md` — PM 지시
+  (`REPENT — DOCUMENT / HANDOFF OPERATING RULE`)에 따라 새 세션이 전체
+  재조사 없이 시작할 수 있는 Current Entry Point 문서 생성(Product
+  Foundation/Branch/Commit/Doc Map/AI-VGL/Canonical 65/Runtime/G-07/
+  Privacy·Minor·Scripture/Production HOLD/Completed/Blocking/P0/Next
+  Action 포함). 과거 History는 CHANGELOG·기존 docs에 유지, 이 문서는
+  최신 상태 스냅샷 역할만 함
+- New Theology Rule Created = 0 / New Product Meaning Created = 0
+
 ## Pre-API Parallel Package 2 — Governance Docs (2026-09-05)
 - `docs/06-ai-vgl-guardrail.md`: Human Review Router / Scripture Check
   Router 요약 문서화(Notion Hub 확정 필드·SLA·Recommendation Category
