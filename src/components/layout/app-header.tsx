@@ -23,6 +23,7 @@ export function AppHeader({
           ? 'sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur'
           : ''
       }`}
+      style={sticky ? { paddingTop: 'max(1.5rem, env(safe-area-inset-top))' } : undefined}
     >
       <Link href="/journey" className="text-brand font-semibold text-accent">
         {title}
