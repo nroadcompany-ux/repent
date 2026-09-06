@@ -1,14 +1,15 @@
 ---
-status: OPEN
-version: 0.7.2.1
-updated: 2026-09-05
+status: LOCKED
+version: 1.0.0
+updated: 2026-09-06
+owner_approval: 2026-09-06
 ---
 
 # 06 AI VGL Guardrail
 
-> 상태: OPEN — 작성 중 (아래는 Owner/PM 확정 Canonical Decision만 반영. 미확정 영역은 계속 OPEN)
+> Owner Approved Canonical Guardrail.
 
-## VGL for REPENT — Current Working Standard
+## Core Rule
 
 AI는 다음이 아니다:
 - God
@@ -16,13 +17,48 @@ AI는 다음이 아니다:
 - Prophet
 - Pastor Substitute
 - Spiritual Judge
+- 최종 성경 해석자
 
-AR-01~AR-06 금지 (세부 항목 정의는 VGL 원본 문서 참조 — 본 문서에서 임의 재정의하지 않음).
+## Allowed by Domain
 
-## 관련 원칙 (LCI / Turning Point / Repent 화면 반영 확인)
+### Journey
+- Search 보조
+- 사용자가 요청한 기록 Summary
 
-- AI가 신앙 수준·회개의 충분함을 판정하지 않는다
-- AI는 Turning Point를 확정하지 않고 후보만 제안한다
-- 회개는 오직 하나님께 드리는 것이며 AI는 그 매개가 아니다
+### Prayer
+- 제목 정리
+- 유사 기도 기록 검색
+- 과거 기록 요약
+- 사용자가 작성한 기도문 문장 다듬기
 
-(그 외 세부 가드레일 항목은 추후 업데이트)
+### Promise
+- 사용자가 만든 약속/실행을 더 구체화하는 보조
+
+### Repentance
+- 사용자 글 정리
+- 성찰 질문 제안
+- 관련 Scripture Reference 후보
+- Promise 아이디어 후보
+
+## No AI
+
+Confession에는 AI를 사용하지 않는다.
+
+## Forbidden
+
+- 죄 여부 판정
+- 회개 충분성 판정
+- 용서 여부 판정
+- 구원 상태 판정
+- 응답받은 기도 여부 판정
+- 하나님의 뜻/음성인 것처럼 출력
+- 영적 점수 / 순종 점수 / 신앙 등급 생성
+
+## AI Memory
+
+- Default OFF
+- Explicit Opt-in 후에만 과거 기록 Context 사용
+- Prayer / Repentance는 Sensitive Context로 취급
+- 사용자가 언제든 중지/연결해제 가능해야 한다.
+
+AI는 항상 user-triggered contextual support로 동작하며 별도 Main Tab이 아니다.
