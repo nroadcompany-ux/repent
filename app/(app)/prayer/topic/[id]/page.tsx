@@ -120,6 +120,11 @@ export default async function PrayerTopicPage({
           <div className="mt-3">
             <Button type="submit">오늘의 기도 남기기</Button>
           </div>
+          {/* Contextual privacy note: it belongs on the screen where the record
+              is actually written, not on the Entry screen. */}
+          <p className="text-caption mt-2 text-ink-faint">
+            이 기록은 기본적으로 나만 볼 수 있습니다.
+          </p>
         </form>
       ) : null}
 

@@ -21,11 +21,30 @@ export const PRIMARY_BRAND_COPY = {
   subline: '하나님과 함께한 삶의 순간을 기록합니다.',
 } as const
 
-/** Shown verbatim under the providers on the Entry / Login screen. */
-export const ENTRY_SAFETY_NOTE = [
-  '기도와 회개 기록은 기본적으로 나만 볼 수 있습니다.',
-  '공개는 내가 직접 선택할 때만 이루어집니다.',
-] as const
+/**
+ * Studio signature at the very bottom of the Entry screen.
+ *
+ * Owner decision 2026-09-06: secondary branding only. It must never compete
+ * with the RETURN wordmark — small, grey, no card or border, and lower in the
+ * visual order than the login CTAs. No NROAD logo asset exists in the
+ * repository, so this is a text wordmark; inventing a logo is forbidden.
+ */
+export const STUDIO_FOOTER = {
+  wordmark: 'NROAD',
+  line: 'Digital Product Studio',
+  since: 'Since 2026',
+} as const
+
+/**
+ * A provider that cannot complete a login says so on the button itself, so the
+ * Entry screen carries no repeated helper paragraph. Removing "(준비중)" is the
+ * only change needed once the provider goes live.
+ */
+export const PROVIDER_PENDING_SUFFIX = ' (준비중)'
+
+export function providerLabel(base: string, available: boolean): string {
+  return available ? base : `${base}${PROVIDER_PENDING_SUFFIX}`
+}
 
 /**
  * The previous hero line. NOT deleted — it stays where its meaning belongs, in
@@ -54,10 +73,9 @@ export const SOCIAL_LOGIN_LABELS = {
 /**
  * A provider that cannot complete a login yet stays VISIBLE and disabled.
  * Hiding it would misrepresent what RETURN supports; letting it link out would
- * drop the member on a provider error page.
+ * drop the member on a provider error page. The state is shown on the button
+ * via providerLabel() — the Entry screen carries no separate helper paragraph.
  */
-export const PROVIDER_PENDING_NOTE = (labels: readonly string[]) =>
-  `${labels.join(' · ')} 로그인은 준비 중입니다.`
 
 /**
  * Wording that must never reach a screen: the system does not judge the

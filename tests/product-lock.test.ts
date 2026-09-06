@@ -35,7 +35,10 @@ import {
   FORBIDDEN_COPY,
   JOURNEY_BANNER_LEGACY_COPY,
   PRIMARY_BRAND_COPY,
+  PROVIDER_PENDING_SUFFIX,
   SOCIAL_LOGIN_LABELS,
+  STUDIO_FOOTER,
+  providerLabel,
   SOCIAL_LOGIN_PROVIDERS,
 } from '../src/domain/copy'
 import { AUTH_ERROR_MESSAGES } from '../src/lib/auth/errors'
@@ -527,16 +530,58 @@ describe('brand copy', () => {
   })
 
   /**
-   * The Entry privacy note is Safety copy, so it has to be legible.
-   * ink-faint (#a2a4ad) on the canvas (#f7f7fa) measures 2.32:1, below WCAG AA;
-   * ink-muted (#6f717a) measures 4.55:1 and passes.
+   * Owner UI correction 2026-09-06: the Entry screen carries brand, meaning and
+   * entry only. Feature privacy notes move to the screens where the feature is
+   * actually used, and a pending provider states it on its own button rather
+   * than in a repeated helper paragraph.
    */
-  it('renders the Entry safety note in a legible token', () => {
-    const noteBlock = login.slice(login.indexOf('ENTRY_SAFETY_NOTE[0]') - 300)
-    expect(noteBlock).toContain('text-ink-muted')
-    expect(noteBlock.slice(0, noteBlock.indexOf('ENTRY_SAFETY_NOTE[0]'))).not.toContain(
-      'text-ink-faint',
+  it('keeps feature privacy copy off the Entry screen', () => {
+    const entry = stripComments(login)
+    expect(entry).not.toContain('기도와 회개 기록은 기본적으로')
+    expect(entry).not.toContain('공개는 내가 직접 선택할 때만')
+    expect(entry).not.toContain('ENTRY_SAFETY_NOTE')
+  })
+
+  it('states a pending provider on the button, not in a helper paragraph', () => {
+    const entry = stripComments(login)
+    expect(entry).toContain('providerLabel')
+    expect(entry).not.toContain('PROVIDER_PENDING_NOTE')
+    expect(entry).not.toContain('로그인은 준비 중입니다')
+    expect(PROVIDER_PENDING_SUFFIX).toBe(' (준비중)')
+    expect(providerLabel('Naver로 시작하기', false)).toBe('Naver로 시작하기 (준비중)')
+    expect(providerLabel('Naver로 시작하기', true)).toBe('Naver로 시작하기')
+  })
+
+  it('carries the studio footer as a text wordmark below the CTAs', () => {
+    expect(STUDIO_FOOTER).toEqual({
+      wordmark: 'NROAD',
+      line: 'Digital Product Studio',
+      since: 'Since 2026',
+    })
+    const entry = stripComments(login)
+    expect(entry).toContain('STUDIO_FOOTER.wordmark')
+    // Below the CTAs in the document order, so it can never outrank them.
+    expect(entry.indexOf('STUDIO_FOOTER.wordmark')).toBeGreaterThan(
+      entry.indexOf('SOCIAL_LOGIN_LABELS.email'),
     )
+    // No card, no border, no oversized type, no purple.
+    const footer = entry.slice(entry.indexOf('<footer'))
+    expect(footer).not.toMatch(/rounded-card|border|text-hero|text-section|text-accent|bg-/)
+    expect(footer.match(/text-caption/g)?.length).toBe(3)
+  })
+
+  it('keeps the privacy note on the screens where records are written', () => {
+    const surfaces = [
+      'app/(app)/prayer/topic/[id]/page.tsx',
+      'app/(app)/prayer/topic/new/page.tsx',
+      'app/(app)/repentance/[id]/write/page.tsx',
+    ]
+    for (const file of surfaces) {
+      expect(readFileSync(join(ROOT, file), 'utf8'), file).toContain('나만 볼 수 있습니다')
+    }
+    expect(
+      readFileSync(join(ROOT, 'app/(app)/confession/write/_components/composer.tsx'), 'utf8'),
+    ).toContain('여기에 적은 내용만 공개됩니다')
   })
 })
 
@@ -603,7 +648,8 @@ describe('auth routes', () => {
 
   it('keeps a pending provider visible instead of hiding it', () => {
     const page = stripComments(read('app/login/page.tsx'))
-    expect(page).toContain('PROVIDER_PENDING_NOTE')
+    // State is shown on the button itself, not in a separate paragraph.
+    expect(page).toContain('providerLabel')
     // Disabled button, never a link, when unavailable.
     expect(page).toMatch(/providers\.google \?[\s\S]{0,200}<Button disabled>/)
     expect(page).toMatch(/providers\.naver \?[\s\S]{0,240}<Button variant="quiet" disabled>/)

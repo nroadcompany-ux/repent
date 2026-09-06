@@ -1,10 +1,10 @@
 import { LoopMark } from '@/components/brand/loop-mark'
 import { Button, ButtonLink } from '@/components/ui/control'
 import {
-  ENTRY_SAFETY_NOTE,
   PRIMARY_BRAND_COPY,
-  PROVIDER_PENDING_NOTE,
   SOCIAL_LOGIN_LABELS,
+  STUDIO_FOOTER,
+  providerLabel,
 } from '@/domain/copy'
 import { authErrorMessage } from '@/lib/auth/errors'
 import { getProviderAvailability } from '@/lib/auth/providers'
@@ -13,14 +13,17 @@ import { publicEnv } from '@/lib/env'
 /**
  * Entry / Login.
  *
- * Brand copy is Owner Final Decision (2026-09-06), from src/domain/copy.ts.
- * Structure: RETURN → 다시 하나님께. → 하나님과 함께한 삶의 순간을 기록합니다.
- *   → Google → Naver → 또는 → 이메일 → privacy note
+ * Owner information structure (2026-09-06):
+ *   Loop Mark → RETURN → 다시 하나님께. → 하나님과 함께한 삶의 순간을 기록합니다.
+ *   → Google → Naver → 또는 → 이메일 → NROAD footer
  *
- * Canonical auth is Google + Naver + Email/Password (Owner decision, AUTH SCOPE
- * ONLY). A provider that cannot complete a login stays VISIBLE and disabled: it
- * must never link out, because Supabase answers a disabled provider with raw
- * JSON on its own domain — a dead end the member cannot get back from.
+ * The screen carries brand, meaning, and entry only. Feature privacy notes live
+ * on the screens where those features are used, not here.
+ *
+ * A provider that cannot complete a login stays VISIBLE, disabled, and says
+ * "(준비중)" on the button — never a separate helper paragraph, and never a
+ * link out, because Supabase answers a disabled provider with raw JSON on its
+ * own domain.
  *
  * Design Guide v1.0 is FINAL LOCK: existing tokens and components only.
  */
@@ -36,25 +39,21 @@ export default async function LoginPage({
   const message = authErrorMessage(error)
 
   const providers = await getProviderAvailability()
-  const pending = [
-    providers.google ? null : 'Google',
-    providers.naver ? null : '네이버',
-  ].filter((label): label is string => label !== null)
 
   return (
-    <main className="flex min-h-dvh flex-col justify-between px-title-gutter pb-10 pt-24">
+    <main className="flex min-h-dvh flex-col px-title-gutter pb-8 pt-24">
       <div>
         <LoopMark width={88} />
         <h1 className="text-brand mt-8 font-semibold text-accent">
           {PRIMARY_BRAND_COPY.wordmark}
         </h1>
         <p className="text-hero mt-3 font-semibold text-ink">{PRIMARY_BRAND_COPY.headline}</p>
-        {/* Owner request: subline +2pt. 12px -> 14px using the existing approved
-            token (--text-value, 14/19). No new size value is introduced. */}
         <p className="text-value mt-3 text-ink-muted">{PRIMARY_BRAND_COPY.subline}</p>
       </div>
 
-      <div>
+      {/* mt-auto keeps the CTAs low without pinning them, so the footer can sit
+          at the end of the content flow rather than being fixed to the bottom. */}
+      <div className="mt-auto pt-10">
         {message ? (
           <p
             role="alert"
@@ -75,7 +74,7 @@ export default async function LoginPage({
                 {SOCIAL_LOGIN_LABELS.google}
               </ButtonLink>
             ) : (
-              <Button disabled>{SOCIAL_LOGIN_LABELS.google}</Button>
+              <Button disabled>{providerLabel(SOCIAL_LOGIN_LABELS.google, false)}</Button>
             )}
 
             {providers.naver ? (
@@ -84,15 +83,9 @@ export default async function LoginPage({
               </ButtonLink>
             ) : (
               <Button variant="quiet" disabled>
-                {SOCIAL_LOGIN_LABELS.naver}
+                {providerLabel(SOCIAL_LOGIN_LABELS.naver, false)}
               </Button>
             )}
-
-            {pending.length > 0 ? (
-              <p className="text-caption -mt-1 text-center text-ink-muted">
-                {PROVIDER_PENDING_NOTE(pending)}
-              </p>
-            ) : null}
 
             <p className="text-caption mt-1 text-center text-ink-faint">또는</p>
 
@@ -101,15 +94,17 @@ export default async function LoginPage({
             </ButtonLink>
           </div>
         )}
-
-        {/* Safety copy uses ink-muted rather than ink-faint: at 11px on the
-            canvas, ink-faint measures 2.32:1 contrast, below WCAG AA. */}
-        <p className="text-caption mt-6 text-center leading-[17px] text-ink-muted">
-          {ENTRY_SAFETY_NOTE[0]}
-          <br />
-          {ENTRY_SAFETY_NOTE[1]}
-        </p>
       </div>
+
+      {/* Studio signature. Text wordmark: no NROAD logo asset exists and
+          designing one is forbidden. No border, no card, lowest visual weight. */}
+      <footer className="mt-10 text-center">
+        <p className="text-caption font-semibold tracking-[0.14em] text-ink-muted">
+          {STUDIO_FOOTER.wordmark}
+        </p>
+        <p className="text-caption mt-[3px] text-ink-muted">{STUDIO_FOOTER.line}</p>
+        <p className="text-caption mt-[1px] text-ink-muted">{STUDIO_FOOTER.since}</p>
+      </footer>
     </main>
   )
 }
