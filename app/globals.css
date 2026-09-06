@@ -1,0 +1,131 @@
+@import 'tailwindcss';
+
+/* ===========================================================================
+ * RETURN Design Tokens
+ *
+ * SOURCE OF TRUTH
+ *   Figma file MRh882Jk04Htb17cXyccGg — "RETURN Main Premium v0.2"
+ *   Verified nodes:
+ *     3:2   RETURN Journey Home · Premium v0.2   (390 x 844)
+ *     3:65  v0.2 Design Notes                     (type scale + principles)
+ *   Figma Variables: NONE PUBLISHED (get_variable_defs returned {}).
+ *   The file contains exactly one page and those two frames — no component
+ *   library, no state frames, no additional screens.
+ *
+ * VISUAL PRINCIPLE (Figma node 3:73 / 3:69)
+ *   Quiet UI · Purple = accent · White = canvas · Glass = selective ·
+ *   No ad-like type · Bold 사용 축소 · Purple 면적 축소 ·
+ *   카드 → 압축형 정보 행 · 여백과 계층 중심의 고급감
+ *
+ * RULES
+ *   Screens consume tokens only. No raw hex / font-size / radius / spacing in
+ *   a screen file. Anything below marked [OPEN] is NOT in the Figma file; it is
+ *   derived from verified values and is awaiting Owner confirmation.
+ * ======================================================================== */
+
+@theme {
+  /* -- COLOR · FIGMA-VERIFIED ---------------------------------------------
+   * Every value below was read off a real node in 3:2.                     */
+  --color-canvas: #f7f7fa; /* 3:2 frame fill */
+  --color-surface: #ffffff; /* 3:15 row, 3:38 graph card, 3:53 nav */
+  --color-accent: #6c43f3; /* 3:3 wordmark, 3:16 row label, 3:14 link */
+  --color-accent-soft: #8a67f7; /* 3:9 loop outer stroke, 3:50 point fill */
+  --color-accent-tint: #f5f1ff; /* 3:6 education banner fill */
+  --color-ink: #17171c; /* 3:7 hero, 3:12 section, 3:17 value */
+  --color-ink-muted: #6f717a; /* 3:8 body, 3:18 caption, 3:58 nav label */
+  --color-ink-faint: #a2a4ad; /* 3:19 chevron, 3:57 inactive nav dot */
+  --color-line: #ececf2; /* 3:39 gridline, 3:54 nav top border */
+
+  /* -- COLOR · [OPEN] ------------------------------------------------------
+   * No error/danger surface exists anywhere in the Figma file. Required by
+   * the Error state mandated in the execution order, so derived here and
+   * reported as OPEN rather than silently treated as approved.             */
+  --color-danger: #c0392f; /* [OPEN] no Figma source */
+  --color-danger-tint: #fdf1f0; /* [OPEN] no Figma source */
+
+  /* -- TYPOGRAPHY · FIGMA-VERIFIED ----------------------------------------
+   * Declared scale (3:71): Hero 24 / Section 18 / Card value 14 /
+   *                        Body 12–13 / Caption 11
+   * Line heights read from the rendered text nodes.                        */
+  --text-hero: 24px; /* 3:7  semibold  */
+  --text-hero--line-height: 31px;
+  --text-brand: 22px; /* 3:3  semibold  */
+  --text-brand--line-height: 28px;
+  --text-section: 18px; /* 3:12 semibold  */
+  --text-section--line-height: 24px;
+  --text-value: 14px; /* 3:17 semibold  */
+  --text-value--line-height: 19px;
+  --text-body: 13px; /* 3:4  medium    */
+  --text-body--line-height: 18px;
+  --text-body-sm: 12px; /* 3:8  regular   */
+  --text-body-sm--line-height: 17px;
+  --text-caption: 11px; /* 3:16 medium    */
+  --text-caption--line-height: 15px;
+  --text-chevron: 20px; /* 3:19 regular   */
+  --text-chevron--line-height: 20px;
+
+  /* -- RADIUS · FIGMA-VERIFIED -------------------------------------------- */
+  --radius-banner: 26px; /* 3:6  education banner */
+  --radius-card: 22px; /* 3:38 graph card       */
+  --radius-row: 18px; /* 3:15 info row         */
+
+  /* -- RADIUS · [OPEN] -----------------------------------------------------
+   * No button / input / chip exists in the Figma file. Derived from the
+   * smallest verified radius family.                                       */
+  --radius-control: 14px; /* [OPEN] no Figma source */
+  --radius-chip: 999px; /* [OPEN] no Figma source */
+
+  /* -- LAYOUT · FIGMA-VERIFIED --------------------------------------------
+   * 390px frame. Cards inset 20 (3:6/3:15/3:38 all x=20, w=350).
+   * Section titles inset 24 (3:12, 3:35). Row height 62, gap 8.
+   * Nav 58 tall with a 1px top border; 5 slots of 78 centered at 39..351.  */
+  --spacing-gutter: 20px;
+  --spacing-title-gutter: 24px;
+  --spacing-row: 62px;
+  --spacing-row-gap: 8px;
+  --spacing-nav: 58px;
+  --spacing-frame: 390px;
+
+  /* -- LAYOUT · [OPEN] -----------------------------------------------------
+   * No button in the Figma file, so no approved control height exists.     */
+  --spacing-control: 48px; /* [OPEN] no Figma source */
+
+  --font-sans: var(--font-inter), var(--font-noto-kr), -apple-system,
+    'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+/* The bottom nav is fixed; scrollable pages reserve room for it. */
+.pb-nav {
+  padding-bottom: calc(var(--spacing-nav) + env(safe-area-inset-bottom) + 20px);
+}
+
+/* Horizontal keep-strips scroll without showing a scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
