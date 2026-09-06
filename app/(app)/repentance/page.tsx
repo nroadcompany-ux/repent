@@ -94,18 +94,18 @@ export default async function RepentancePage({
         ) : (
           <RowStack>
             <InfoRow
-              label={<ExamplePill />}
-              value="화를 내고 후회한 일"
+              label="이어쓰기"
+              value={<><ExamplePill />화를 내고 후회한 일</>}
               caption="이런 식으로 제목을 붙여둘 수 있어요"
             />
             <InfoRow
-              label={<ExamplePill />}
-              value="약속을 지키지 못한 일"
+              label="이어쓰기"
+              value={<><ExamplePill />약속을 지키지 못한 일</>}
               caption="예시는 실제 기록에 포함되지 않아요"
             />
             <InfoRow
-              label={<ExamplePill />}
-              value="마음속 미움을 내려놓고 싶은 일"
+              label="이어쓰기"
+              value={<><ExamplePill />마음속 미움을 내려놓고 싶은 일</>}
               caption="예시는 저장·검색·통계에 포함되지 않아요"
             />
           </RowStack>
