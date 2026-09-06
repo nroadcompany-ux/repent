@@ -47,14 +47,14 @@ export default async function SettingsPage({
       <PageHeader title="내 정보" backHref="/journey" />
 
       {saved ? (
-        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[18px] text-accent">
+        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
           저장했어요.
         </p>
       ) : null}
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {error === 'name' ? '이름을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
         </p>
@@ -71,7 +71,7 @@ export default async function SettingsPage({
               maxLength={20}
               required
             />
-            <p className="text-caption mt-2 leading-[16px] text-ink-faint">
+            <p className="text-caption mt-2 leading-[19px] text-ink-faint">
               고백 공간에서는 이 이름만 보입니다.
             </p>
           </div>
@@ -105,7 +105,7 @@ export default async function SettingsPage({
             />
             <span>
               교회명과 교단을 다른 사람에게 보여주기
-              <span className="text-caption mt-1 block leading-[16px] text-ink-muted">
+              <span className="text-caption mt-1 block leading-[19px] text-ink-muted">
                 켜지 않으면 아무에게도 보이지 않습니다. 기본은 꺼짐입니다.
               </span>
             </span>
@@ -120,7 +120,7 @@ export default async function SettingsPage({
             />
             <span>
               프로필을 공개하기
-              <span className="text-caption mt-1 block leading-[16px] text-ink-muted">
+              <span className="text-caption mt-1 block leading-[19px] text-ink-muted">
                 사진은 최대 {PROFILE_GALLERY_MAX}장까지 올릴 수 있고, 교인 인증 수단이 아닙니다.
               </span>
             </span>
@@ -149,7 +149,7 @@ export default async function SettingsPage({
             />
             <span>
               지난 기록을 참고해서 도와주기
-              <span className="text-caption mt-1 block leading-[16px] text-ink-muted">
+              <span className="text-caption mt-1 block leading-[19px] text-ink-muted">
                 기본은 꺼짐입니다. 켜지 않으면 기도와 회개 기록은 AI에게 전달되지 않습니다. 언제든
                 다시 끌 수 있어요.
               </span>
@@ -161,7 +161,7 @@ export default async function SettingsPage({
             </Button>
           </div>
         </form>
-        <p className="text-caption mt-3 leading-[16px] text-ink-faint">
+        <p className="text-caption mt-3 leading-[19px] text-ink-faint">
           AI는 죄 여부, 회개의 충분함, 용서, 하나님의 뜻을 판단하지 않습니다. 고백 공간에는 AI가
           쓰이지 않습니다.
           {featureFlags.aiAssist ? '' : ' (AI 도움 기능은 아직 준비 중입니다.)'}

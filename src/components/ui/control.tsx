@@ -104,7 +104,7 @@ export function TextArea({
     <textarea
       {...props}
       rows={rows}
-      className={`${FIELD_BASE} resize-none py-3 leading-[22px] ${className}`}
+      className={`${FIELD_BASE} resize-none py-3 leading-[25px] ${className}`}
     />
   )
 }

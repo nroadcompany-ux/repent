@@ -65,7 +65,7 @@ export default async function EditPrayerTopicPage({
         <Button type="submit" variant="danger">
           기도제목 삭제
         </Button>
-        <p className="text-caption mt-3 text-center leading-[17px] text-ink-faint">
+        <p className="text-caption mt-3 text-center leading-[20px] text-ink-faint">
           삭제하면 이 제목에 남긴 기도 기록도 함께 사라집니다.
         </p>
       </form>

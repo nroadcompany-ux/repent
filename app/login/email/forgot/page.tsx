@@ -26,7 +26,7 @@ export default async function ForgotPasswordPage({
       {message ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {message}
         </p>
@@ -34,18 +34,18 @@ export default async function ForgotPasswordPage({
 
       {sent ? (
         <div className="px-title-gutter pt-4">
-          <p className="text-body leading-[22px] text-ink">
+          <p className="text-body leading-[25px] text-ink">
             {email ? `${email} 으로` : '입력하신 주소로'} 재설정 메일을 보냈습니다.
             <br />
             메일의 링크에서 새 비밀번호를 정할 수 있어요.
           </p>
-          <p className="text-body-sm mt-4 leading-[19px] text-ink-muted">
+          <p className="text-body-sm mt-4 leading-[22px] text-ink-muted">
             메일이 보이지 않으면 스팸함도 확인해 주세요.
           </p>
         </div>
       ) : (
         <form action={requestPasswordReset} className="px-title-gutter pt-4">
-          <p className="text-body-sm mb-5 leading-[19px] text-ink-muted">
+          <p className="text-body-sm mb-5 leading-[22px] text-ink-muted">
             가입하신 이메일 주소를 알려주시면 재설정 링크를 보내드립니다.
           </p>
           <FieldLabel htmlFor="email">이메일</FieldLabel>

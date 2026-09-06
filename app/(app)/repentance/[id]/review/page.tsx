@@ -44,7 +44,7 @@ export default async function RepentanceReviewPage({
         <h1 className="text-section font-semibold text-ink">
           {record.title || '제목 없는 기록'}
         </h1>
-        <p className="text-body-sm mt-2 leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-2 leading-[21px] text-ink-muted">
           저장하기 전에 한 번 읽어보세요. 고치고 싶으면 언제든 돌아갈 수 있어요.
         </p>
       </div>
@@ -52,7 +52,7 @@ export default async function RepentanceReviewPage({
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           저장하지 못했어요. 기록은 그대로 남아 있습니다. 다시 시도해 주세요.
         </p>
@@ -73,9 +73,9 @@ export default async function RepentanceReviewPage({
                 </Link>
               </div>
               {body ? (
-                <p className="text-body mt-2 whitespace-pre-wrap leading-[22px] text-ink">{body}</p>
+                <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">{body}</p>
               ) : (
-                <p className="text-body-sm mt-2 leading-[18px] text-ink-faint">
+                <p className="text-body-sm mt-2 leading-[21px] text-ink-faint">
                   {step.optional ? '비워둠' : '아직 적지 않음'}
                 </p>
               )}

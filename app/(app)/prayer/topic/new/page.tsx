@@ -26,7 +26,7 @@ export default async function NewPrayerTopicPage({
         {error ? (
           <p
             role="alert"
-            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
           >
             {ERRORS[error] ?? '다시 시도해 주세요.'}
           </p>
@@ -76,7 +76,7 @@ export default async function NewPrayerTopicPage({
           <Button type="submit">기도제목 만들기</Button>
         </div>
 
-        <p className="text-caption mt-5 text-center leading-[17px] text-ink-faint">
+        <p className="text-caption mt-5 text-center leading-[20px] text-ink-faint">
           기도 기록은 나만 볼 수 있습니다.
         </p>
       </form>

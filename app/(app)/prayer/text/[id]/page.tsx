@@ -48,7 +48,7 @@ export default async function PrayerTextPage({
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           저장하지 못했어요. 입력하신 내용은 그대로 있습니다. 다시 시도해 주세요.
         </p>
@@ -103,7 +103,7 @@ export default async function PrayerTextPage({
             {prayerText.body ? (
               <p className="text-body whitespace-pre-wrap leading-[24px] text-ink">{prayerText.body}</p>
             ) : (
-              <p className="text-body-sm leading-[18px] text-ink-muted">
+              <p className="text-body-sm leading-[21px] text-ink-muted">
                 아직 내용이 비어 있어요. 수정에서 기도문을 적어보세요.
               </p>
             )}

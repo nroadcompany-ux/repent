@@ -18,7 +18,7 @@ export default function OfflinePage() {
     <main className="flex min-h-dvh flex-col items-center justify-center px-title-gutter text-center">
       <LoopMark width={72} />
       <p className="text-section mt-8 font-semibold text-ink">인터넷 연결을 확인해 주세요.</p>
-      <p className="text-body-sm mt-3 leading-[19px] text-ink-muted">
+      <p className="text-body-sm mt-3 leading-[22px] text-ink-muted">
         연결되면 다시 이어갈 수 있습니다.
       </p>
     </main>

@@ -32,7 +32,7 @@ export default async function ResetPasswordPage({
       {message ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {message}
         </p>

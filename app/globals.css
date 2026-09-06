@@ -51,16 +51,16 @@
   --text-hero--line-height: 31px;
   --text-brand: 22px; /* 3:3  semibold  */
   --text-brand--line-height: 28px;
-  --text-section: 18px; /* 3:12 semibold  */
-  --text-section--line-height: 24px;
-  --text-value: 14px; /* 3:17 semibold  */
-  --text-value--line-height: 19px;
-  --text-body: 13px; /* 3:4  medium    */
-  --text-body--line-height: 18px;
-  --text-body-sm: 12px; /* 3:8  regular   */
-  --text-body-sm--line-height: 17px;
-  --text-caption: 11px; /* 3:16 medium    */
-  --text-caption--line-height: 15px;
+  --text-section: 20px; /* 3:12 semibold  */
+  --text-section--line-height: 27px;
+  --text-value: 16px; /* 3:17 semibold  */
+  --text-value--line-height: 22px;
+  --text-body: 15px; /* 3:4  medium    */
+  --text-body--line-height: 22px;
+  --text-body-sm: 14px; /* 3:8  regular   */
+  --text-body-sm--line-height: 20px;
+  --text-caption: 13px; /* 3:16 medium    */
+  --text-caption--line-height: 18px;
   --text-chevron: 20px; /* 3:19 regular   */
   --text-chevron--line-height: 20px;
 

@@ -40,7 +40,7 @@ export default async function EditPromisePage({
         {error ? (
           <p
             role="alert"
-            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
           >
             {error === 'title' ? '약속 내용을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
           </p>
@@ -123,7 +123,7 @@ export default async function EditPromisePage({
         <Button type="submit" variant="danger">
           약속 삭제
         </Button>
-        <p className="text-caption mt-3 text-center leading-[17px] text-ink-faint">
+        <p className="text-caption mt-3 text-center leading-[20px] text-ink-faint">
           삭제하면 이 약속의 실행 기록과 체크도 함께 사라집니다.
         </p>
       </form>

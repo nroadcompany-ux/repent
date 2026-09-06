@@ -24,7 +24,7 @@ export default async function NewPrayerTextPage({
         {error ? (
           <p
             role="alert"
-            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
           >
             {error === 'title' ? '제목을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
           </p>

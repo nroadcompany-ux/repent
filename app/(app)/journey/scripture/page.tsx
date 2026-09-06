@@ -36,7 +36,7 @@ export default async function ScripturePage({
         {error ? (
           <p
             role="alert"
-            className="text-body-sm mb-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+            className="text-body-sm mb-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
           >
             {error === 'reference' ? '말씀 위치를 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
           </p>
@@ -58,7 +58,7 @@ export default async function ScripturePage({
           <Button type="submit">말씀 담아두기</Button>
         </div>
 
-        <p className="text-caption mt-3 leading-[16px] text-ink-faint">
+        <p className="text-caption mt-3 leading-[19px] text-ink-faint">
           말씀 본문은 저작권 확인 전까지 앱에 저장하지 않습니다. 위치와 내 메모만 남습니다.
         </p>
       </form>
@@ -80,7 +80,7 @@ export default async function ScripturePage({
                     </p>
                     <p className="text-value mt-[2px] font-semibold text-ink">{scripture.reference}</p>
                     {scripture.memo ? (
-                      <p className="text-body-sm mt-2 whitespace-pre-wrap leading-[19px] text-ink-muted">
+                      <p className="text-body-sm mt-2 whitespace-pre-wrap leading-[22px] text-ink-muted">
                         {scripture.memo}
                       </p>
                     ) : null}

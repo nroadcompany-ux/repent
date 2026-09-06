@@ -54,7 +54,7 @@ export default async function RepentanceDetailPage({
       <PageHeader title={record.title || '회개 기록'} backHref="/repentance" />
 
       {justSaved ? (
-        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[18px] text-accent">
+        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
           기록을 마쳤습니다. 여기까지 온 것으로 충분합니다.
         </p>
       ) : null}
@@ -68,7 +68,7 @@ export default async function RepentanceDetailPage({
           return (
             <section key={step.key} className="rounded-row bg-surface px-4 py-4">
               <p className="text-caption font-medium text-accent">{step.label}</p>
-              <p className="text-body mt-2 whitespace-pre-wrap leading-[22px] text-ink">{body}</p>
+              <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">{body}</p>
             </section>
           )
         })}
@@ -109,7 +109,7 @@ export default async function RepentanceDetailPage({
             기록 삭제
           </Button>
         </form>
-        <p className="text-caption mt-1 text-center leading-[17px] text-ink-faint">
+        <p className="text-caption mt-1 text-center leading-[20px] text-ink-faint">
           이 기록을 삭제해도, 이미 고백으로 나눈 글은 따로 남습니다.
         </p>
       </div>

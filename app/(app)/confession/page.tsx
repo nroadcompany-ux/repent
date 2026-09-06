@@ -99,7 +99,7 @@ export default async function ConfessionPage({
       <EducationBanner slides={SLIDES} />
 
       {blocked ? (
-        <p className="text-body-sm mx-title-gutter mt-5 rounded-control bg-accent-tint px-4 py-3 leading-[18px] text-accent">
+        <p className="text-body-sm mx-title-gutter mt-5 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
           차단했어요. 이 사람의 글과 댓글은 이제 보이지 않습니다.
         </p>
       ) : null}
@@ -120,7 +120,7 @@ export default async function ConfessionPage({
         {error ? (
           <p
             role="alert"
-            className="text-body-sm mx-gutter rounded-card bg-danger-tint px-6 py-8 text-center leading-[18px] text-danger"
+            className="text-body-sm mx-gutter rounded-card bg-danger-tint px-6 py-8 text-center leading-[21px] text-danger"
           >
             글을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
           </p>
@@ -151,7 +151,7 @@ export default async function ConfessionPage({
                     <p className="text-caption font-medium text-ink-muted">
                       {authorName.get(post.user_id) || '이름 없음'}
                     </p>
-                    <p className="text-body mt-2 line-clamp-6 whitespace-pre-wrap leading-[22px] text-ink">
+                    <p className="text-body mt-2 line-clamp-6 whitespace-pre-wrap leading-[25px] text-ink">
                       {post.body}
                     </p>
                   </Link>

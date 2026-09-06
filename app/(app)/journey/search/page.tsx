@@ -84,7 +84,7 @@ export default async function JourneySearchPage({
 
       <div className="mt-7">
         {!hasCriteria ? (
-          <p className="text-body-sm px-title-gutter leading-[18px] text-ink-muted">
+          <p className="text-body-sm px-title-gutter leading-[21px] text-ink-muted">
             찾고 싶은 말이나 기간을 정해보세요. 내가 남긴 기록만 검색됩니다.
           </p>
         ) : records.length === 0 ? (

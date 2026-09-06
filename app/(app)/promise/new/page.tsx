@@ -34,7 +34,7 @@ export default async function NewPromisePage({
         {error ? (
           <p
             role="alert"
-            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
           >
             {error === 'title' ? '약속 내용을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
           </p>
@@ -88,7 +88,7 @@ export default async function NewPromisePage({
           <div>
             <FieldLabel htmlFor="due_date">기한 (선택)</FieldLabel>
             <TextField id="due_date" name="due_date" type="date" />
-            <p className="text-caption mt-2 leading-[16px] text-ink-faint">
+            <p className="text-caption mt-2 leading-[19px] text-ink-faint">
               기한을 정하면 남은 날짜와 지금까지의 기록을 함께 볼 수 있어요.
             </p>
           </div>

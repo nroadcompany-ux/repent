@@ -176,7 +176,7 @@ export default async function PromisePage({
         )}
       </div>
 
-      <p className="text-caption mt-6 px-title-gutter text-center leading-[17px] text-ink-faint">
+      <p className="text-caption mt-6 px-title-gutter text-center leading-[20px] text-ink-faint">
         기록하지 않은 날은 비어 있을 뿐, 잘못한 날이 아닙니다.
       </p>
     </main>

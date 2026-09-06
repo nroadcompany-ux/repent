@@ -66,7 +66,7 @@ export default async function OnboardingPage({
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {ERRORS[error] ?? '다시 시도해 주세요.'}
         </p>
@@ -79,7 +79,7 @@ export default async function OnboardingPage({
             <br />
             불러드릴까요?
           </h1>
-          <p className="text-body-sm mt-3 leading-[18px] text-ink-muted">
+          <p className="text-body-sm mt-3 leading-[21px] text-ink-muted">
             고백 공간에서는 이 이름만 보입니다. 본명이 아니어도 괜찮아요.
           </p>
           <div className="mt-8">
@@ -106,7 +106,7 @@ export default async function OnboardingPage({
             <br />
             신앙생활 하시나요?
           </h1>
-          <p className="text-body-sm mt-3 leading-[18px] text-ink-muted">
+          <p className="text-body-sm mt-3 leading-[21px] text-ink-muted">
             교회명과 교단은 다른 사람에게 자동으로 공개되지 않습니다. 공개 여부는 나중에 직접 고를
             수 있어요.
           </p>
@@ -157,7 +157,7 @@ export default async function OnboardingPage({
               />
               <span>
                 이용약관에 동의합니다.
-                <span className="text-caption mt-1 block leading-[16px] text-ink-muted">
+                <span className="text-caption mt-1 block leading-[19px] text-ink-muted">
                   RETURN은 기록을 남기고 다시 돌아보는 공간입니다.
                 </span>
               </span>
@@ -171,7 +171,7 @@ export default async function OnboardingPage({
               />
               <span>
                 개인정보 처리방침에 동의합니다.
-                <span className="text-caption mt-1 block leading-[16px] text-ink-muted">
+                <span className="text-caption mt-1 block leading-[19px] text-ink-muted">
                   기도·회개·약속 기록은 기본적으로 나만 볼 수 있고, 공개는 내가 선택할 때만
                   이루어집니다.
                 </span>
@@ -191,7 +191,7 @@ export default async function OnboardingPage({
             <br />
             어디쯤인가요?
           </h1>
-          <p className="text-body-sm mt-3 leading-[18px] text-ink-muted">
+          <p className="text-body-sm mt-3 leading-[21px] text-ink-muted">
             지금 쓰지 않아도 괜찮아요. 비워두고 넘어가도 됩니다.
           </p>
           <div className="mt-8 flex flex-col gap-6">

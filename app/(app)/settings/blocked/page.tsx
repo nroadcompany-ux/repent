@@ -26,7 +26,7 @@ export default async function BlockedPage() {
       <PageHeader title="차단한 사람" backHref="/settings" />
 
       {blockedIds.length === 0 ? (
-        <p className="text-body-sm mt-4 px-title-gutter leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-4 px-title-gutter leading-[21px] text-ink-muted">
           차단한 사람이 없습니다.
         </p>
       ) : (

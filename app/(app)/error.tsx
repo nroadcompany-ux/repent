@@ -23,7 +23,7 @@ export default function AppError({ reset }: { error: Error; reset: () => void })
     <main className="flex min-h-dvh flex-col items-center justify-center px-title-gutter">
       <div className="w-full rounded-card bg-surface px-6 py-10 text-center">
         <p className="text-value font-semibold text-ink">잠시 불러오지 못했어요</p>
-        <p className="text-body-sm mt-2 leading-[19px] text-ink-muted">
+        <p className="text-body-sm mt-2 leading-[22px] text-ink-muted">
           기록은 그대로 있습니다. 다시 시도해 주세요.
         </p>
         <div className="mt-6">

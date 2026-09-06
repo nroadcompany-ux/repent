@@ -157,12 +157,12 @@ export default async function JourneyCalendarPage({
               ))}
             </ul>
           ) : (
-            <p className="text-body-sm mt-3 px-title-gutter leading-[18px] text-ink-muted">
+            <p className="text-body-sm mt-3 px-title-gutter leading-[21px] text-ink-muted">
               이 날은 남긴 기록이 없어요.
             </p>
           )
         ) : (
-          <p className="text-body-sm mt-3 px-title-gutter leading-[18px] text-ink-muted">
+          <p className="text-body-sm mt-3 px-title-gutter leading-[21px] text-ink-muted">
             점이 찍힌 날에는 기록이 있습니다.
           </p>
         )}

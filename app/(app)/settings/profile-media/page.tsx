@@ -66,14 +66,14 @@ export default async function ProfileMediaPage({
       <PageHeader title="프로필 사진" backHref="/settings" />
 
       {saved ? (
-        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[18px] text-accent">
+        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
           저장했어요.
         </p>
       ) : null}
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {ERRORS[error] ?? '다시 시도해 주세요.'}
         </p>
@@ -81,7 +81,7 @@ export default async function ProfileMediaPage({
 
       <section className="px-title-gutter pt-5">
         <h2 className="text-section font-semibold text-ink">대표 사진</h2>
-        <p className="text-body-sm mt-1 leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-1 leading-[21px] text-ink-muted">
           고백 공간에서 이름과 함께 보이는 사진 한 장입니다.
         </p>
 
@@ -114,7 +114,7 @@ export default async function ProfileMediaPage({
 
       <section className="mt-10 px-title-gutter">
         <h2 className="text-section font-semibold text-ink">갤러리</h2>
-        <p className="text-body-sm mt-1 leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-1 leading-[21px] text-ink-muted">
           {used} / {PROFILE_GALLERY_MAX}장 · 예배와 섬김, 일상의 사진을 담아둘 수 있어요.
         </p>
 
@@ -130,7 +130,7 @@ export default async function ProfileMediaPage({
             />
           </div>
         ) : (
-          <p className="text-body-sm mt-4 rounded-control bg-canvas px-4 py-3 leading-[18px] text-ink-muted">
+          <p className="text-body-sm mt-4 rounded-control bg-canvas px-4 py-3 leading-[21px] text-ink-muted">
             갤러리가 가득 찼어요. 사진을 지우면 다시 추가할 수 있습니다.
           </p>
         )}
@@ -174,7 +174,7 @@ export default async function ProfileMediaPage({
 
       <section className="mt-10 px-title-gutter">
         <h2 className="text-section font-semibold text-ink">해시태그</h2>
-        <p className="text-body-sm mt-1 leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-1 leading-[21px] text-ink-muted">
           나를 소개하는 말을 몇 개 남겨둘 수 있어요.
         </p>
 
@@ -205,7 +205,7 @@ export default async function ProfileMediaPage({
         ) : null}
       </section>
 
-      <p className="text-caption mt-10 px-title-gutter pb-4 text-center leading-[17px] text-ink-muted">
+      <p className="text-caption mt-10 px-title-gutter pb-4 text-center leading-[20px] text-ink-muted">
         사진은 나를 표현하는 자료일 뿐, 교인임을 확인하는 수단이 아닙니다.
         <br />
         다른 사람의 얼굴이나 개인정보가 담긴 사진은 올리지 말아주세요.

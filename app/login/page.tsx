@@ -57,14 +57,14 @@ export default async function LoginPage({
         {message ? (
           <p
             role="alert"
-            className="text-body-sm mb-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+            className="text-body-sm mb-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
           >
             {message}
           </p>
         ) : null}
 
         {!configured ? (
-          <p className="text-body-sm rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger">
+          <p className="text-body-sm rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger">
             로그인 준비가 완료되면 바로 이용할 수 있습니다.
           </p>
         ) : (

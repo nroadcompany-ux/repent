@@ -28,7 +28,7 @@ export function EmptyState({
     <div className="mx-gutter rounded-card bg-surface px-6 py-10 text-center">
       <p className="text-value font-semibold text-ink">{title}</p>
       {description ? (
-        <p className="text-body-sm mt-2 leading-[19px] text-ink-muted">{description}</p>
+        <p className="text-body-sm mt-2 leading-[22px] text-ink-muted">{description}</p>
       ) : null}
       {actionLabel && actionHref ? (
         <div className="mt-5">
@@ -57,7 +57,7 @@ export function ErrorState({
   return (
     <div className="mx-gutter rounded-card bg-danger-tint px-6 py-8 text-center">
       <p className="text-value font-semibold text-danger">{title}</p>
-      <p className="text-body-sm mt-2 leading-[19px] text-ink-muted">{description}</p>
+      <p className="text-body-sm mt-2 leading-[22px] text-ink-muted">{description}</p>
       {children ? <div className="mt-5">{children}</div> : null}
     </div>
   )

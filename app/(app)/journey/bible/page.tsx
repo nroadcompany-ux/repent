@@ -52,7 +52,7 @@ export default async function BibleReadingPage({
         <p className="text-value mt-[2px] font-semibold text-ink">
           {totalRead} / {TOTAL_CHAPTERS}장
         </p>
-        <p className="text-caption mt-[2px] leading-[16px] text-ink-muted">
+        <p className="text-caption mt-[2px] leading-[19px] text-ink-muted">
           내가 표시한 만큼만 기록됩니다. 정해진 진도는 없습니다.
         </p>
       </section>

@@ -51,14 +51,14 @@ export default async function RepentancePage({
       <EducationBanner slides={SLIDES} />
 
       {saved === 'draft' ? (
-        <p className="text-body-sm mx-title-gutter mt-5 rounded-control bg-accent-tint px-4 py-3 leading-[18px] text-accent">
+        <p className="text-body-sm mx-title-gutter mt-5 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
           임시저장했어요. 언제든 이어서 쓸 수 있습니다.
         </p>
       ) : null}
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-5 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           시작하지 못했어요. 잠시 후 다시 시도해 주세요.
         </p>

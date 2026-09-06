@@ -54,7 +54,7 @@ export function EducationBanner({ slides }: { slides: readonly EducationSlide[] 
           <br />
           {slide.headline[1]}
         </p>
-        <p className="text-body-sm mt-[8px] w-[236px] leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-[8px] w-[236px] leading-[21px] text-ink-muted">
           {slide.body[0]}
           <br />
           {slide.body[1]}

@@ -91,14 +91,14 @@ export default async function PrayerTopicPage({
         </div>
 
         {topic.body ? (
-          <p className="text-body mt-4 whitespace-pre-wrap leading-[22px] text-ink">{topic.body}</p>
+          <p className="text-body mt-4 whitespace-pre-wrap leading-[25px] text-ink">{topic.body}</p>
         ) : null}
       </div>
 
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {ERRORS[error] ?? '다시 시도해 주세요.'}
         </p>
@@ -153,7 +153,7 @@ export default async function PrayerTopicPage({
         </h2>
 
         {(records ?? []).length === 0 ? (
-          <p className="text-body-sm mt-3 px-title-gutter leading-[18px] text-ink-muted">
+          <p className="text-body-sm mt-3 px-title-gutter leading-[21px] text-ink-muted">
             아직 남긴 기도가 없어요. 오늘 한 줄이면 충분합니다.
           </p>
         ) : (
@@ -163,7 +163,7 @@ export default async function PrayerTopicPage({
                 <p className="text-caption font-medium text-accent">
                   {formatFullDate(record.prayed_on)}
                 </p>
-                <p className="text-body mt-2 whitespace-pre-wrap leading-[22px] text-ink">
+                <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">
                   {record.body}
                 </p>
               </li>
@@ -196,7 +196,7 @@ export default async function PrayerTopicPage({
             {topic.closed_at ? '다시 기도 이어가기' : '이 기도제목 마무리하기'}
           </Button>
         </form>
-        <p className="text-caption mt-3 text-center leading-[17px] text-ink-faint">
+        <p className="text-caption mt-3 text-center leading-[20px] text-ink-faint">
           마무리는 기록을 정리하는 것일 뿐, 응답 여부를 뜻하지 않습니다.
         </p>
       </div>

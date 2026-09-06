@@ -112,7 +112,7 @@ export default async function ConfessionWritePage({
       <PageHeader title={sourceKind ? '기록에서 나누기' : '고백 나누기'} backHref="/confession" />
 
       {sourceKind && fields.length === 0 ? (
-        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-canvas px-4 py-3 leading-[18px] text-ink-muted">
+        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-canvas px-4 py-3 leading-[21px] text-ink-muted">
           원본 기록을 불러오지 못했어요. 아래에 직접 적어서 나눌 수 있습니다.
         </p>
       ) : null}

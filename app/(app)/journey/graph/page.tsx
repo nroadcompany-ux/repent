@@ -90,7 +90,7 @@ export default async function JourneyGraphPage({
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           저장하지 못했어요. 다시 시도해 주세요.
         </p>
@@ -109,7 +109,7 @@ export default async function JourneyGraphPage({
         )}
       </div>
 
-      <p className="text-caption mt-3 px-title-gutter leading-[17px] text-ink-faint">
+      <p className="text-caption mt-3 px-title-gutter leading-[20px] text-ink-faint">
         점은 내가 기록한 날에만 찍힙니다. 기록하지 않은 날은 비어 있을 뿐이고, 그 사이를 이어 그리지
         않습니다. 선으로 잇는 것은 삶의 사건 층뿐입니다.
       </p>
@@ -117,7 +117,7 @@ export default async function JourneyGraphPage({
       {/* 마음 기록 */}
       <section className="mt-8 px-title-gutter">
         <h2 className="text-section font-semibold text-ink">오늘의 마음</h2>
-        <p className="text-body-sm mt-1 leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-1 leading-[21px] text-ink-muted">
           {formatFullDate(focusDate)}
         </p>
 
@@ -169,7 +169,7 @@ export default async function JourneyGraphPage({
       {/* 삶의 사건 */}
       <section className="mt-9 px-title-gutter">
         <h2 className="text-section font-semibold text-ink">삶의 사건</h2>
-        <p className="text-body-sm mt-1 leading-[18px] text-ink-muted">
+        <p className="text-body-sm mt-1 leading-[21px] text-ink-muted">
           기억해두고 싶은 일을 남겨두면 흐름 위에 함께 보입니다.
         </p>
 
@@ -221,7 +221,7 @@ export default async function JourneyGraphPage({
                   </p>
                   <p className="text-value mt-[2px] font-semibold text-ink">{event.title}</p>
                   {event.body ? (
-                    <p className="text-body-sm mt-2 whitespace-pre-wrap leading-[19px] text-ink-muted">
+                    <p className="text-body-sm mt-2 whitespace-pre-wrap leading-[22px] text-ink-muted">
                       {event.body}
                     </p>
                   ) : null}

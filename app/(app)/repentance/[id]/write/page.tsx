@@ -71,7 +71,7 @@ export default async function RepentanceWritePage({
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           저장하지 못했어요. 적으신 내용은 화면에 그대로 있습니다. 다시 시도해 주세요.
         </p>
@@ -86,7 +86,7 @@ export default async function RepentanceWritePage({
           <br />
           {step.heading[1]}
         </h1>
-        <p className="text-body-sm mt-3 leading-[18px] text-ink-muted">{step.guide}</p>
+        <p className="text-body-sm mt-3 leading-[21px] text-ink-muted">{step.guide}</p>
 
         {step.key === 'looking_back' ? (
           <div className="mt-7">
@@ -139,7 +139,7 @@ export default async function RepentanceWritePage({
           </div>
         </div>
 
-        <p className="text-caption mt-6 text-center leading-[17px] text-ink-faint">
+        <p className="text-caption mt-6 text-center leading-[20px] text-ink-faint">
           이 기록은 나만 볼 수 있습니다.
           <br />
           RETURN은 회개가 충분한지, 용서받았는지 판단하지 않습니다.

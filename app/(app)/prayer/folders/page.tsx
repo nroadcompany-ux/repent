@@ -41,7 +41,7 @@ export default async function PrayerFoldersPage({
         {error ? (
           <p
             role="alert"
-            className="text-body-sm mb-4 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+            className="text-body-sm mb-4 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
           >
             {error === 'name' ? '기도함 이름을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
           </p>
@@ -85,7 +85,7 @@ export default async function PrayerFoldersPage({
         </li>
       </ul>
 
-      <p className="text-caption mt-5 px-title-gutter text-center leading-[17px] text-ink-faint">
+      <p className="text-caption mt-5 px-title-gutter text-center leading-[20px] text-ink-faint">
         기도함을 지워도 안에 있던 기도제목은 사라지지 않습니다.
       </p>
     </main>

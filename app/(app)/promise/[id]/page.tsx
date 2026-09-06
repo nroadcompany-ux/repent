@@ -113,7 +113,7 @@ export default async function PromiseDetailPage({
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {ERRORS[error] ?? '다시 시도해 주세요.'}
         </p>
@@ -162,7 +162,7 @@ export default async function PromiseDetailPage({
         <p className="text-value mt-[2px] font-semibold text-ink">
           {done} / {target}회 · {keepRate}%
         </p>
-        <p className="text-caption mt-[2px] leading-[16px] text-ink-muted">
+        <p className="text-caption mt-[2px] leading-[19px] text-ink-muted">
           {promise.started_on}부터 지금까지 내가 남긴 기록입니다. 신앙을 재는 숫자가 아닙니다.
         </p>
       </section>
@@ -172,7 +172,7 @@ export default async function PromiseDetailPage({
           {promise.background ? (
             <>
               <p className="text-caption font-medium text-accent">약속의 배경</p>
-              <p className="text-body mt-1 whitespace-pre-wrap leading-[22px] text-ink">
+              <p className="text-body mt-1 whitespace-pre-wrap leading-[25px] text-ink">
                 {promise.background}
               </p>
             </>
@@ -180,7 +180,7 @@ export default async function PromiseDetailPage({
           {promise.purpose ? (
             <>
               <p className="text-caption mt-4 font-medium text-accent">약속의 목적</p>
-              <p className="text-body mt-1 whitespace-pre-wrap leading-[22px] text-ink">
+              <p className="text-body mt-1 whitespace-pre-wrap leading-[25px] text-ink">
                 {promise.purpose}
               </p>
             </>

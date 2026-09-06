@@ -45,7 +45,7 @@ export function KeepStrip({
             <button
               type="submit"
               aria-label={`${relativeDayLabel(date)} 기록 ${done} / ${dailyTarget}`}
-              className={`flex h-[38px] w-[46px] flex-col items-center justify-center rounded-control border transition-colors ${
+              className={`flex h-[42px] w-[48px] flex-col items-center justify-center rounded-control border transition-colors ${
                 complete
                   ? 'border-accent bg-accent text-white'
                   : partial
@@ -53,10 +53,10 @@ export function KeepStrip({
                     : 'border-line bg-surface text-ink-faint'
               }`}
             >
-              <span className="text-caption font-medium leading-[13px]">
+              <span className="text-caption font-medium leading-[15px]">
                 {relativeDayLabel(date)}
               </span>
-              <span className="text-caption leading-[13px]">
+              <span className="text-caption leading-[15px]">
                 {dailyTarget > 1 ? `${done}/${dailyTarget}` : complete ? '✓' : '·'}
               </span>
             </button>

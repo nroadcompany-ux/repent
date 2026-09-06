@@ -105,7 +105,7 @@ export function ShareCopyComposer({
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {error === 'empty' ? '나눌 내용을 적어주세요.' : '올리지 못했어요. 다시 시도해 주세요.'}
         </p>
@@ -115,7 +115,7 @@ export function ShareCopyComposer({
       {fields.length > 0 ? (
         <section className="mb-6 rounded-card bg-surface px-4 py-4">
           <p className="text-caption font-medium text-accent">{sourceLabel ?? '원본 기록'}에서 가져오기</p>
-          <p className="text-caption mt-1 leading-[16px] text-ink-muted">
+          <p className="text-caption mt-1 leading-[19px] text-ink-muted">
             고른 항목만 아래 글에 담깁니다. 아무것도 고르지 않으면 원본은 그대로 비공개로 남습니다.
           </p>
           <ul className="mt-3 flex flex-col gap-2">
@@ -180,7 +180,7 @@ export function ShareCopyComposer({
           placeholder="여기에 적은 내용만 공개됩니다."
           required
         />
-        <p className="text-caption mt-2 leading-[16px] text-ink-faint">
+        <p className="text-caption mt-2 leading-[19px] text-ink-faint">
           여기에 담긴 글은 원본과 별개로 저장됩니다. 나중에 원본을 고치거나 지워도 이 글은 그대로
           남고, 이 글을 지워도 원본은 사라지지 않습니다.
         </p>
@@ -228,7 +228,7 @@ export function ShareCopyComposer({
           <p className="text-caption font-medium text-accent">
             {CONFESSION_TYPE_LABELS[type]} · 이렇게 보입니다
           </p>
-          <p className="text-body mt-2 whitespace-pre-wrap leading-[22px] text-ink">
+          <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">
             {draft || '아직 내용이 없어요.'}
           </p>
           {photoPreview ? (
@@ -251,7 +251,7 @@ export function ShareCopyComposer({
         </Button>
       </div>
 
-      <p className="text-caption mt-5 text-center leading-[17px] text-ink-faint">
+      <p className="text-caption mt-5 text-center leading-[20px] text-ink-faint">
         고백에는 순위가 없고, AI가 개입하지 않습니다.
       </p>
     </form>

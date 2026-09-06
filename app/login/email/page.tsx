@@ -46,7 +46,7 @@ export default async function EmailAuthPage({
       {message ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-5 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {message}
         </p>
@@ -93,7 +93,7 @@ export default async function EmailAuthPage({
             <Button type="submit">가입하기</Button>
           </div>
 
-          <p className="text-caption mt-4 text-center leading-[17px] text-ink-muted">
+          <p className="text-caption mt-4 text-center leading-[20px] text-ink-muted">
             가입하시면 인증 메일을 보내드립니다. 인증 후 로그인할 수 있어요.
           </p>
         </form>
@@ -138,7 +138,7 @@ export default async function EmailAuthPage({
         </form>
       )}
 
-      <p className="text-caption mt-8 px-title-gutter pb-10 text-center leading-[17px] text-ink-muted">
+      <p className="text-caption mt-8 px-title-gutter pb-10 text-center leading-[20px] text-ink-muted">
         기도와 회개 기록은 기본적으로 나만 볼 수 있습니다.
       </p>
     </main>

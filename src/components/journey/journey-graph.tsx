@@ -108,7 +108,7 @@ export function JourneyGraph({
 export function JourneyGraphEmpty() {
   return (
     <div className="mx-gutter flex h-[116px] items-center justify-center rounded-card bg-surface px-8">
-      <p className="text-body-sm text-center leading-[18px] text-ink-muted">
+      <p className="text-body-sm text-center leading-[21px] text-ink-muted">
         오늘의 마음을 한 번 남겨두면
         <br />
         여기에서 흐름을 볼 수 있어요.

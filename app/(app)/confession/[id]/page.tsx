@@ -94,14 +94,14 @@ export default async function ConfessionDetailPage({
       <PageHeader title={CONFESSION_TYPE_LABELS[post.type]} backHref="/confession" />
 
       {reported ? (
-        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[18px] text-accent">
+        <p className="text-body-sm mx-title-gutter mt-2 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
           신고를 접수했어요. 운영진이 내용을 확인한 뒤 처리합니다.
         </p>
       ) : null}
       {error ? (
         <p
           role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[18px] text-danger"
+          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
           {ERRORS[error] ?? '다시 시도해 주세요.'}
         </p>
@@ -117,7 +117,7 @@ export default async function ConfessionDetailPage({
           </p>
         </div>
 
-        <p className="text-body mt-3 whitespace-pre-wrap leading-[22px] text-ink">{post.body}</p>
+        <p className="text-body mt-3 whitespace-pre-wrap leading-[25px] text-ink">{post.body}</p>
 
         {photoUrl ? (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -170,7 +170,7 @@ export default async function ConfessionDetailPage({
           </form>
 
           {(comments ?? []).length === 0 ? (
-            <p className="text-body-sm mt-4 px-title-gutter leading-[18px] text-ink-muted">
+            <p className="text-body-sm mt-4 px-title-gutter leading-[21px] text-ink-muted">
               아직 댓글이 없어요.
             </p>
           ) : (
@@ -209,7 +209,7 @@ export default async function ConfessionDetailPage({
                         </div>
                       </form>
                     ) : (
-                      <p className="text-body mt-2 whitespace-pre-wrap leading-[22px] text-ink">
+                      <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">
                         {comment.body}
                       </p>
                     )}
@@ -271,7 +271,7 @@ export default async function ConfessionDetailPage({
             </ul>
           )}
 
-          <p className="text-caption mt-4 px-title-gutter text-center leading-[17px] text-ink-faint">
+          <p className="text-caption mt-4 px-title-gutter text-center leading-[20px] text-ink-faint">
             신앙이 다르다는 이유로는 신고할 수 없습니다.
           </p>
         </section>
@@ -286,7 +286,7 @@ export default async function ConfessionDetailPage({
             </Button>
           </form>
           {post.source_kind ? (
-            <p className="text-caption mt-3 text-center leading-[17px] text-ink-faint">
+            <p className="text-caption mt-3 text-center leading-[20px] text-ink-faint">
               이 글을 지워도 원본 기록은 그대로 남습니다.
             </p>
           ) : null}
@@ -294,7 +294,7 @@ export default async function ConfessionDetailPage({
       ) : (
         <section className="mt-9 px-title-gutter">
           <h2 className="text-section font-semibold text-ink">이 글 신고하기</h2>
-          <p className="text-body-sm mt-2 leading-[18px] text-ink-muted">
+          <p className="text-body-sm mt-2 leading-[21px] text-ink-muted">
             신앙이 다르다는 이유로는 신고할 수 없습니다. 아래 사유 중에서 골라주세요.
           </p>
 
