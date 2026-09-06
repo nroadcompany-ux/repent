@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 
+import { AppStartSplash } from '@/components/splash/app-start-splash'
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -23,6 +24,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <>
+      <AppStartSplash />
       <div className="pb-nav">{children}</div>
       <BottomNav />
     </>

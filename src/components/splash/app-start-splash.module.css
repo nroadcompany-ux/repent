@@ -1,0 +1,89 @@
+.splash {
+  position: fixed;
+  inset-block: 0;
+  left: 50%;
+  z-index: 100;
+  width: min(100vw, 412px);
+  height: 100dvh;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateX(-50%);
+  background: var(--color-canvas);
+  opacity: 1;
+  transition: opacity 140ms ease-out;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.lockup {
+  position: absolute;
+  top: 47%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.wordmark {
+  color: var(--color-accent);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tagline {
+  margin-top: 18px;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: splash-tagline-in 240ms ease-out 180ms both;
+}
+
+.exiting {
+  opacity: 0;
+}
+
+@keyframes splash-tagline-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 390px) {
+  .wordmark {
+    font-size: 38px;
+  }
+
+  .tagline {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 412px) {
+  .wordmark {
+    font-size: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash,
+  .tagline {
+    animation: none;
+    transition: none;
+  }
+}
