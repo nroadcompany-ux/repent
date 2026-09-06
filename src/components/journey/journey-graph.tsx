@@ -104,15 +104,63 @@ export function JourneyGraph({
   )
 }
 
-/** Shown in place of the chart before there is anything to draw. */
-export function JourneyGraphEmpty() {
+/**
+ * First-use preview. Sample points are deliberately UI-only: they are never
+ * written to a domain table and therefore never enter search, calendar or
+ * statistics. Timeline anchors are real profile metadata, not mood values.
+ */
+export function JourneyGraphEmpty({
+  birthDate,
+  returnStartedOn,
+}: {
+  birthDate?: string | null
+  returnStartedOn?: string | null
+}) {
   return (
-    <div className="mx-gutter flex h-[116px] items-center justify-center rounded-card bg-surface px-8">
-      <p className="text-body-sm text-center leading-[21px] text-ink-muted">
-        오늘의 마음을 한 번 남겨두면
-        <br />
-        여기에서 흐름을 볼 수 있어요.
-      </p>
-    </div>
+    <Link
+      href="/journey/graph"
+      className="mx-gutter block rounded-card bg-surface px-4 py-3"
+      aria-label="예시로 보는 나의 여정"
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-caption rounded-chip bg-accent-tint px-[10px] py-[4px] font-medium text-accent">
+          예시
+        </span>
+        <span className="text-caption text-ink-faint">오늘 남긴 기록이 나의 여정이 됩니다</span>
+      </div>
+
+      <svg
+        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+        className="mt-1 h-[92px] w-full"
+        role="img"
+        aria-label="예시 여정 그래프"
+      >
+        {GRIDLINES.map((y) => (
+          <rect key={y} x={INSET_X * 2} y={y} width={VIEW_W - INSET_X * 4} height={1} fill="#ECECF2" />
+        ))}
+        <polyline
+          points="42,70 108,54 176,67 242,43 308,58"
+          fill="none"
+          stroke="#CDBEFC"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeDasharray="4 5"
+        />
+        {[['42','70'],['108','54'],['176','67'],['242','43'],['308','58']].map(([cx, cy]) => (
+          <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={3} fill="#FFFFFF" stroke="#8A67F7" strokeWidth={2} />
+        ))}
+      </svg>
+
+      <div className="flex items-center justify-between border-t border-line pt-2">
+        <div>
+          <p className="text-caption font-medium text-ink">● 태어난 날</p>
+          <p className="text-caption text-ink-faint">{birthDate ?? '생년월일을 입력하면 표시됩니다'}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-caption font-medium text-ink">● RETURN을 시작한 날</p>
+          <p className="text-caption text-ink-faint">{returnStartedOn ?? '오늘'}</p>
+        </div>
+      </div>
+    </Link>
   )
 }

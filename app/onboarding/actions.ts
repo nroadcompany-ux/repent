@@ -18,12 +18,15 @@ function text(form: FormData, key: string): string {
 export async function saveProfileStep(form: FormData) {
   const { supabase, userId } = await requireUser()
   const displayName = text(form, 'display_name')
+  const birthDate = text(form, 'birth_date')
+  const today = new Date().toISOString().slice(0, 10)
 
   if (!displayName) redirect('/onboarding?step=profile&error=name')
+  if (!birthDate || birthDate > today) redirect('/onboarding?step=profile&error=birth')
 
   const { error } = await supabase
     .from('profiles')
-    .update({ display_name: displayName })
+    .update({ display_name: displayName, birth_date: birthDate })
     .eq('id', userId)
 
   if (error) redirect('/onboarding?step=profile&error=save')

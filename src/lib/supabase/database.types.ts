@@ -1,6 +1,6 @@
 /**
  * Database contract for the RETURN Supabase project (hzeabckqzwhqrlbcnhhy).
- * Mirrors supabase/migrations/0001–0006 exactly. When a migration changes a
+ * Mirrors supabase/migrations/0001–0008 exactly. When a migration changes a
  * column, change it here in the same commit.
  */
 
@@ -40,6 +40,7 @@ export type ProfileRow = {
   avatar_path: string | null
   bio: string | null
   profile_visibility: Visibility
+  birth_date: string | null
   terms_agreed_at: string | null
   privacy_agreed_at: string | null
   onboarding_completed_at: string | null
