@@ -472,11 +472,15 @@
       </div>
 
       <div class="section">
-        <p class="section__title">내 약속</p>
+        <p class="section__title">하나님과 나의 약속</p>
         <p class="note" style="margin:-6px 0 12px">
-          날짜 칸을 좌우로 밀면 지난 날들을 볼 수 있어요. 약속 이름을 누르면 자세히 볼 수 있습니다.
+          오늘·어제·그제만 보입니다. 약속 이름을 누르면 자세히 볼 수 있어요.
         </p>
+        <div class="chips" id="pr-groups" style="margin-bottom:12px"></div>
         <div id="pr-list"></div>
+        <button class="cta cta--ghost" id="pr-more" type="button" style="margin-top:12px">
+          이행 전체 보기
+        </button>
       </div>
 
       <div class="section" id="pr-samples"></div>
@@ -509,6 +513,22 @@
         <div class="field">
           <label class="field__label" for="pd-purpose">무엇을 위한 약속인가요</label>
           <textarea class="textarea" id="pd-purpose" placeholder="예) 하루를 하나님 앞에서 먼저 시작하고 싶습니다."></textarea>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="section__title">약속 설정</p>
+        <div class="field">
+          <label class="field__label">어디에 넣을까요</label>
+          <div class="chips" id="pd-group"></div>
+        </div>
+        <div class="field">
+          <label class="field__label">하루에 몇 번</label>
+          <p class="field__hint">
+            하루에 여러 번 해야 하는 약속이면 횟수를 정해두세요.
+            표에서 한 번씩 누를 때마다 채워지고, 정한 횟수를 채우면 완료로 바뀝니다.
+          </p>
+          <div class="chips" id="pd-target"></div>
         </div>
       </div>
 
@@ -867,6 +887,22 @@
           원본은 그대로 남습니다. 사본은 원본과 분리되어, 원본을 고쳐도 함께 바뀌지 않습니다.
         </p>
       </div>
+    </div>
+  </section>
+
+  <!-- ========================= KEEP TABLE — ALL DAYS ==================== -->
+  <section class="screen" id="screen-keep-all">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">이행 전체 보기</span>
+    </header>
+
+    <div class="scroll">
+      <p class="note" style="margin-bottom:12px">
+        지난 30일입니다. 날짜 칸을 좌우로 밀어 보세요.
+      </p>
+      <div class="chips" id="ka-groups" style="margin-bottom:12px"></div>
+      <div id="ka-list"></div>
     </div>
   </section>
 

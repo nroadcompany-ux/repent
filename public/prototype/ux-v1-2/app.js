@@ -85,6 +85,7 @@
       { id: 'r2', type: 'promise', title: '매일 아침 10분 먼저 기도하기', body: '', day: dayOffset(20),
         status: 'active', sourcePrayerId: 'r1',
         // Gaps on purpose: a day without a mark is just empty, not a failure.
+        group: 'daily',
         context: '아침마다 쫓기듯 하루를 시작하는 게 마음에 걸렸습니다.',
         purpose: '하루를 하나님 앞에서 먼저 시작하고 싶습니다.',
         // Gaps on purpose: a day without a mark is just empty, not a failure.
@@ -94,7 +95,7 @@
           return c;
         })() },
       { id: 'r16', type: 'promise', title: '40일 새벽기도 이어가기', body: '', day: dayOffset(22),
-        status: 'active',
+        status: 'active', group: 'season',
         context: '올해는 한 번 끝까지 해보고 싶다는 마음이 들었습니다.',
         purpose: '흔들릴 때마다 돌아올 자리를 만들어두려고 합니다.',
         due: (function () {
@@ -118,7 +119,21 @@
         body: '요즘 부쩍 말수가 줄었습니다.', day: dayOffset(12),
         hearts: { give: '먼저 들어주는 마음', receive: '아이와의 편한 저녁', praise: '끝까지 들어줬구나' } },
       { id: 'r8', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(0), promiseId: 'r2' },
-      { id: 'r9', type: 'promise', title: '한 주에 한 번 안부 전하기', body: '', day: dayOffset(30), status: 'closed' },
+      { id: 'r9', type: 'promise', title: '한 주에 한 번 안부 전하기', body: '', day: dayOffset(30),
+        status: 'closed', group: 'people' },
+      { id: 'r17', type: 'promise', title: '하루 세 번 짧게 기도하기', body: '', day: dayOffset(6),
+        status: 'active', group: 'daily', dailyTarget: 3,
+        context: '길게는 못 해도 자주 떠올리고 싶었습니다.',
+        purpose: '하루 중에 하나님을 잊지 않으려고요.',
+        checks: (function () {
+          var c = {};
+          c[dayOffset(0)] = 2;
+          c[dayOffset(1)] = 3;
+          c[dayOffset(2)] = 1;
+          c[dayOffset(4)] = 3;
+          c[dayOffset(5)] = 3;
+          return c;
+        })() },
       { id: 'r10', type: 'prayer', group: 'soul', title: '동생이 다시 교회에 나오기를',
         body: '오래 기다리고 있습니다.', day: dayOffset(60),
         hearts: { give: '재촉하지 않는 마음', receive: '동생과의 편한 대화', praise: '끝까지 기다렸구나' } },
@@ -665,8 +680,34 @@
     return days; // newest first
   }
 
+  /**
+   * A promise may need doing more than once a day (2–10). `checks[iso]` holds
+   * either `true` (single) or a count, and the cell fills only when the day's
+   * target is reached.
+   */
+  function targetOf(p) { return Math.max(1, Number(p.dailyTarget) || 1); }
+
+  function countOf(p, iso) {
+    var v = p.checks && p.checks[iso];
+    if (v === true) return 1;
+    return Number(v) || 0;
+  }
+
   function isChecked(promise, iso) {
-    return !!(promise.checks && promise.checks[iso]);
+    return countOf(promise, iso) >= targetOf(promise);
+  }
+
+  /** Groups are the user's own filing, never a status. */
+  var PROMISE_GROUPS = [
+    { id: 'daily', label: '매일' },
+    { id: 'weekly', label: '주간' },
+    { id: 'season', label: '기간' },
+    { id: 'people', label: '사람과의 약속' },
+  ];
+
+  function groupLabel(id) {
+    var g = PROMISE_GROUPS.filter(function (x) { return x.id === id; })[0];
+    return g ? g.label : '매일';
   }
 
   /**
@@ -675,23 +716,25 @@
    * when there are tens of promises.
    */
   var TABLE_DAYS = 30;
+  var HOME_DAYS = 3; // 오늘 · 어제 · 그제
 
-  function renderKeepTable(host, promises) {
+  function renderKeepTable(host, promises, dayCount, wideNames) {
     if (!promises.length) {
-      host.innerHTML = '<div class="empty"><p class="empty__title">아직 약속이 없습니다.</p>' +
+      host.innerHTML = '<div class="empty"><p class="empty__title">여기에는 약속이 없습니다.</p>' +
         '<p class="empty__body">기도에서 마음에 남은 것이 있다면 한 줄로 적어보세요.</p></div>';
       return;
     }
 
-    var days = checkDayList(TABLE_DAYS);
+    var days = checkDayList(dayCount);
 
-    var names = '<div class="ptable__head">약속</div>' +
+    var names = '<div class="ptable__head">하나님과 나의 약속</div>' +
       promises.map(function (p) {
-        var acts = byType('action').filter(function (a) { return a.promiseId === p.id; });
+        var t = targetOf(p);
         return '<button class="ptable__name" type="button" data-open-promise="' + p.id + '">' +
           '<span class="ptable__name-title">' + p.title + '</span>' +
-          '<span class="ptable__name-meta">' +
-          (p.status === 'closed' ? '마무리됨' : '진행 중') + ' · 실행 ' + acts.length + '회' +
+          '<span class="ptable__name-meta">' + groupLabel(p.group) +
+          (t > 1 ? ' · 하루 ' + t + '번' : '') +
+          (p.status === 'closed' ? ' · 마무리됨' : '') +
           '</span></button>';
       }).join('');
 
@@ -703,20 +746,26 @@
 
     var rows = promises.map(function (p) {
       var closed = p.status === 'closed';
+      var t = targetOf(p);
       return '<div class="ptable__row">' +
         days.map(function (d) {
-          var on = isChecked(p, d.iso);
+          var n = countOf(p, d.iso);
+          var done = n >= t;
+          var partial = n > 0 && !done;
           return '<button class="pcell' + (d.isToday ? ' pcell--todaycol' : '') +
-            (closed ? ' pcell--closed' : '') + '" type="button"' +
+            (partial ? ' pcell--partial' : '') + (closed ? ' pcell--closed' : '') + '" type="button"' +
             (closed ? ' disabled' : ' data-check="' + p.id + '" data-day="' + d.iso + '"') +
-            ' aria-pressed="' + on + '" aria-label="' + p.title + ' ' + d.dom + '일">' +
+            ' aria-pressed="' + done + '" aria-label="' + p.title + ' ' + d.dom + '일' +
+            (t > 1 ? ' ' + n + '/' + t : '') + '">' +
             '<span class="pcell__dot">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4.5 4.5L19 7"/></svg>' +
+            (t > 1 && !done
+              ? '<span class="pcell__count">' + (n || '') + '</span>'
+              : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4.5 4.5L19 7"/></svg>') +
             '</span></button>';
         }).join('') + '</div>';
     }).join('');
 
-    host.innerHTML = '<div class="ptable">' +
+    host.innerHTML = '<div class="ptable' + (wideNames ? '' : ' ptable--all') + '">' +
       '<div class="ptable__names">' + names + '</div>' +
       '<div class="ptable__scroll"><div class="ptable__grid">' + headRow + rows + '</div></div></div>';
   }
@@ -745,11 +794,23 @@
     var p = findById(b.dataset.check);
     if (!p) return;
     if (!p.checks) p.checks = {};
+
     var iso = b.dataset.day;
-    if (p.checks[iso]) delete p.checks[iso];
-    else p.checks[iso] = true;
+    var t = targetOf(p);
+    var n = countOf(p, iso);
+
+    if (t === 1) {
+      if (n) delete p.checks[iso];
+      else p.checks[iso] = true;
+    } else {
+      // Count up to the day's target, then the next tap clears it.
+      var next = n + 1;
+      if (next > t) delete p.checks[iso];
+      else p.checks[iso] = next;
+    }
 
     if (current.screen === 'promise-detail') screens['promise-detail'](current.ctx || {});
+    else if (current.screen === 'keep-all') screens['keep-all'](current.ctx || {});
     else screens.promise(current.ctx || {});
   });
 
@@ -1197,17 +1258,63 @@
     el('pr-compose').style.display = ctx && ctx.openCompose ? 'block' : 'none';
     el('pr-new-input').value = '';
 
-    // Active promises first, then finished ones.
-    var ordered = all.slice().sort(function (a, b) {
-      if ((a.status === 'closed') !== (b.status === 'closed')) return a.status === 'closed' ? 1 : -1;
-      return a.day < b.day ? 1 : -1;
-    });
-    renderKeepTable(el('pr-list'), ordered);
+    renderGroupChips(el('pr-groups'), all);
+    renderKeepTable(el('pr-list'), filterPromises(all), HOME_DAYS, true);
 
     renderSamples(el('pr-samples'), 'promise', function () {
       el('pr-compose').style.display = 'block';
       el('pr-new-input').focus();
     });
+  };
+
+  /* Group filter shared by the promise tab and the full keep table */
+
+  var promiseFilter = 'all';
+
+  function filterPromises(all) {
+    var list = all.slice().sort(function (a, b) {
+      if ((a.status === 'closed') !== (b.status === 'closed')) return a.status === 'closed' ? 1 : -1;
+      return a.day < b.day ? 1 : -1;
+    });
+    if (promiseFilter === 'all') return list;
+    if (promiseFilter === 'closed') return list.filter(function (p) { return p.status === 'closed'; });
+    return list.filter(function (p) {
+      return p.status !== 'closed' && (p.group || 'daily') === promiseFilter;
+    });
+  }
+
+  function renderGroupChips(host, all) {
+    var counts = { all: all.length, closed: 0 };
+    PROMISE_GROUPS.forEach(function (g) { counts[g.id] = 0; });
+    all.forEach(function (p) {
+      if (p.status === 'closed') counts.closed++;
+      else counts[p.group || 'daily'] = (counts[p.group || 'daily'] || 0) + 1;
+    });
+
+    var items = [{ id: 'all', label: '전체' }]
+      .concat(PROMISE_GROUPS)
+      .concat([{ id: 'closed', label: '지난 약속' }]);
+
+    host.innerHTML = items.map(function (it) {
+      return '<button class="chip chip--sm" type="button" data-pfilter="' + it.id + '" aria-pressed="' +
+        (promiseFilter === it.id) + '">' + it.label + ' ' + (counts[it.id] || 0) + '</button>';
+    }).join('');
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-pfilter]');
+    if (!b) return;
+    promiseFilter = b.dataset.pfilter;
+    if (current.screen === 'keep-all') screens['keep-all'](current.ctx || {});
+    else screens.promise(current.ctx || {});
+  });
+
+  el('pr-more').addEventListener('click', function () { nav('keep-all'); });
+
+  screens['keep-all'] = function () {
+    var all = byType('promise');
+    renderGroupChips(el('ka-groups'), all);
+    renderKeepTable(el('ka-list'), filterPromises(all), TABLE_DAYS, false);
   };
 
   el('pr-new-save').addEventListener('click', function () {
@@ -1261,6 +1368,16 @@
     el('pd-purpose').value = p.purpose || '';
     el('pd-due').value = p.due || '';
     el('pd-deadline').innerHTML = deadlineHtml(p);
+
+    el('pd-group').innerHTML = PROMISE_GROUPS.map(function (g) {
+      return '<button class="chip chip--sm" type="button" data-pgroup="' + g.id + '" aria-pressed="' +
+        ((p.group || 'daily') === g.id) + '">' + g.label + '</button>';
+    }).join('');
+
+    el('pd-target').innerHTML = [1, 2, 3, 5, 7, 10].map(function (n) {
+      return '<button class="chip chip--sm" type="button" data-ptarget="' + n + '" aria-pressed="' +
+        (targetOf(p) === n) + '">' + (n === 1 ? '하루 1번' : n + '번') + '</button>';
+    }).join('');
 
     el('pd-checks').innerHTML = p.status === 'closed'
       ? '<p class="note">마무리된 약속입니다. 지난 표시는 그대로 남아 있습니다.</p>' +
@@ -1323,6 +1440,20 @@
       '지나온 기간 중 지켰다고 표시한 날의 수입니다. 잘하고 못하고를 재는 점수가 아니며, ' +
       '남은 날은 계산에 넣지 않습니다.</p>';
   }
+
+  el('pd-group').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-pgroup]');
+    if (!b) return;
+    findById(current.ctx.promiseId).group = b.dataset.pgroup;
+    screens['promise-detail'](current.ctx);
+  });
+
+  el('pd-target').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-ptarget]');
+    if (!b) return;
+    findById(current.ctx.promiseId).dailyTarget = Number(b.dataset.ptarget);
+    screens['promise-detail'](current.ctx);
+  });
 
   el('pd-save-detail').addEventListener('click', function () {
     var p = findById(current.ctx.promiseId);
@@ -1820,7 +1951,8 @@
     ['11 기도문 — 상세 (복사·나누기)', 'script-detail', 'seed'],
     ['12 기도 → 약속 브릿지', 'prayer-bridge', 'seed'],
     ['13 약속 대시보드', 'promise', 'seed'],
-    ['14 약속 상세 + 실행', 'promise-detail', 'seed'],
+    ['14 약속 상세 + 설정 + 기한', 'promise-detail', 'seed'],
+    ['14b 이행 전체 보기 (30일)', 'keep-all', 'seed'],
     ['15 돌아보기 브릿지', 'reflection', 'seed'],
     ['16 회개 — 직접 진입', 'repentance', 'seed'],
     ['17 회개 — 실행에서 이어짐', 'repentance', 'seed-linked'],
