@@ -9,12 +9,21 @@ import type { ReactNode } from 'react'
 export function AppHeader({
   title = 'RETURN',
   actions,
+  sticky = false,
 }: {
   title?: string
   actions?: ReactNode
+  /** Keep the primary app bar visible while the page body scrolls. */
+  sticky?: boolean
 }) {
   return (
-    <header className="flex items-center justify-between px-title-gutter pt-6 pb-2">
+    <header
+      className={`flex items-center justify-between px-title-gutter pt-6 pb-2 ${
+        sticky
+          ? 'sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur'
+          : ''
+      }`}
+    >
       <Link href="/journey" className="text-brand font-semibold text-accent">
         {title}
       </Link>

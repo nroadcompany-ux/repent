@@ -9,15 +9,6 @@ import { setAiMemoryConsent, updateProfile } from './actions'
 
 export const dynamic = 'force-dynamic'
 
-/**
- * 내 정보.
- *
- * [OPEN — NO FIGMA SOURCE] The approved Figma frame has no profile or settings
- * entry point (its header carries only 검색 / 달력). This screen exists because
- * canonical docs/04 and docs/07 require member-controlled church visibility,
- * profile fields, and an AI Memory switch; its visual treatment is built from
- * existing tokens and is awaiting an Owner-approved frame.
- */
 export default async function SettingsPage({
   searchParams,
 }: {
@@ -29,7 +20,7 @@ export default async function SettingsPage({
   const [{ data: profile }, { data: consent }, { count: blockedCount }] = await Promise.all([
     supabase
       .from('profiles')
-      .select('display_name, church_name, denomination, church_info_public, bio, profile_visibility')
+      .select('display_name, birth_date, church_name, denomination, church_info_public, bio, profile_visibility')
       .eq('id', userId)
       .maybeSingle(),
     supabase.from('ai_memory_consent').select('enabled').eq('user_id', userId).maybeSingle(),
@@ -39,8 +30,8 @@ export default async function SettingsPage({
       .eq('blocker_id', userId),
   ])
 
-  // Absence of a row means OFF (AC-10).
   const aiMemoryEnabled = consent?.enabled ?? AI_MEMORY_DEFAULT_ON
+  const today = new Date().toISOString().slice(0, 10)
 
   return (
     <main>
@@ -56,7 +47,11 @@ export default async function SettingsPage({
           role="alert"
           className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
         >
-          {error === 'name' ? '이름을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
+          {error === 'name'
+            ? '이름을 입력해 주세요.'
+            : error === 'birth'
+              ? '생년월일을 확인해 주세요.'
+              : '저장하지 못했어요. 다시 시도해 주세요.'}
         </p>
       ) : null}
 
@@ -73,6 +68,20 @@ export default async function SettingsPage({
             />
             <p className="text-caption mt-2 leading-[19px] text-ink-faint">
               고백 공간에서는 이 이름만 보입니다.
+            </p>
+          </div>
+
+          <div>
+            <FieldLabel htmlFor="birth_date">생년월일</FieldLabel>
+            <TextField
+              id="birth_date"
+              name="birth_date"
+              type="date"
+              max={today}
+              defaultValue={profile?.birth_date ?? ''}
+            />
+            <p className="text-caption mt-2 leading-[19px] text-ink-faint">
+              나의 여정에서 태어난 날을 첫 기준점으로 사용합니다.
             </p>
           </div>
 
@@ -170,10 +179,7 @@ export default async function SettingsPage({
 
       <section className="mt-9 px-title-gutter">
         <h2 className="text-section font-semibold text-ink">프로필 사진</h2>
-        <Link
-          href="/settings/profile-media"
-          className="text-body-sm mt-3 block font-medium text-accent"
-        >
+        <Link href="/settings/profile-media" className="text-body-sm mt-3 block font-medium text-accent">
           대표 사진 · 갤러리 · 해시태그
         </Link>
       </section>
