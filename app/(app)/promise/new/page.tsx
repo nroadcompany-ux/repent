@@ -1,17 +1,12 @@
 import { PageHeader } from '@/components/layout/app-header'
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
+import { todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
+import { RecurrenceFields } from '../_components/recurrence-fields'
 import { createPromise } from '../actions'
 
 export const dynamic = 'force-dynamic'
 
-/**
- * 새 약속. docs/03 Home Primary CTA.
- *
- * `source` / `title` may arrive from Prayer or Repentance ("약속으로 남기기"),
- * which is the cross-domain loop in docs/01. The prefilled title is only a
- * suggestion — the member can rewrite it before saving.
- */
 export default async function NewPromisePage({
   searchParams,
 }: {
@@ -32,13 +27,14 @@ export default async function NewPromisePage({
 
       <form action={createPromise} className="px-title-gutter pt-4">
         {error ? (
-          <p
-            role="alert"
-            className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
-          >
+          <p role="alert" className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger">
             {error === 'title' ? '약속 내용을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
           </p>
         ) : null}
+
+        <p className="text-body-sm mb-6 leading-[21px] text-ink-muted">
+          약속 자체가 실행할 일입니다. 같은 내용을 실행 목록에 다시 적지 않아도 됩니다.
+        </p>
 
         <div className="flex flex-col gap-5">
           <div>
@@ -48,66 +44,47 @@ export default async function NewPromisePage({
               name="title"
               defaultValue={prefilledTitle ?? ''}
               maxLength={100}
-              placeholder="예: 매일 아침 10분 말씀 읽기"
+              placeholder="예: 새벽예배 참석하기"
               required
             />
           </div>
 
           <div>
             <FieldLabel htmlFor="group_id">그룹</FieldLabel>
-            <select
-              id="group_id"
-              name="group_id"
-              className="h-control w-full rounded-control border border-line bg-surface px-4 text-value text-ink outline-none focus:border-accent"
-            >
+            <select id="group_id" name="group_id" className="h-control w-full rounded-control border border-line bg-surface px-4 text-value text-ink outline-none focus:border-accent">
               <option value="">그룹 없음</option>
               {(groups ?? []).map((group) => (
-                <option key={group.id} value={group.id}>
-                  {group.name}
-                </option>
+                <option key={group.id} value={group.id}>{group.name}</option>
               ))}
             </select>
           </div>
 
-          <div>
-            <FieldLabel htmlFor="background">어떤 상황에서 하게 된 약속인가요 (선택)</FieldLabel>
-            <TextArea
-              id="background"
-              name="background"
-              rows={3}
-              maxLength={2000}
-              placeholder="나중에 다시 읽을 때 도움이 됩니다."
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <FieldLabel htmlFor="started_on">시작일</FieldLabel>
+              <TextField id="started_on" name="started_on" type="date" defaultValue={todayKst()} required />
+            </div>
+            <div>
+              <FieldLabel htmlFor="due_date">종료일 (선택)</FieldLabel>
+              <TextField id="due_date" name="due_date" type="date" />
+            </div>
           </div>
 
-          <div>
-            <FieldLabel htmlFor="purpose">무엇을 위한 약속인가요 (선택)</FieldLabel>
-            <TextArea id="purpose" name="purpose" rows={3} maxLength={2000} />
-          </div>
+          <RecurrenceFields />
 
-          <div>
-            <FieldLabel htmlFor="due_date">기한 (선택)</FieldLabel>
-            <TextField id="due_date" name="due_date" type="date" />
-            <p className="text-caption mt-2 leading-[19px] text-ink-faint">
-              기한을 정하면 남은 날짜와 지금까지의 기록을 함께 볼 수 있어요.
-            </p>
-          </div>
-
-          <div>
-            <FieldLabel htmlFor="daily_target">하루에 몇 번 하시겠어요</FieldLabel>
-            <select
-              id="daily_target"
-              name="daily_target"
-              defaultValue="1"
-              className="h-control w-full rounded-control border border-line bg-surface px-4 text-value text-ink outline-none focus:border-accent"
-            >
-              {Array.from({ length: 10 }, (_, index) => index + 1).map((count) => (
-                <option key={count} value={count}>
-                  하루 {count}번
-                </option>
-              ))}
-            </select>
-          </div>
+          <details className="rounded-row border border-line bg-surface px-4 py-3">
+            <summary className="text-body-sm cursor-pointer font-medium text-ink">배경·목적 메모 (선택)</summary>
+            <div className="mt-4 flex flex-col gap-4">
+              <div>
+                <FieldLabel htmlFor="background">어떤 상황에서 하게 된 약속인가요</FieldLabel>
+                <TextArea id="background" name="background" rows={3} maxLength={2000} />
+              </div>
+              <div>
+                <FieldLabel htmlFor="purpose">무엇을 위한 약속인가요</FieldLabel>
+                <TextArea id="purpose" name="purpose" rows={3} maxLength={2000} />
+              </div>
+            </div>
+          </details>
         </div>
 
         <div className="mt-8">
