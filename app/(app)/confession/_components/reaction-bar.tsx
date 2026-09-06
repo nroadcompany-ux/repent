@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { tallyReactions } from '@/domain/confession-reactions'
 import {
   CONFESSION_VOTES,
   CONFESSION_VOTE_ICONS,
@@ -9,6 +10,9 @@ import {
 import { toggleSimpleReaction } from '../vote-actions'
 
 export type VoteType = ConfessionVote
+
+/** Re-exported so the feed and detail screens keep their existing import. */
+export { tallyReactions }
 
 /**
  * Owner simplified Confession feedback to 👍 / 👎 / 💬 + counts.
@@ -72,24 +76,4 @@ export function ReactionBar({
       ) : null}
     </div>
   )
-}
-
-export function tallyReactions(
-  rows: ReadonlyArray<{ post_id: string; user_id: string; type: unknown }>,
-  userId: string,
-) {
-  const counts = new Map<string, Map<VoteType, number>>()
-  const mine = new Map<string, VoteType>()
-
-  for (const row of rows) {
-    const type = String(row.type)
-    if (type !== 'like' && type !== 'dislike') continue
-    const vote = type as VoteType
-    const perPost = counts.get(row.post_id) ?? new Map<VoteType, number>()
-    perPost.set(vote, (perPost.get(vote) ?? 0) + 1)
-    counts.set(row.post_id, perPost)
-    if (row.user_id === userId) mine.set(row.post_id, vote)
-  }
-
-  return { counts, mine }
 }

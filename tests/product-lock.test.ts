@@ -371,10 +371,14 @@ describe('confession (docs/04, docs/08, AC-06)', () => {
     expect(bar).toContain('CONFESSION_VOTE_ICONS')
     expect(bar).toContain('CONFESSION_VOTE_LABELS')
     expect(bar).toContain('💬')
-    // A tally counts only live votes; a legacy row is skipped, never coerced.
-    expect(bar).toMatch(/type !== 'like' && type !== 'dislike'/)
     // Counts are rendered, but never sorted or compared across posts.
     expect(bar).not.toMatch(/\.sort\(/)
+    // A tally counts only live votes; the rule itself is exercised in
+    // tests/legacy-compat.test.ts against the extracted domain function.
+    const tally = stripComments(
+      readFileSync(join(ROOT, 'src/domain/confession-reactions.ts'), 'utf8'),
+    )
+    expect(tally).toContain('if (!isLiveVote(row.type)) continue')
   })
 
   it('shows the same three figures on the feed and on the detail screen', () => {

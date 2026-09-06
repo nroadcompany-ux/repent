@@ -4,6 +4,12 @@ import { notFound } from 'next/navigation'
 import { PageHeader } from '@/components/layout/app-header'
 import { Button } from '@/components/ui/control'
 import { PROMISE_CLOSE_LABEL } from '@/domain/product-lock'
+import {
+  isScheduled,
+  keepRate as keepRateOf,
+  recurrenceLabel,
+  type PromiseWithRepeat as PromiseRecurrence,
+} from '@/domain/promise'
 import { dateRange, dDayLabel, formatMonthDay, todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 import { KeepStrip } from '../_components/keep-strip'
@@ -11,51 +17,15 @@ import { closePromise, reopenPromise } from '../actions'
 
 export const dynamic = 'force-dynamic'
 
-type RepeatType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
-type PromiseWithRepeat = {
+type PromiseWithRepeat = PromiseRecurrence & {
   id: string
   title: string
   group_id: string | null
   background: string | null
   purpose: string | null
-  started_on: string
-  due_date: string | null
   daily_target: number
   state: 'active' | 'closed'
   closed_at: string | null
-  repeat_type?: RepeatType
-  repeat_weekdays?: number[]
-}
-
-function jsDay(date: string): number {
-  return new Date(`${date}T12:00:00+09:00`).getDay()
-}
-
-function isScheduled(date: string, promise: PromiseWithRepeat): boolean {
-  if (date < promise.started_on) return false
-  if (promise.due_date && date > promise.due_date) return false
-  const type = promise.repeat_type ?? 'none'
-  if (type === 'none') return date === promise.started_on
-  if (type === 'daily') return true
-  if (type === 'weekly') {
-    const weekdays = promise.repeat_weekdays?.length ? promise.repeat_weekdays : [jsDay(promise.started_on)]
-    return weekdays.includes(jsDay(date))
-  }
-  if (type === 'monthly') return date.slice(8, 10) === promise.started_on.slice(8, 10)
-  return date.slice(5, 10) === promise.started_on.slice(5, 10)
-}
-
-function recurrenceLabel(promise: PromiseWithRepeat): string {
-  const type = promise.repeat_type ?? 'none'
-  if (type === 'none') return '한 번'
-  if (type === 'daily') return '매일'
-  if (type === 'monthly') return `매월 ${Number(promise.started_on.slice(8, 10))}일`
-  if (type === 'yearly') return `매년 ${Number(promise.started_on.slice(5, 7))}월 ${Number(promise.started_on.slice(8, 10))}일`
-  const names = ['일', '월', '화', '수', '목', '금', '토']
-  const days = (promise.repeat_weekdays?.length ? promise.repeat_weekdays : [jsDay(promise.started_on)])
-    .map((day) => names[day])
-    .join('·')
-  return `매주 ${days}`
 }
 
 export default async function PromiseDetailPage({
@@ -107,7 +77,7 @@ export default async function PromiseDetailPage({
     0,
   )
   const target = scheduled.length
-  const keepRate = target > 0 ? Math.round((done / target) * 100) : 0
+  const keepRate = keepRateOf(done, target)
   const recentScheduled = scheduled.slice(-3).reverse()
 
   return (
