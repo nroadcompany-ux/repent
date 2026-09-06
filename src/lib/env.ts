@@ -1,13 +1,11 @@
 /**
- * Environment access.
+ * Public environment access.
  *
- * Security boundary (Owner execution order):
- *   - SERVICE_ROLE_KEY and ANTHROPIC_API_KEY must never reach the client
- *     bundle. They are read through `serverEnv()`, which throws if it is ever
- *     evaluated in the browser, so an accidental client import fails loudly at
- *     runtime instead of silently shipping a secret.
- *   - Only NEXT_PUBLIC_* values are readable from the browser.
- *   - No secret value is ever logged, echoed, or included in an error message.
+ * This module is imported by the browser Supabase client, so it must contain
+ * ONLY values that are safe to ship to the browser. Every privileged name —
+ * SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY, NAVER_CLIENT_SECRET — lives in
+ * ./env.server.ts behind `server-only`, so it cannot reach a client bundle even
+ * as a bare identifier.
  */
 
 function required(name: string, value: string | undefined): string {
@@ -31,27 +29,9 @@ export function requirePublicEnv() {
   }
 }
 
-export function serverEnv() {
-  if (typeof window !== 'undefined') {
-    throw new Error('serverEnv() was called in the browser. Server secrets must stay server-side.')
-  }
-  return {
-    serviceRoleKey: () => required('SUPABASE_SERVICE_ROLE_KEY', process.env.SUPABASE_SERVICE_ROLE_KEY),
-    naverClientId: () => required('NAVER_CLIENT_ID', process.env.NAVER_CLIENT_ID),
-    naverClientSecret: () => required('NAVER_CLIENT_SECRET', process.env.NAVER_CLIENT_SECRET),
-    anthropicApiKey: () => required('ANTHROPIC_API_KEY', process.env.ANTHROPIC_API_KEY),
-  }
-}
-
-/** True when a provider is configured, so the UI can hide what cannot work yet. */
-export const featureFlags = {
-  naverLogin: Boolean(process.env.NAVER_CLIENT_ID && process.env.NAVER_CLIENT_SECRET),
-  aiAssist: Boolean(process.env.ANTHROPIC_API_KEY),
-} as const
-
 /**
  * Absolute site origin, used to build OAuth redirect URLs.
- * Falls back to the Vercel-provided URL so preview deployments work without
+ * Falls back to the Vercel-provided host so a preview deployment works without
  * an extra variable.
  */
 export function siteOrigin(): string {

@@ -329,13 +329,39 @@ describe('secrets', () => {
     }
   })
 
-  it('reads privileged keys only through the server-only modules', () => {
+  it('reads privileged keys only through the server-only module', () => {
     const offenders = SOURCES.filter(
       ({ path, code }) =>
-        path !== 'src/lib/env.ts' &&
-        /process\.env\.(SUPABASE_SERVICE_ROLE_KEY|ANTHROPIC_API_KEY|NAVER_CLIENT_SECRET)/.test(code),
+        path !== 'src/lib/env.server.ts' &&
+        /process\.env\.(SUPABASE_SERVICE_ROLE_KEY|ANTHROPIC_API_KEY|NAVER_CLIENT_ID|NAVER_CLIENT_SECRET)/.test(
+          code,
+        ),
     )
     expect(offenders.map((offender) => offender.path)).toEqual([])
+  })
+
+  /**
+   * src/lib/env.ts is imported by the browser Supabase client, so anything it
+   * mentions ships to the browser — a `process.env.SECRET` lookup compiles to
+   * `undefined` but still leaves the NAME in the bundle. Keep it clean.
+   */
+  it('keeps privileged names out of the browser-reachable env module', () => {
+    // Comments are stripped from the bundle, so only real code is checked here —
+    // this module's own doc comment names the variables to say where they live.
+    const publicEnvModule = stripComments(readFileSync(join(ROOT, 'src/lib/env.ts'), 'utf8'))
+    for (const name of [
+      'SERVICE_ROLE',
+      'ANTHROPIC',
+      'NAVER_CLIENT_ID',
+      'NAVER_CLIENT_SECRET',
+    ]) {
+      expect(publicEnvModule).not.toContain(name)
+    }
+  })
+
+  it('guards the server-only env module', () => {
+    const serverEnvModule = readFileSync(join(ROOT, 'src/lib/env.server.ts'), 'utf8')
+    expect(serverEnvModule).toContain("import 'server-only'")
   })
 
   it('guards the admin client with server-only', () => {

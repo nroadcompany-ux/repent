@@ -7,7 +7,8 @@ import {
   NAVER_NEXT_COOKIE,
   NAVER_STATE_COOKIE,
 } from '@/lib/auth/naver'
-import { serverEnv, siteOrigin, featureFlags } from '@/lib/env'
+import { siteOrigin } from '@/lib/env'
+import { featureFlags, serverEnv } from '@/lib/env.server'
 
 /**
  * Naver sign-in, step 1 of 2.

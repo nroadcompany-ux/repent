@@ -1,6 +1,7 @@
 import { LoopMark } from '@/components/brand/loop-mark'
 import { ButtonLink } from '@/components/ui/control'
-import { featureFlags, publicEnv } from '@/lib/env'
+import { publicEnv } from '@/lib/env'
+import { featureFlags } from '@/lib/env.server'
 
 /**
  * Sign-in. Canonical docs/00 + AC-07: Social Login is 네이버 / 구글 only.

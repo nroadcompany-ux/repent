@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { PageHeader } from '@/components/layout/app-header'
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
 import { AI_MEMORY_DEFAULT_ON, PROFILE_GALLERY_MAX } from '@/domain/product-lock'
-import { featureFlags } from '@/lib/env'
+import { featureFlags } from '@/lib/env.server'
 import { requireUser } from '@/lib/supabase/server'
 import { setAiMemoryConsent, updateProfile } from './actions'
 

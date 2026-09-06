@@ -7,7 +7,8 @@ import {
   NAVER_STATE_COOKIE,
   NAVER_TOKEN_URL,
 } from '@/lib/auth/naver'
-import { serverEnv, siteOrigin } from '@/lib/env'
+import { siteOrigin } from '@/lib/env'
+import { serverEnv } from '@/lib/env.server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 
