@@ -3,24 +3,14 @@ import { notFound } from 'next/navigation'
 import { PageHeader } from '@/components/layout/app-header'
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
 import {
-  REPENTANCE_FLOW,
-  repentanceStep,
-  repentanceStepIndex,
+  REPENTANCE_WRITE_FLOW,
+  repentanceWriteStep,
+  repentanceWriteStepIndex,
 } from '@/domain/repentance'
-import { REPENTANCE_FINAL_CTA } from '@/domain/product-lock'
 import { requireUser } from '@/lib/supabase/server'
 import { saveRepentanceStep } from '../../actions'
 
 export const dynamic = 'force-dynamic'
-
-/**
- * Repentance writing surface. docs/02:
- *   돌아보기 → 깨닫기 → 돌이킴 약속 → 돌아가기 → 회개 기록 마치기 → Preview/Review
- *
- * AC-04 forbids Progress %, 회개 완료율, and any spiritual score, so the step
- * indicator below is navigational only — named steps, no number, no percentage,
- * no bar. 임시저장 is available on every step (docs/03 Secondary).
- */
 
 export default async function RepentanceWritePage({
   params,
@@ -35,27 +25,27 @@ export default async function RepentanceWritePage({
 
   const { data: record } = await supabase
     .from('repentances')
-    .select('id, title, looking_back, realization, turning_promise, returning_note, state')
+    .select('id, title, looking_back, realization, returning_note, state, recorded_at')
     .eq('id', id)
     .eq('user_id', userId)
     .maybeSingle()
 
   if (!record) notFound()
 
-  const step = repentanceStep(stepParam ?? 'looking_back')
-  const index = repentanceStepIndex(step.key)
+  const step = repentanceWriteStep(stepParam ?? 'looking_back')
+  const index = repentanceWriteStepIndex(step.key)
   const isFirst = index === 0
-  const isLast = index === REPENTANCE_FLOW.length - 1
-
+  const isLast = index === REPENTANCE_WRITE_FLOW.length - 1
   const value = record[step.column] ?? ''
+  const today = new Date().toISOString().slice(0, 10)
+  const recordDate = record.recorded_at?.slice(0, 10) ?? today
 
   return (
     <main>
-      <PageHeader title="돌아보기" backHref="/repentance" />
+      <PageHeader title="회개하기" backHref="/repentance" />
 
-      {/* Navigational step marker. Not a progress meter. */}
       <ol className="flex gap-2 px-title-gutter pt-1" aria-label="회개 기록 단계">
-        {REPENTANCE_FLOW.map((flowStep, flowIndex) => (
+        {REPENTANCE_WRITE_FLOW.map((flowStep, flowIndex) => (
           <li
             key={flowStep.key}
             aria-current={flowStep.key === step.key ? 'step' : undefined}
@@ -89,15 +79,28 @@ export default async function RepentanceWritePage({
         <p className="text-body-sm mt-3 leading-[21px] text-ink-muted">{step.guide}</p>
 
         {step.key === 'looking_back' ? (
-          <div className="mt-7">
-            <FieldLabel htmlFor="title">이 기록의 제목 (선택)</FieldLabel>
-            <TextField
-              id="title"
-              name="title"
-              defaultValue={record.title}
-              maxLength={80}
-              placeholder="나중에 찾기 쉽도록 한 줄로 적어두세요"
-            />
+          <div className="mt-7 flex flex-col gap-5">
+            <div>
+              <FieldLabel htmlFor="recorded_on">날짜</FieldLabel>
+              <TextField
+                id="recorded_on"
+                name="recorded_on"
+                type="date"
+                max={today}
+                defaultValue={recordDate}
+                required
+              />
+            </div>
+            <div>
+              <FieldLabel htmlFor="title">이 기록의 제목 (선택)</FieldLabel>
+              <TextField
+                id="title"
+                name="title"
+                defaultValue={record.title}
+                maxLength={80}
+                placeholder="예: 화를 내고 후회한 일"
+              />
+            </div>
           </div>
         ) : null}
 
@@ -109,7 +112,7 @@ export default async function RepentanceWritePage({
           <TextArea
             id={step.column}
             name={step.column}
-            rows={10}
+            rows={9}
             maxLength={8000}
             defaultValue={value}
             placeholder={step.placeholder}
@@ -119,7 +122,7 @@ export default async function RepentanceWritePage({
         <div className="mt-8 flex flex-col gap-3">
           {isLast ? (
             <Button type="submit" name="intent" value="finish">
-              {REPENTANCE_FINAL_CTA}
+              회개 기록 마치기
             </Button>
           ) : (
             <Button type="submit" name="intent" value="next">
