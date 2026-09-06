@@ -36,6 +36,27 @@ const SAMPLE_POSTS: ReadonlyArray<{
   { id: 'sample-10', type: 'daily', author: 'RETURN 예시', body: '오늘은 조금 느리게 가도 괜찮다고 생각해 봅니다.' },
 ]
 
+function SampleReactionRow() {
+  return (
+    <div className="mt-3 flex items-center gap-2 border-t border-line pt-2" aria-label="예시 반응">
+      {[
+        ['👍', 0, '좋아요'],
+        ['👎', 0, '싫어요'],
+        ['💬', 0, '댓글'],
+      ].map(([icon, count, label]) => (
+        <span
+          key={String(label)}
+          className="text-body-sm inline-flex min-h-9 items-center gap-1 rounded-chip px-3 font-medium text-ink-muted"
+          aria-label={`${label} ${count}`}
+        >
+          <span aria-hidden="true">{icon}</span>
+          <span>{count}</span>
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export default async function ConfessionPage({
   searchParams,
 }: {
@@ -128,6 +149,7 @@ export default async function ConfessionPage({
                 </div>
                 <p className="text-caption mt-3 font-medium text-ink-muted">{sample.author}</p>
                 <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">{sample.body}</p>
+                <SampleReactionRow />
               </li>
             ))}
           </ul>
