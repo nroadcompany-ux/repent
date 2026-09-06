@@ -2,29 +2,60 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { PageHeader } from '@/components/layout/app-header'
-import { KeepStrip } from '../_components/keep-strip'
-import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
-import { ACTION_OUTCOME_LABELS, PROMISE_CLOSE_LABEL } from '@/domain/product-lock'
-import { addDays, dateRange, dDayLabel, formatMonthDay, todayKst } from '@/lib/date'
+import { Button } from '@/components/ui/control'
+import { PROMISE_CLOSE_LABEL } from '@/domain/product-lock'
+import { dateRange, dDayLabel, formatMonthDay, todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
-import { closePromise, createAction, recordAction, reopenPromise } from '../actions'
+import { KeepStrip } from '../_components/keep-strip'
+import { closePromise, reopenPromise } from '../actions'
 
 export const dynamic = 'force-dynamic'
 
-/**
- * Promise Detail. docs/03: Primary CTA is 실행 기록 추가; secondary surfaces are
- * 그룹 / Reminder / Review / 마무리. docs/01 puts Action and its records inside
- * this screen — Action is never a tab of its own.
- *
- * The keep rate shown here is a behavioural measurement of what the member
- * chose to record (docs/04 "이행률은 행동 측정치만 허용"). It is labelled as
- * such, is never called a score, and a low number carries no verdict.
- */
+type RepeatType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
+type PromiseWithRepeat = {
+  id: string
+  title: string
+  group_id: string | null
+  background: string | null
+  purpose: string | null
+  started_on: string
+  due_date: string | null
+  daily_target: number
+  state: 'active' | 'closed'
+  closed_at: string | null
+  repeat_type?: RepeatType
+  repeat_weekdays?: number[]
+}
 
-const ERRORS: Record<string, string> = {
-  save: '저장하지 못했어요. 입력하신 내용은 그대로 있습니다. 다시 시도해 주세요.',
-  action_title: '실행 내용을 입력해 주세요.',
-  check: '기록하지 못했어요. 다시 시도해 주세요.',
+function jsDay(date: string): number {
+  return new Date(`${date}T12:00:00+09:00`).getDay()
+}
+
+function isScheduled(date: string, promise: PromiseWithRepeat): boolean {
+  if (date < promise.started_on) return false
+  if (promise.due_date && date > promise.due_date) return false
+  const type = promise.repeat_type ?? 'none'
+  if (type === 'none') return date === promise.started_on
+  if (type === 'daily') return true
+  if (type === 'weekly') {
+    const weekdays = promise.repeat_weekdays?.length ? promise.repeat_weekdays : [jsDay(promise.started_on)]
+    return weekdays.includes(jsDay(date))
+  }
+  if (type === 'monthly') return date.slice(8, 10) === promise.started_on.slice(8, 10)
+  return date.slice(5, 10) === promise.started_on.slice(5, 10)
+}
+
+function recurrenceLabel(promise: PromiseWithRepeat): string {
+  const type = promise.repeat_type ?? 'none'
+  if (type === 'none') return '한 번'
+  if (type === 'daily') return '매일'
+  if (type === 'monthly') return `매월 ${Number(promise.started_on.slice(8, 10))}일`
+  if (type === 'yearly') return `매년 ${Number(promise.started_on.slice(5, 7))}월 ${Number(promise.started_on.slice(8, 10))}일`
+  const names = ['일', '월', '화', '수', '목', '금', '토']
+  const days = (promise.repeat_weekdays?.length ? promise.repeat_weekdays : [jsDay(promise.started_on)])
+    .map((day) => names[day])
+    .join('·')
+  return `매주 ${days}`
 }
 
 export default async function PromiseDetailPage({
@@ -38,21 +69,20 @@ export default async function PromiseDetailPage({
   const { id } = await params
   const { error } = await searchParams
 
-  const { data: promise } = await supabase
+  const { data: rawPromise } = await supabase
     .from('promises')
-    .select(
-      'id, title, group_id, background, purpose, started_on, due_date, daily_target, state, closed_at',
-    )
+    .select('*')
     .eq('id', id)
     .eq('user_id', userId)
     .maybeSingle()
 
-  if (!promise) notFound()
-
+  if (!rawPromise) notFound()
+  const promise = rawPromise as unknown as PromiseWithRepeat
   const today = todayKst()
-  const strip = [today, addDays(today, -1), addDays(today, -2)]
+  const windowEnd = promise.due_date && promise.due_date < today ? promise.due_date : today
+  const scheduled = dateRange(promise.started_on, windowEnd).filter((date) => isScheduled(date, promise))
 
-  const [{ data: group }, { data: checks }, { data: actions }] = await Promise.all([
+  const [{ data: group }, { data: checks }, { data: legacyActions }] = await Promise.all([
     promise.group_id
       ? supabase.from('promise_groups').select('name').eq('id', promise.group_id).maybeSingle()
       : Promise.resolve({ data: null }),
@@ -70,33 +100,15 @@ export default async function PromiseDetailPage({
       .order('created_at', { ascending: false }),
   ])
 
-  const actionIds = (actions ?? []).map((action) => action.id)
-  const { data: actionRecords } = actionIds.length
-    ? await supabase
-        .from('action_records')
-        .select('id, action_id, outcome, note, recorded_on')
-        .eq('user_id', userId)
-        .in('action_id', actionIds)
-        .order('recorded_on', { ascending: false })
-    : { data: [] }
-
   const checkMap = new Map((checks ?? []).map((check) => [check.check_date, check.done_count]))
-
-  // Behavioural keep rate over the window the member actually committed to.
-  const windowEnd = promise.due_date && promise.due_date < today ? promise.due_date : today
-  const days = dateRange(promise.started_on, windowEnd)
-  const target = days.length * promise.daily_target
-  const done = (checks ?? []).reduce((sum, check) => sum + check.done_count, 0)
-  const keepRate = target > 0 ? Math.round((Math.min(done, target) / target) * 100) : 0
-
-  // Recent history, newest first, grouped by month so a long promise stays scannable.
-  const history = days.slice().reverse().slice(0, 30)
-  const recordsByAction = new Map<string, typeof actionRecords>()
-  for (const record of actionRecords ?? []) {
-    const list = recordsByAction.get(record.action_id) ?? []
-    list.push(record)
-    recordsByAction.set(record.action_id, list)
-  }
+  const scheduledSet = new Set(scheduled)
+  const done = (checks ?? []).reduce(
+    (sum, check) => sum + (scheduledSet.has(check.check_date) && check.done_count > 0 ? 1 : 0),
+    0,
+  )
+  const target = scheduled.length
+  const keepRate = target > 0 ? Math.round((done / target) * 100) : 0
+  const recentScheduled = scheduled.slice(-3).reverse()
 
   return (
     <main>
@@ -111,11 +123,8 @@ export default async function PromiseDetailPage({
       />
 
       {error ? (
-        <p
-          role="alert"
-          className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger"
-        >
-          {ERRORS[error] ?? '다시 시도해 주세요.'}
+        <p role="alert" className="text-body-sm mx-title-gutter mt-2 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger">
+          기록하지 못했어요. 다시 시도해 주세요.
         </p>
       ) : null}
 
@@ -123,6 +132,9 @@ export default async function PromiseDetailPage({
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-caption rounded-chip bg-accent-tint px-[10px] py-[4px] font-medium text-accent">
             {group?.name ?? '그룹 없음'}
+          </span>
+          <span className="text-caption rounded-chip bg-canvas px-[10px] py-[4px] font-medium text-ink-muted">
+            {recurrenceLabel(promise)}
           </span>
           {promise.state === 'closed' ? (
             <span className="text-caption rounded-chip bg-canvas px-[10px] py-[4px] font-medium text-ink-muted">
@@ -134,22 +146,21 @@ export default async function PromiseDetailPage({
               {dDayLabel(promise.due_date, today)}
             </span>
           ) : null}
-          {promise.daily_target > 1 ? (
-            <span className="text-caption rounded-chip bg-canvas px-[10px] py-[4px] font-medium text-ink-muted">
-              하루 {promise.daily_target}번
-            </span>
-          ) : null}
         </div>
+        <p className="text-caption mt-2 text-ink-muted">
+          {promise.started_on} 시작{promise.due_date ? ` · ${promise.due_date} 종료` : ' · 종료일 없음'}
+        </p>
       </div>
 
-      {promise.state === 'active' ? (
+      {promise.state === 'active' && recentScheduled.length > 0 ? (
         <section className="mx-gutter mt-5 rounded-card bg-surface px-4 py-4">
-          <p className="text-caption font-medium text-accent">오늘 · 어제 · 그제</p>
+          <p className="text-caption font-medium text-accent">약속 이행 기록</p>
+          <p className="text-caption mt-1 text-ink-muted">약속 자체가 실행할 일입니다. 같은 내용을 다시 적지 않아도 돼요.</p>
           <div className="mt-3">
             <KeepStrip
               promiseId={id}
-              dailyTarget={promise.daily_target}
-              dates={strip}
+              dailyTarget={1}
+              dates={recentScheduled}
               counts={checkMap}
               returnTo={`/promise/${id}`}
             />
@@ -158,12 +169,12 @@ export default async function PromiseDetailPage({
       ) : null}
 
       <section className="mx-gutter mt-2 rounded-card bg-surface px-4 py-4">
-        <p className="text-caption font-medium text-accent">지금까지의 기록</p>
+        <p className="text-caption font-medium text-accent">약속 이행률</p>
         <p className="text-value mt-[2px] font-semibold text-ink">
           {done} / {target}회 · {keepRate}%
         </p>
         <p className="text-caption mt-[2px] leading-[19px] text-ink-muted">
-          {promise.started_on}부터 지금까지 내가 남긴 기록입니다. 신앙을 재는 숫자가 아닙니다.
+          예정된 날 중 내가 직접 지켰다고 남긴 기록입니다. 신앙을 재는 숫자가 아닙니다.
         </p>
       </section>
 
@@ -172,129 +183,42 @@ export default async function PromiseDetailPage({
           {promise.background ? (
             <>
               <p className="text-caption font-medium text-accent">약속의 배경</p>
-              <p className="text-body mt-1 whitespace-pre-wrap leading-[25px] text-ink">
-                {promise.background}
-              </p>
+              <p className="text-body mt-1 whitespace-pre-wrap leading-[25px] text-ink">{promise.background}</p>
             </>
           ) : null}
           {promise.purpose ? (
             <>
               <p className="text-caption mt-4 font-medium text-accent">약속의 목적</p>
-              <p className="text-body mt-1 whitespace-pre-wrap leading-[25px] text-ink">
-                {promise.purpose}
-              </p>
+              <p className="text-body mt-1 whitespace-pre-wrap leading-[25px] text-ink">{promise.purpose}</p>
             </>
           ) : null}
         </section>
       ) : null}
 
-      {/* Primary CTA — 실행 기록 추가 (docs/03) */}
-      <section className="mt-7 px-title-gutter">
-        <h2 className="text-section font-semibold text-ink">실행</h2>
-        <form action={createAction} className="mt-3">
-          <input type="hidden" name="promise_id" value={id} />
-          <FieldLabel htmlFor="action_title">무엇을 실행하시겠어요</FieldLabel>
-          <TextField
-            id="action_title"
-            name="title"
-            maxLength={100}
-            placeholder="예: 이번 주 수요일 아침에 읽기"
-            required
-          />
-          <div className="mt-3">
-            <FieldLabel htmlFor="planned_for">언제 (선택)</FieldLabel>
-            <TextField id="planned_for" name="planned_for" type="date" />
-          </div>
-          <div className="mt-4">
-            <Button type="submit">실행 기록 추가</Button>
-          </div>
-        </form>
-      </section>
-
-      {(actions ?? []).length > 0 ? (
-        <ul className="mt-5 flex flex-col gap-row-gap px-gutter">
-          {(actions ?? []).map((action) => {
-            const records = recordsByAction.get(action.id) ?? []
-            return (
-              <li key={action.id} className="rounded-row bg-surface px-4 py-4">
-                <p className="text-value font-semibold text-ink">{action.title}</p>
-                {action.planned_for ? (
-                  <p className="text-caption mt-[2px] text-ink-muted">
-                    {formatMonthDay(action.planned_for)} 예정
-                  </p>
-                ) : null}
-
-                <form action={recordAction} className="mt-3">
-                  <input type="hidden" name="action_id" value={action.id} />
-                  <input type="hidden" name="promise_id" value={id} />
-                  <TextArea name="note" rows={2} maxLength={2000} placeholder="어떻게 됐는지 한 줄로 남겨보세요." />
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {(
-                      Object.entries(ACTION_OUTCOME_LABELS) as Array<
-                        [keyof typeof ACTION_OUTCOME_LABELS, string]
-                      >
-                    ).map(([outcome, label]) => (
-                      <button
-                        key={outcome}
-                        type="submit"
-                        name="outcome"
-                        value={outcome}
-                        className="text-caption rounded-chip border border-line bg-surface px-3 py-[6px] font-medium text-ink-muted"
-                      >
-                        {label}
-                      </button>
-                    ))}
-                    {/* Optional Repent — offered, never required (docs/04). */}
-                    <button
-                      type="submit"
-                      name="then"
-                      value="repent"
-                      className="text-caption rounded-chip bg-accent-tint px-3 py-[6px] font-medium text-accent"
-                    >
-                      기록하고 돌아보기
-                    </button>
-                  </div>
-                </form>
-
-                {records.length > 0 ? (
-                  <ul className="mt-4 flex flex-col gap-2 border-t border-line pt-3">
-                    {records.map((record) => (
-                      <li key={record.id} className="text-caption text-ink-muted">
-                        <span className="font-medium text-accent">
-                          {ACTION_OUTCOME_LABELS[record.outcome]}
-                        </span>{' '}
-                        · {formatMonthDay(record.recorded_on)}
-                        {record.note ? (
-                          <span className="mt-[2px] block whitespace-pre-wrap text-ink">
-                            {record.note}
-                          </span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+      {(legacyActions ?? []).length > 0 ? (
+        <details className="mx-gutter mt-4 rounded-card bg-surface px-4 py-4">
+          <summary className="text-body-sm cursor-pointer font-medium text-ink-muted">이전 방식의 실행 기록 {(legacyActions ?? []).length}개</summary>
+          <ul className="mt-3 flex flex-col gap-2">
+            {(legacyActions ?? []).map((action) => (
+              <li key={action.id} className="text-caption text-ink-muted">
+                {action.title}{action.planned_for ? ` · ${formatMonthDay(action.planned_for)}` : ''}
               </li>
-            )
-          })}
-        </ul>
+            ))}
+          </ul>
+        </details>
       ) : null}
 
       <section className="mt-8 px-title-gutter">
-        <h2 className="text-section font-semibold text-ink">지난 기록</h2>
+        <h2 className="text-section font-semibold text-ink">지난 이행 기록</h2>
         <div className="mt-3 flex flex-wrap gap-[6px]">
-          {history.map((date) => {
-            const count = checkMap.get(date) ?? 0
-            const complete = count >= promise.daily_target
+          {scheduled.slice().reverse().slice(0, 30).map((date) => {
+            const complete = (checkMap.get(date) ?? 0) > 0
             return (
               <span
                 key={date}
-                title={`${date} · ${count}/${promise.daily_target}`}
+                title={date}
                 className={`text-caption flex h-[30px] w-[42px] items-center justify-center rounded-control border ${
-                  complete
-                    ? 'border-accent bg-accent text-white'
-                    : count > 0
-                      ? 'border-accent bg-accent-tint text-accent'
-                      : 'border-line bg-surface text-ink-faint'
+                  complete ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-faint'
                 }`}
               >
                 {formatMonthDay(date).replace('월 ', '/').replace('일', '')}
