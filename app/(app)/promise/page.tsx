@@ -149,7 +149,13 @@ export default async function PromisePage({
                         ? PROMISE_CLOSE_LABEL
                         : (groupName.get(promise.group_id ?? '') ?? '약속')}
                     </p>
-                    <p className="text-value mt-[2px] truncate font-semibold text-ink">
+                    {/* Two lines, not one. The 3-day strip takes 156px of a
+                        375px screen, leaving the title 135px — at 16px Korean
+                        that clipped even an ordinary promise on one line.
+                        Measured at 375: only a title over ~30 characters is
+                        cut now. Typography is unchanged; this is the row
+                        layout adapting to it. */}
+                    <p className="text-value mt-[2px] line-clamp-2 font-semibold text-ink">
                       {promise.title}
                     </p>
                     <p className="text-caption mt-[2px] truncate text-ink-muted">
