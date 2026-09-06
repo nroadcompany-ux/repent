@@ -2,7 +2,6 @@ import Link from 'next/link'
 
 import { AppHeader, HeaderAction } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
-import { EmptyState } from '@/components/ui/state'
 import { SegmentedLinks } from '@/components/ui/segmented-links'
 import { CONFESSION_TYPE_LABELS } from '@/domain/product-lock'
 import { formatMonthDay } from '@/lib/date'
@@ -37,6 +36,74 @@ const FILTERS = [
   ...(Object.entries(CONFESSION_TYPE_LABELS) as Array<[ConfessionType, string]>).map(
     ([value, label]) => ({ value, label }),
   ),
+]
+
+const SAMPLE_POSTS: ReadonlyArray<{
+  id: string
+  type: ConfessionType
+  author: string
+  body: string
+}> = [
+  {
+    id: 'sample-01',
+    type: 'daily',
+    author: 'RETURN 예시',
+    body: '오늘은 하루가 길게 느껴졌어요. 그래도 무사히 마친 것에 감사합니다.',
+  },
+  {
+    id: 'sample-02',
+    type: 'prayer',
+    author: 'RETURN 예시',
+    body: '가족이 건강하게 지낼 수 있도록 기도 부탁드려요.',
+  },
+  {
+    id: 'sample-03',
+    type: 'grace',
+    author: 'RETURN 예시',
+    body: '오늘 말씀을 읽다가 마음이 조금 편안해졌어요.',
+  },
+  {
+    id: 'sample-04',
+    type: 'confession',
+    author: 'RETURN 예시',
+    body: '화가 난 마음을 오래 붙잡고 있었던 것을 돌아봅니다.',
+  },
+  {
+    id: 'sample-05',
+    type: 'daily',
+    author: 'RETURN 예시',
+    body: '출근길 하늘을 보며 잠깐 멈춰 섰습니다.',
+  },
+  {
+    id: 'sample-06',
+    type: 'prayer',
+    author: 'RETURN 예시',
+    body: '중요한 결정을 앞두고 있습니다. 지혜를 구합니다.',
+  },
+  {
+    id: 'sample-07',
+    type: 'grace',
+    author: 'RETURN 예시',
+    body: '예상하지 못한 도움을 받아 감사한 하루였습니다.',
+  },
+  {
+    id: 'sample-08',
+    type: 'confession',
+    author: 'RETURN 예시',
+    body: '해야 할 말을 미루고 있었어요. 용기 내어 먼저 다가가고 싶습니다.',
+  },
+  {
+    id: 'sample-09',
+    type: 'prayer',
+    author: 'RETURN 예시',
+    body: '마음이 지친 친구를 위해 함께 기도해 주세요.',
+  },
+  {
+    id: 'sample-10',
+    type: 'daily',
+    author: 'RETURN 예시',
+    body: '오늘은 조금 느리게 가도 괜찮다고 생각해 봅니다.',
+  },
 ]
 
 export default async function ConfessionPage({
@@ -92,6 +159,9 @@ export default async function ConfessionPage({
   }
 
   const returnTo = activeType ? `/confession?type=${activeType}` : '/confession'
+  const visibleSamples = activeType
+    ? SAMPLE_POSTS.filter((sample) => sample.type === activeType)
+    : SAMPLE_POSTS
 
   return (
     <main>
@@ -125,12 +195,24 @@ export default async function ConfessionPage({
             글을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
           </p>
         ) : (posts ?? []).length === 0 ? (
-          <EmptyState
-            title="아직 나눈 글이 없어요"
-            description="꼭 나누지 않아도 괜찮습니다. 나누고 싶을 때만 담으세요."
-            actionLabel="고백 나누기"
-            actionHref="/confession/write"
-          />
+          <ul className="flex flex-col gap-row-gap px-gutter">
+            {visibleSamples.map((sample) => (
+              <li key={sample.id} className="rounded-card bg-surface px-4 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-caption rounded-chip bg-accent-tint px-[10px] py-[4px] font-medium text-accent">
+                      {CONFESSION_TYPE_LABELS[sample.type]}
+                    </span>
+                    <span className="text-caption rounded-chip border border-accent-soft px-[10px] py-[4px] font-medium text-accent">
+                      예시
+                    </span>
+                  </div>
+                </div>
+                <p className="text-caption mt-3 font-medium text-ink-muted">{sample.author}</p>
+                <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">{sample.body}</p>
+              </li>
+            ))}
+          </ul>
         ) : (
           <ul className="flex flex-col gap-row-gap px-gutter">
             {(posts ?? []).map((post) => {
