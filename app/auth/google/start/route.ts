@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 import { isSupabaseProviderEnabled } from '@/lib/auth/providers'
+import { rememberReturnTo } from '@/lib/auth/return-to'
 import { siteOrigin } from '@/lib/env'
 import { createClient } from '@/lib/supabase/server'
 
@@ -9,29 +10,29 @@ import { createClient } from '@/lib/supabase/server'
  * is written as an httpOnly cookie rather than living in browser storage.
  */
 export async function GET(request: NextRequest) {
-  const next = request.nextUrl.searchParams.get('next') ?? '/journey'
+  const origin = siteOrigin()
 
   // Guard: a disabled provider makes Supabase answer the browser with raw JSON
   // on its own domain, which the member cannot get back from. Only redirect
   // when we positively know the provider is enabled; an unreachable settings
   // endpoint falls through and lets Supabase decide.
   if (!(await isSupabaseProviderEnabled('google', true))) {
-    return NextResponse.redirect(`${siteOrigin()}/login?error=google_unconfigured`)
+    return NextResponse.redirect(`${origin}/login?error=google_unconfigured`)
   }
 
   const supabase = await createClient()
 
+  // The return path travels in an httpOnly cookie, not a query string, so the
+  // URL registered with Supabase stays a bare path.
+  await rememberReturnTo(request.nextUrl.searchParams.get('next'), origin.startsWith('https://'))
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: `${siteOrigin()}/auth/callback?next=${encodeURIComponent(next)}`,
-    },
+    options: { redirectTo: `${origin}/auth/callback` },
   })
 
   if (error || !data.url) {
-    const failed = new URL('/login', siteOrigin())
-    failed.searchParams.set('error', 'google')
-    return NextResponse.redirect(failed)
+    return NextResponse.redirect(`${origin}/login?error=google`)
   }
 
   return NextResponse.redirect(data.url)

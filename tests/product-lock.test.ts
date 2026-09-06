@@ -709,3 +709,40 @@ describe('account enumeration', () => {
     expect(actions).not.toContain('/auth/confirm?type=')
   })
 })
+
+/**
+ * Supabase Redirect URL allowlist stays minimal (PM response §6).
+ * Every URL RETURN hands to Supabase must be a bare path, so the allowlist is
+ * two exact routes with no wildcard.
+ */
+describe('redirect allowlist scope', () => {
+  const REDIRECT_SOURCES = [
+    'app/auth/google/start/route.ts',
+    'app/login/email/actions.ts',
+  ]
+
+  it('sends only bare callback paths to Supabase', () => {
+    for (const file of REDIRECT_SOURCES) {
+      const code = stripComments(readFileSync(join(ROOT, file), 'utf8'))
+      for (const match of code.matchAll(/(?:redirectTo|emailRedirectTo):\s*`([^`]+)`/g)) {
+        const url = match[1] as string
+        expect(url, `${file}: ${url}`).not.toContain('?')
+        expect(url, `${file}: ${url}`).toMatch(/^\$\{(origin|siteOrigin\(\))\}\/auth\/(callback|confirm)$/)
+      }
+    }
+  })
+
+  it('carries the return path in a cookie instead of the callback URL', () => {
+    const start = readFileSync(join(ROOT, 'app/auth/google/start/route.ts'), 'utf8')
+    const callback = readFileSync(join(ROOT, 'app/auth/callback/route.ts'), 'utf8')
+    expect(start).toContain('rememberReturnTo')
+    expect(callback).toContain('takeReturnTo')
+  })
+
+  it('refuses an absolute return path', () => {
+    const returnTo = readFileSync(join(ROOT, 'src/lib/auth/return-to.ts'), 'utf8')
+    // Blocks both http://evil and protocol-relative //evil.
+    expect(returnTo).toContain("startsWith('/')")
+    expect(returnTo).toContain("startsWith('//')")
+  })
+})

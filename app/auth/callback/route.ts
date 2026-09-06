@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
+import { takeReturnTo } from '@/lib/auth/return-to'
 import { siteOrigin } from '@/lib/env'
 import { createClient } from '@/lib/supabase/server'
 
@@ -10,7 +11,6 @@ import { createClient } from '@/lib/supabase/server'
  */
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code')
-  const next = request.nextUrl.searchParams.get('next') ?? '/journey'
   const origin = siteOrigin()
 
   if (!code) {
@@ -42,5 +42,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/onboarding`)
   }
 
-  return NextResponse.redirect(`${origin}${next.startsWith('/') ? next : '/journey'}`)
+  return NextResponse.redirect(`${origin}${await takeReturnTo()}`)
 }
