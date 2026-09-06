@@ -18,6 +18,7 @@
 
   var KINDS = {
     prayer: { label: '기도', color: '#6D4AFF' },
+    script: { label: '기도문', color: '#9A7CFF' },
     promise: { label: '약속', color: '#4A2FD6' },
     action: { label: '실행', color: '#3E9BD6' },
     repentance: { label: '회개', color: '#C06FB8' },
@@ -107,6 +108,12 @@
       { id: 'r13', type: 'prayer', group: 'church', title: '주일학교 아이들',
         body: '', day: dayOffset(18),
         hearts: { give: '준비하는 시간', receive: '아이들과 통하는 한마디', praise: '작은 자리를 지켰구나' } },
+      { id: 'r14', type: 'script', occasion: '주일예배 대표기도', title: '8월 마지막 주 주일예배 대표기도',
+        body: '사랑의 하나님, 한 주간도 저희를 지켜주셔서 감사합니다.\n\n각자의 자리에서 애쓰다 온 마음들을 아시오니, 오늘 이 시간만큼은 내려놓고 주님 앞에 앉게 하여 주옵소서.\n\n지난 한 주 마음이 무거웠던 이들, 병상에 있는 이들, 오늘 이 자리에 오지 못한 이들을 기억하여 주옵소서.\n\n예수님의 이름으로 기도드립니다. 아멘.',
+        day: dayOffset(11) },
+      { id: 'r15', type: 'script', occasion: '가정예배', title: '어머니 생신 가정예배 기도',
+        body: '하나님, 어머니에게 허락하신 세월을 감사합니다.\n\n지나온 날들 속에 하나님이 함께하셨음을 저희가 압니다.\n\n남은 날에도 건강 주시고, 저희가 그 곁을 잘 지키게 하여 주옵소서.',
+        day: dayOffset(3) },
     ];
     store.nextId = 20;
   }
@@ -286,8 +293,8 @@
   /* ---------------------------------------------------------- record curve */
 
   function renderCurve(target, records, days) {
-    var lanes = ['prayer', 'promise', 'action', 'repentance', 'confession'];
-    var W = 330, H = 128, padL = 34, padR = 8, padT = 8, padB = 18;
+    var lanes = ['prayer', 'script', 'promise', 'action', 'repentance', 'confession'];
+    var W = 330, H = 146, padL = 40, padR = 8, padT = 8, padB = 18;
     var innerW = W - padL - padR;
     var laneH = (H - padT - padB) / lanes.length;
     var today = new Date();
@@ -460,6 +467,102 @@
     host.scrollLeft = keep;
   });
 
+  /* ------------------------------------------- shared blocks (voice/privacy) */
+
+  /**
+   * Voice memo. This prototype only shows how it would work — nothing is
+   * recorded. The cap is under a minute so a memo stays a note, not a sermon.
+   */
+  function voiceBlock() {
+    return '<div class="voice">' +
+      '<div class="voice__row">' +
+      '<span class="voice__btn" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>' +
+      '<span><span class="voice__label">음성으로 남기기</span>' +
+      '<span class="voice__limit">최대 1분 · 짧게 한 마디면 충분합니다</span></span></div>' +
+      '<ul class="voice__guide">' +
+      '<li>버튼을 누르면 녹음이 시작되고, 다시 누르면 멈춥니다.</li>' +
+      '<li>1분이 되면 자동으로 멈춥니다.</li>' +
+      '<li>녹음은 글과 함께 이 기록에 붙어 저장됩니다.</li>' +
+      '<li>저장 전에 다시 듣고 지울 수 있습니다.</li>' +
+      '</ul></div>';
+  }
+
+  /**
+   * Privacy notice. Matches the permission boundary: a private record is the
+   * owner's alone — operators and moderators included.
+   */
+  function privacyBlock(extra) {
+    return '<div class="privacy-note">' +
+      '<span class="privacy-note__icon">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>' +
+      '<span><span class="privacy-note__title">이 기록은 나만 볼 수 있습니다</span>' +
+      '<span class="privacy-note__body">' +
+      '앱 운영진을 포함해 다른 어떤 사람도 이 내용을 볼 수 없습니다. ' +
+      (extra || '내가 직접 나누기를 선택한 부분만 다른 분들에게 보입니다.') +
+      '</span></span></div>';
+  }
+
+  /* ------------------------------------------------------------- samples */
+
+  /** Shown so a blank page is never the first thing a user meets. */
+  var SAMPLES = {
+    prayer: {
+      title: '이렇게 적는 분들이 많아요',
+      items: [
+        ['조급한 마음을 내려놓게 해주세요', '한 문장이면 충분합니다'],
+        ['동생이 다시 교회에 나오기를', '오래 붙잡는 제목도 괜찮아요'],
+        ['이번 달 생활비가 채워지기를', '현실적인 필요도 기도가 됩니다'],
+      ],
+      cta: '내 기도도 적어볼까요?',
+    },
+    script: {
+      title: '이런 자리에 씁니다',
+      items: [
+        ['9월 첫 주 주일예배 대표기도', '앞에서 드릴 기도를 미리 정리'],
+        ['수요 소모임 기도회 인도', '함께 기도할 순서를 적어둠'],
+        ['어머니 생신 가정예배 기도', '가족 앞에서 드릴 기도'],
+      ],
+      cta: '내 기도문도 써볼까요?',
+    },
+    promise: {
+      title: '이런 약속들이 있어요',
+      items: [
+        ['매일 아침 10분 먼저 기도하기', '작을수록 오래 갑니다'],
+        ['한 주에 한 번 안부 전하기', '사람과의 약속도 좋습니다'],
+        ['화가 날 때 한 박자 쉬고 말하기', '태도에 대한 약속도 됩니다'],
+      ],
+      cta: '내 약속도 적어볼까요?',
+    },
+    repentance: {
+      title: '이런 것들을 적습니다',
+      items: [
+        ['지친다는 이유로 아이에게 큰 소리를 낸 일', '오늘 있었던 일'],
+        ['오래전 친구에게 했던 말이 계속 남아 있는 것', '지난 기억도 됩니다'],
+        ['교회에서 사람을 겉으로만 대했던 태도', '드러나지 않은 마음도'],
+      ],
+      cta: '내 이야기도 적어볼까요?',
+    },
+  };
+
+  function renderSamples(host, key, onCta) {
+    var s = SAMPLES[key];
+    if (!host || !s) return;
+    host.innerHTML =
+      '<div class="sample__head"><span class="sample__title">' + s.title + '</span>' +
+      '<span class="sample__hint">예시</span></div>' +
+      '<div class="sample__list">' +
+      s.items.map(function (it) {
+        return '<div class="sample__item"><p class="sample__text">' + it[0] + '</p>' +
+          '<p class="sample__meta">' + it[1] + '</p></div>';
+      }).join('') +
+      '</div>' +
+      '<div class="sample__cta"><button class="cta cta--soft" data-sample-cta="' + key + '">' + s.cta + '</button></div>';
+    if (onCta) host.querySelector('[data-sample-cta]').addEventListener('click', onCta);
+  }
+
   /* --------------------------------------------------------------- screens */
 
   screens.intro = function () {};
@@ -488,6 +591,7 @@
     renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
     if (first) host.scrollLeft = host.scrollWidth;
 
+    renderToday();
     renderCurve(el('j-curve'), store.records, days);
     el('j-legend').innerHTML = legendHtml();
 
@@ -517,6 +621,40 @@
     c.addEventListener('click', function () { journeyRange = c.dataset.range; screens.journey(); });
   });
 
+  /**
+   * Today prompts — the three onboarding questions moved here. They are an
+   * invitation on the home screen, not a gate in front of it, and a prompt
+   * already answered today is shown as done rather than nagging.
+   */
+  var TODAY_PROMPTS = [
+    { kind: 'prayer', icon: '🙏', q: '오늘 하나님께 드리고 싶은 기도가 있나요?', hint: '짧게 한 문장이어도 좋습니다' },
+    { kind: 'promise', icon: '🤝', q: '마음에 남아 있는 약속이나 결단이 있나요?', hint: '지키지 못해도 괜찮습니다' },
+    { kind: 'action', icon: '🌿', q: '오늘 실천하고 싶은 한 가지가 있나요?', hint: '아주 작은 것이어도 좋습니다' },
+  ];
+
+  function renderToday() {
+    var today = dayOffset(0);
+    el('j-today').innerHTML = TODAY_PROMPTS.map(function (p) {
+      var done = store.records.some(function (r) { return r.type === p.kind && r.day === today; });
+      return '<button class="today' + (done ? ' today--done' : '') + '" type="button" data-today="' + p.kind + '">' +
+        '<span class="today__icon">' + p.icon + '</span>' +
+        '<span><span class="today__q">' + p.q + '</span>' +
+        '<span class="today__hint">' + (done ? '오늘 남겼어요' : p.hint) + '</span></span>' +
+        '<span class="today__arrow">›</span></button>';
+    }).join('');
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-today]');
+    if (!t) return;
+    var kind = t.dataset.today;
+    if (kind === 'prayer') { nav('prayer-new', { label: '오늘', value: '기도 남기기' }); return; }
+    if (kind === 'promise') { nav('promise', { label: '오늘', value: '약속 남기기', openCompose: true }); return; }
+    var open = byType('promise').filter(function (p) { return p.status !== 'closed'; });
+    if (open.length) nav('promise-detail', { promiseId: open[open.length - 1].id, label: '오늘', value: '실행 남기기' });
+    else nav('promise', { label: '오늘', value: '실행을 담을 약속을 먼저 남겨주세요', openCompose: true });
+  });
+
   /* First record landed */
   screens['first-saved'] = function (ctx) {
     el('fs-title').textContent = '첫 기록이 여정에 남았어요';
@@ -525,8 +663,44 @@
     el('fs-legend').innerHTML = legendHtml();
   };
 
-  /* Prayer — groups */
+  /* Prayer — groups + prayer scripts */
+
+  /** Occasions a prayer script is written for. */
+  var OCCASIONS = ['주일예배 대표기도', '소모임 기도회', '가정예배', '식사기도', '심방·병문안', '기타'];
+
+  var prayerTab = 'titles';
+
+  Array.prototype.forEach.call(document.querySelectorAll('#p-seg .seg__item'), function (b) {
+    b.addEventListener('click', function () { prayerTab = b.dataset.ptab; screens.prayer(current.ctx || {}); });
+  });
+
+  function renderScripts() {
+    var list = byType('script').slice().sort(function (a, b) { return a.day < b.day ? 1 : -1; });
+
+    el('p-scripts').innerHTML = list.length
+      ? list.map(function (s) {
+          return '<button class="script" type="button" data-script="' + s.id + '">' +
+            '<span class="script__body"><span class="script__occasion">' + (s.occasion || '기타') + '</span>' +
+            '<span class="script__name">' + s.title + '</span>' +
+            '<span class="script__excerpt">' + (s.body || '아직 본문이 없습니다') + '</span>' +
+            '<span class="script__meta">' + prettyDay(s.day) + '</span></span>' +
+            '<span class="script__arrow">›</span></button>';
+        }).join('')
+      : '<div class="empty"><p class="empty__title">아직 써둔 기도문이 없습니다.</p>' +
+        '<p class="empty__body">앞에서 기도할 일이 있을 때 미리 적어두면 그대로 쌓입니다.</p></div>';
+
+    renderSamples(el('p-script-samples'), 'script', function () { nav('script-new'); });
+  }
+
   screens.prayer = function () {
+    Array.prototype.forEach.call(document.querySelectorAll('#p-seg .seg__item'), function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.ptab === prayerTab));
+    });
+    el('p-pane-titles').style.display = prayerTab === 'titles' ? 'block' : 'none';
+    el('p-pane-scripts').style.display = prayerTab === 'scripts' ? 'block' : 'none';
+
+    if (prayerTab === 'scripts') { renderScripts(); return; }
+
     var all = byType('prayer');
     var weekCut = dayOffset(6);
     el('p-week').textContent = all.filter(function (r) { return r.day >= weekCut; }).length;
@@ -545,6 +719,8 @@
         '<span class="pgroup__meta">' + g.desc + '</span></span>' +
         '<span class="pgroup__count">' + n + '개 ›</span></button>';
     }).join('');
+
+    renderSamples(el('p-samples'), 'prayer', function () { nav('prayer-new'); });
   };
 
   document.addEventListener('click', function (e) {
@@ -646,7 +822,81 @@
       return '<button class="chip chip--sm" type="button" data-gsel="' + g.id + '" aria-pressed="' +
         (g.id === composeGroup) + '">' + g.icon + ' ' + g.name + '</button>';
     }).join('');
+    el('pn-voice').innerHTML = voiceBlock();
+    el('pn-privacy').innerHTML = privacyBlock();
   };
+
+  /* Prayer scripts — compose and detail */
+
+  var scriptOccasion = OCCASIONS[0];
+
+  screens['script-new'] = function () {
+    el('ps-title').value = '';
+    el('ps-body').value = '';
+    el('ps-voice').innerHTML = voiceBlock();
+    el('ps-privacy').innerHTML =
+      '<div style="margin-top:16px">' +
+      privacyBlock('기도문을 다른 분들과 나누고 싶을 때는 상세 화면에서 복사하거나 직접 나누기를 선택하시면 됩니다.') +
+      '</div>';
+    el('ps-occasions').innerHTML = OCCASIONS.map(function (o) {
+      return '<button class="chip chip--sm" type="button" data-occ="' + o + '" aria-pressed="' +
+        (o === scriptOccasion) + '">' + o + '</button>';
+    }).join('');
+  };
+
+  el('ps-occasions').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-occ]');
+    if (!b) return;
+    scriptOccasion = b.dataset.occ;
+    Array.prototype.forEach.call(el('ps-occasions').children, function (c) {
+      c.setAttribute('aria-pressed', String(c.dataset.occ === scriptOccasion));
+    });
+  });
+
+  el('ps-save').addEventListener('click', function () {
+    var title = el('ps-title').value.trim();
+    var body = el('ps-body').value.trim();
+    if (!title && !body) { el('ps-title').focus(); return; }
+    var rec = add('script', title || scriptOccasion, body, { occasion: scriptOccasion });
+    markerToast('기도문');
+    prayerTab = 'scripts';
+    nav('script-detail', { scriptId: rec.id });
+  });
+
+  el('p-script-new').addEventListener('click', function () { nav('script-new'); });
+
+  document.addEventListener('click', function (e) {
+    var s = e.target.closest && e.target.closest('[data-script]');
+    if (s) nav('script-detail', { scriptId: s.dataset.script });
+  });
+
+  screens['script-detail'] = function (ctx) {
+    var s = findById(ctx.scriptId);
+    if (!s) { nav('prayer'); return; }
+    el('psd-occasion').textContent = s.occasion || '기타';
+    el('psd-title').textContent = s.title;
+    el('psd-when').textContent = prettyDay(s.day) + '에 저장됨';
+    el('psd-body').textContent = s.body || '아직 본문이 없습니다.';
+    el('psd-copy').textContent = '기도문 복사하기';
+  };
+
+  el('psd-copy').addEventListener('click', function () {
+    var s = findById(current.ctx.scriptId);
+    var text = s.title + '\n\n' + (s.body || '');
+    var done = function () {
+      el('psd-copy').textContent = '복사했어요';
+      setTimeout(function () { el('psd-copy').textContent = '기도문 복사하기'; }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else {
+      done();
+    }
+  });
+
+  el('psd-share').addEventListener('click', function () {
+    nav('sharecopy', { recordId: current.ctx.scriptId, label: '기도문에서 이어짐', value: '고른 부분만 나눠집니다' });
+  });
 
   el('p-group-chips').addEventListener('click', function (e) {
     var b = e.target.closest('[data-gsel]');
@@ -714,6 +964,11 @@
         }).join('')
       : '<div class="empty"><p class="empty__title">아직 약속이 없습니다.</p>' +
         '<p class="empty__body">기도에서 마음에 남은 것이 있다면 한 줄로 적어보세요.</p></div>';
+
+    renderSamples(el('pr-samples'), 'promise', function () {
+      el('pr-compose').style.display = 'block';
+      el('pr-new-input').focus();
+    });
   };
 
   el('pr-new-save').addEventListener('click', function () {
@@ -848,6 +1103,11 @@
     el('rp-turn').value = '';
     el('rp-scripture-panel').style.display = 'none';
     el('rp-return').innerHTML = returnBlock(ctx);
+    el('rp-voice').innerHTML = voiceBlock();
+    el('rp-privacy').innerHTML = privacyBlock(
+      '회개 기록은 특히 그렇습니다. 나누고 싶은 부분이 생기면 그때 직접 고르시면 됩니다.',
+    );
+    renderSamples(el('rp-samples'), 'repentance', function () { el('rp-sin').focus(); });
   };
 
   el('rp-scripture').addEventListener('click', function () {
@@ -988,6 +1248,16 @@
     Array.prototype.forEach.call(document.querySelectorAll('#cp-privacy .privacy__opt'), function (c) {
       c.setAttribute('aria-pressed', String(c.dataset.privacy === composerPrivacy));
     });
+    el('cp-voice').innerHTML = voiceBlock();
+    el('cp-privacy-note').innerHTML =
+      '<div class="privacy-note"><span class="privacy-note__icon">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>' +
+      '<span><span class="privacy-note__title">여기 쓴 글은 공개 범위에 따라 보입니다</span>' +
+      '<span class="privacy-note__body">' +
+      '<b>나만 보기</b>를 고르면 앱 운영진을 포함해 누구도 볼 수 없습니다. ' +
+      '이름 가림으로 나누면 내용만 보이고 이름은 가려집니다.' +
+      '</span></span></div>';
   };
 
   Array.prototype.forEach.call(document.querySelectorAll('#cp-types .chip'), function (c) {
@@ -1010,7 +1280,9 @@
   screens.sharecopy = function (ctx) {
     var rec = ctx.recordId ? findById(ctx.recordId) : null;
     var parts = rec ? (rec.body || rec.title).split('\n\n') : ['돌아본 내용'];
-    var labels = ['죄를 돌아보기', '구체적으로 돌아보기', '새롭게 깨달은 것', '돌이키기'];
+    var labels = rec && rec.type === 'script'
+      ? parts.map(function (_, i) { return i === 0 ? '첫 문단' : i + 1 + '번째 문단'; })
+      : ['죄를 돌아보기', '구체적으로 돌아보기', '새롭게 깨달은 것', '돌이키기'];
 
     el('sc-fields').innerHTML = parts.map(function (v, i) {
       return '<label class="checkline"' + (i === parts.length - 1 ? ' style="border-bottom:0"' : '') + '>' +
@@ -1069,18 +1341,21 @@
     ['05 기도 — 묶음 목록', 'prayer', 'seed'],
     ['06 기도 — 묶음 안 제목들', 'prayer-group', 'seed'],
     ['07 기도 — 제목 상세', 'prayer-detail', 'seed'],
-    ['08 기도 — 남기기', 'prayer-new', 'seed'],
-    ['09 기도 → 약속 브릿지', 'prayer-bridge', 'seed'],
-    ['10 약속 대시보드', 'promise', 'seed'],
-    ['11 약속 상세 + 실행', 'promise-detail', 'seed'],
-    ['12 돌아보기 브릿지', 'reflection', 'seed'],
-    ['13 회개 — 직접 진입', 'repentance', 'seed'],
-    ['14 회개 — 실행에서 이어짐', 'repentance', 'seed-linked'],
-    ['15 회개 → 나누기 브릿지', 'repentance-bridge', 'seed'],
-    ['16 지난 회개 기록', 'repentance-history', 'seed'],
-    ['17 고백 피드', 'confession', 'seed'],
-    ['18 고백 작성', 'composer', 'seed'],
-    ['19 ShareCopy → 고백 미리보기', 'sharecopy', 'seed'],
+    ['08 기도 — 남기기 (음성·비공개 안내)', 'prayer-new', 'seed'],
+    ['09 기도문 — 목록', 'prayer', 'seed-scripts'],
+    ['10 기도문 — 쓰기', 'script-new', 'seed'],
+    ['11 기도문 — 상세 (복사·나누기)', 'script-detail', 'seed'],
+    ['12 기도 → 약속 브릿지', 'prayer-bridge', 'seed'],
+    ['13 약속 대시보드', 'promise', 'seed'],
+    ['14 약속 상세 + 실행', 'promise-detail', 'seed'],
+    ['15 돌아보기 브릿지', 'reflection', 'seed'],
+    ['16 회개 — 직접 진입', 'repentance', 'seed'],
+    ['17 회개 — 실행에서 이어짐', 'repentance', 'seed-linked'],
+    ['18 회개 → 나누기 브릿지', 'repentance-bridge', 'seed'],
+    ['19 지난 회개 기록', 'repentance-history', 'seed'],
+    ['20 고백 피드', 'confession', 'seed'],
+    ['21 고백 작성', 'composer', 'seed'],
+    ['22 ShareCopy → 고백 미리보기', 'sharecopy', 'seed'],
   ];
 
   el('proto-index-list').innerHTML = INDEX.map(function (row, i) {
@@ -1095,14 +1370,16 @@
 
     if (mode === 'reset') resetData();
     if (mode === 'first') { resetData(); add('prayer', '조급한 마음을 내려놓게 해주세요', '', { group: 'self' }); }
-    if (mode === 'seed' || mode === 'seed-linked' || mode === 'coach') seedData();
+    if (mode === 'seed' || mode === 'seed-linked' || mode === 'coach' || mode === 'seed-scripts') seedData();
 
     stack = [];
     selectedEvent = null;
+    prayerTab = mode === 'seed-scripts' ? 'scripts' : 'titles';
     var ctx = null;
     if (row[1] === 'promise-detail') ctx = { promiseId: 'r2' };
     if (row[1] === 'prayer-group') ctx = { groupId: 'self' };
     if (row[1] === 'prayer-detail') ctx = { prayerId: 'r1' };
+    if (row[1] === 'script-detail') ctx = { scriptId: 'r14' };
     if (row[1] === 'prayer-bridge') ctx = { prayerId: 'r1', title: '조급한 마음을 내려놓게 해주세요' };
     if (row[1] === 'first-saved') ctx = { label: '기도' };
     if (row[1] === 'reflection') {

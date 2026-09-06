@@ -16,6 +16,8 @@
     <span class="proto-bar__tag">UX VALIDATION</span>
     <span>ux-v1-2 · NON-CANONICAL</span>
     <span class="proto-bar__spacer"></span>
+    <a href="./repent-app-spec.md" download="REPENT-앱내용.md"
+       style="color:#d9cffb;font-size:12px;padding:4px 8px;border-radius:8px;border:1px solid #4a3b76">앱 내용</a>
     <button id="proto-loop" type="button">처음부터</button>
     <button id="proto-menu" type="button">화면 목록</button>
   </div>
@@ -87,6 +89,13 @@
         </p>
       </div>
 
+      <!-- Today: the three onboarding questions live here now, as prompts -->
+      <div class="section" id="tour-today">
+        <p class="section__title">오늘</p>
+        <p class="note" style="margin:-6px 0 12px">한 가지만 남겨도 오늘의 점이 생깁니다.</p>
+        <div class="stack" id="j-today"></div>
+      </div>
+
       <div class="section">
         <p class="section__title">지나온 순간</p>
         <p class="note" style="margin:-6px 0 12px">눌러보면 그날의 생각과 돌아봄이 나옵니다.</p>
@@ -156,29 +165,125 @@
       <span class="appbar__spacer"></span>
     </header>
 
+    <div class="seg" id="p-seg">
+      <button class="seg__item" data-ptab="titles" aria-selected="true" type="button">기도 제목</button>
+      <button class="seg__item" data-ptab="scripts" aria-selected="false" type="button">기도문</button>
+    </div>
+
     <div class="scroll">
       <div class="context" data-context></div>
 
-      <div class="stats">
-        <div class="stats__cell">
-          <p class="stats__num" id="p-week">0</p>
-          <p class="stats__label">이번 주 기도</p>
+      <!-- 기도 제목 -->
+      <div id="p-pane-titles">
+        <div class="stats">
+          <div class="stats__cell">
+            <p class="stats__num" id="p-week">0</p>
+            <p class="stats__label">이번 주 기도</p>
+          </div>
+          <div class="stats__cell">
+            <p class="stats__num" id="p-total">0</p>
+            <p class="stats__label">전체 기록</p>
+          </div>
         </div>
-        <div class="stats__cell">
-          <p class="stats__num" id="p-total">0</p>
-          <p class="stats__label">전체 기록</p>
+        <p class="recent-line" id="p-recent"></p>
+
+        <div class="section">
+          <p class="section__title">묶음</p>
+          <p class="note" style="margin:-6px 0 12px">묶음을 누르면 그 안의 제목들을 볼 수 있어요.</p>
+          <div id="p-groups"></div>
+        </div>
+
+        <div class="section" id="p-samples"></div>
+
+        <div class="section">
+          <button class="cta" id="p-new" type="button">기도 남기기</button>
         </div>
       </div>
-      <p class="recent-line" id="p-recent"></p>
 
-      <div class="section">
-        <p class="section__title">기도 제목</p>
-        <p class="note" style="margin:-6px 0 12px">묶음을 누르면 그 안의 제목들을 볼 수 있어요.</p>
-        <div id="p-groups"></div>
+      <!-- 기도문 (대표기도 등 미리 준비하는 기도) -->
+      <div id="p-pane-scripts" style="display:none">
+        <div class="banner">
+          <p class="banner__eyebrow">기도문</p>
+          <p class="banner__title">기도할 자리를 미리 준비해요</p>
+          <p class="banner__body">
+            주일예배 대표기도, 소모임 기도회처럼 앞에서 기도할 일이 있을 때
+            미리 써두는 자리입니다. 쓴 기도문은 그대로 쌓여서, 나중에 인생 그래프에서
+            그때 무엇을 놓고 기도했는지 다시 볼 수 있어요.
+          </p>
+        </div>
+
+        <div class="section">
+          <p class="section__title">내 기도문</p>
+          <div id="p-scripts"></div>
+        </div>
+
+        <div class="section" id="p-script-samples"></div>
+
+        <div class="section">
+          <button class="cta" id="p-script-new" type="button">기도문 쓰기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= PRAYER SCRIPT — COMPOSE ==================== -->
+  <section class="screen" id="screen-script-new">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">기도문 쓰기</span>
+    </header>
+
+    <div class="scroll">
+      <div class="field">
+        <label class="field__label" for="ps-occasion">어떤 자리인가요</label>
+        <div class="chips" id="ps-occasions"></div>
       </div>
 
-      <div class="section">
-        <button class="cta" id="p-new" type="button">기도 남기기</button>
+      <div class="field">
+        <label class="field__label" for="ps-title">기도문 제목</label>
+        <input class="input" id="ps-title" type="text" placeholder="예) 9월 첫 주 주일예배 대표기도" />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="ps-body">기도문</label>
+        <p class="field__hint">
+          다 쓰지 않아도 됩니다. 떠오르는 문장부터 적어두고 나중에 이어서 다듬으셔도 돼요.
+        </p>
+        <textarea class="textarea textarea--tall" id="ps-body" placeholder="사랑의 하나님, 오늘 이 자리에 저희를 불러주셔서 감사합니다."></textarea>
+      </div>
+
+      <div id="ps-voice"></div>
+      <div id="ps-privacy"></div>
+
+      <button class="cta" id="ps-save" type="button" style="margin-top:16px">기도문 저장</button>
+    </div>
+  </section>
+
+  <!-- ======================= PRAYER SCRIPT — DETAIL ===================== -->
+  <section class="screen" id="screen-script-detail">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">기도문</span>
+    </header>
+
+    <div class="scroll">
+      <div class="head">
+        <p class="head__eyebrow" id="psd-occasion"></p>
+        <h1 class="head__title" id="psd-title"></h1>
+        <p class="head__sub" id="psd-when"></p>
+      </div>
+
+      <div class="card">
+        <p class="card__body" id="psd-body" style="font-size:16.5px; line-height:1.8; color:var(--text)"></p>
+      </div>
+
+      <div class="section stack">
+        <button class="cta cta--soft" id="psd-copy" type="button">기도문 복사하기</button>
+        <button class="cta cta--ghost" id="psd-share" type="button">고백에 나누기</button>
+        <p class="note">
+          복사는 내 기기 안에서만 일어납니다. 나누기를 누르면 무엇이 보이는지 미리 확인한 뒤
+          직접 게시하게 됩니다.
+        </p>
       </div>
     </div>
   </section>
@@ -275,7 +380,9 @@
         <textarea class="textarea" id="p-body-input" placeholder="마음에 있는 것을 그대로 적어보세요."></textarea>
       </div>
 
-      <div class="discern" style="margin-bottom:16px">
+      <div id="pn-voice"></div>
+
+      <div class="discern" style="margin:16px 0">
         <p class="discern__title">한 번만 스스로 물어보세요</p>
         <p class="discern__body">
           이 기도는 <b>내가 원하는 것을 이뤄달라는 마음</b>에 가깝나요,
@@ -285,7 +392,9 @@
         <p class="discern__note">답은 적지 않아도 됩니다. 앱은 판단하지 않습니다.</p>
       </div>
 
-      <button class="cta" id="p-save" type="button">기도 남기기</button>
+      <div id="pn-privacy"></div>
+
+      <button class="cta" id="p-save" type="button" style="margin-top:16px">기도 남기기</button>
     </div>
   </section>
 
@@ -349,6 +458,8 @@
         <p class="section__title">내 약속</p>
         <div id="pr-list" class="stack"></div>
       </div>
+
+      <div class="section" id="pr-samples"></div>
     </div>
   </section>
 
@@ -456,6 +567,8 @@
       </div>
       <p class="recent-line" id="rp-recent"></p>
 
+      <div class="section" id="rp-samples"></div>
+
       <div class="section">
         <div class="field">
           <label class="field__label" for="rp-sin">죄를 돌아보기</label>
@@ -490,6 +603,9 @@
           <textarea class="textarea" id="rp-turn" placeholder="앞으로 하고 싶은 한 가지를 적어보세요."></textarea>
         </div>
       </div>
+
+      <div id="rp-voice"></div>
+      <div id="rp-privacy" style="margin-top:16px"></div>
 
       <div class="section">
         <p class="section__title">함께 남길 수 있어요 <span class="note">(선택)</span></p>
@@ -616,6 +732,9 @@
           <button class="privacy__opt" data-privacy="private" type="button">나만 보기</button>
         </div>
       </div>
+
+      <div id="cp-voice"></div>
+      <div id="cp-privacy-note" style="margin:16px 0"></div>
 
       <button class="cta" id="cp-save" type="button">남기기</button>
     </div>
