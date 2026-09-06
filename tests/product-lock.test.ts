@@ -6,6 +6,8 @@ import {
   ACTION_FAILURE_IS_SIN,
   AI_MEMORY_DEFAULT_ON,
   AUTOMATED_ELIGIBILITY_JUDGMENT,
+  COMMENT_DELETE_IS_SOFT,
+  CONFESSION_COMMENTS_ENABLED,
   CONFESSION_PHOTO_MAX,
   CONFESSION_TYPE_LABELS,
   CONFESSION_USES_AI,
@@ -227,11 +229,29 @@ describe('confession (docs/04, docs/08, AC-06)', () => {
     ])
   })
 
-  it('enables only reactions that exist in the canonical set', () => {
-    for (const reaction of ENABLED_REACTIONS) {
-      expect(Object.keys(REACTION_LABELS)).toContain(reaction)
-    }
-    expect(ENABLED_REACTIONS.length).toBeGreaterThan(0)
+  /**
+   * Owner final decision 2026-09-06: all three canonical reactions ship.
+   * A single-reaction build is a Canonical Delta, so this asserts the full set
+   * rather than merely "a subset of the canonical set".
+   */
+  it('enables all three canonical reactions', () => {
+    expect([...ENABLED_REACTIONS]).toEqual(['pray_together', 'received_grace', 'touched'])
+    expect([...ENABLED_REACTIONS]).toEqual(Object.keys(REACTION_LABELS))
+  })
+
+  it('renders every enabled reaction from the shared bar', () => {
+    const bar = stripComments(
+      readFileSync(join(ROOT, 'app/(app)/confession/_components/reaction-bar.tsx'), 'utf8'),
+    )
+    expect(bar).toContain('ENABLED_REACTIONS.map')
+    // Counts are rendered, but never sorted or compared across posts.
+    expect(bar).not.toMatch(/\.sort\(/)
+  })
+
+  it('never orders the feed by reaction or comment volume', () => {
+    const feed = stripComments(readFileSync(join(ROOT, 'app/(app)/confession/page.tsx'), 'utf8'))
+    const orders = feed.match(/\.order\([^)]*\)/g) ?? []
+    expect(orders).toEqual([".order('created_at', { ascending: false })"])
   })
 
   it('allows one reaction per member per post', () => {
@@ -242,6 +262,46 @@ describe('confession (docs/04, docs/08, AC-06)', () => {
 
   it('caps a post at one photo', () => {
     expect(CONFESSION_PHOTO_MAX).toBe(1)
+  })
+
+  /**
+   * Comment is in the Confession MVP (docs/04, AC-06), confirmed as the Owner's
+   * final decision on 2026-09-06. 0003 had it switched off; 0007 restores it.
+   */
+  it('includes comments in the MVP', () => {
+    expect(CONFESSION_COMMENTS_ENABLED).toBe(true)
+    const migration = readFileSync(
+      join(ROOT, 'supabase/migrations/0007_confession_comments_mvp.sql'),
+      'utf8',
+    )
+    for (const policy of [
+      'confession_comments_insert_own',
+      'confession_comments_update_own',
+      'confession_comments_delete_own',
+      'confession_comments_select_visible',
+    ]) {
+      expect(migration).toContain(policy)
+    }
+  })
+
+  it('keeps comments to the capabilities docs/08 names', () => {
+    const actions = stripComments(
+      readFileSync(join(ROOT, 'app/(app)/confession/actions.ts'), 'utf8'),
+    )
+    // write / read / author delete / report — and nothing beyond it.
+    expect(actions).toContain('createComment')
+    expect(actions).toContain('deleteComment')
+    expect(actions).toContain('reportComment')
+    // No threading, no reactions on comments, no mentions: not in any canonical source.
+    expect(actions).not.toMatch(/parent_comment_id|comment_reactions|mentions/)
+  })
+
+  it('deletes a comment softly so a moderator can still review it', () => {
+    expect(COMMENT_DELETE_IS_SOFT).toBe(true)
+    const actions = readFileSync(join(ROOT, 'app/(app)/confession/actions.ts'), 'utf8')
+    const block = actions.slice(actions.indexOf('export async function deleteComment'))
+    expect(block).toContain('deleted_at')
+    expect(block.slice(0, block.indexOf('}'))).not.toContain('.delete()')
   })
 
   it('uses no AI', () => {

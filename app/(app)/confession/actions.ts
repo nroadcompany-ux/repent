@@ -181,10 +181,101 @@ export async function unblockAuthor(form: FormData) {
   redirect('/settings/blocked')
 }
 
-/*
- * Comments are deliberately absent from this file. Canonical docs/04 includes
- * Comment in the Confession MVP, but the Owner execution order lists it under
- * DO NOT INVENT, so no write action exists — and public.confession_comments has
- * no INSERT policy either, closing it at both layers. Screens read the switch
- * from CONFESSION_COMMENTS_ENABLED in src/domain/product-lock.ts.
+/* ---------------------------------------------------------------------------
+ * Comments — Confession MVP (docs/04, AC-06, docs/08 Comment Safety).
+ *
+ * Scope is exactly what docs/08 names: write, read, author delete, report,
+ * block, moderator hide/delete. No threading, no reactions on comments, no
+ * mentions — none of those exist in a canonical source, so none are built.
+ * ------------------------------------------------------------------------ */
+
+const COMMENT_MAX_LENGTH = 1000
+
+export async function createComment(form: FormData) {
+  const { supabase, userId } = await requireUser()
+
+  const postId = text(form, 'post_id')
+  const body = text(form, 'body')
+
+  if (!postId) redirect('/confession')
+  if (!body) redirect(`/confession/${postId}?error=comment_empty`)
+
+  const { error } = await supabase.from('confession_comments').insert({
+    post_id: postId,
+    user_id: userId,
+    body: body.slice(0, COMMENT_MAX_LENGTH),
+  })
+
+  if (error) redirect(`/confession/${postId}?error=comment_save`)
+
+  revalidatePath(`/confession/${postId}`)
+  revalidatePath('/confession')
+  redirect(`/confession/${postId}#comments`)
+}
+
+export async function updateComment(form: FormData) {
+  const { supabase, userId } = await requireUser()
+
+  const id = text(form, 'comment_id')
+  const postId = text(form, 'post_id')
+  const body = text(form, 'body')
+
+  if (!id || !postId) redirect('/confession')
+  if (!body) redirect(`/confession/${postId}?error=comment_empty`)
+
+  const { error } = await supabase
+    .from('confession_comments')
+    .update({ body: body.slice(0, COMMENT_MAX_LENGTH) })
+    .eq('id', id)
+    .eq('user_id', userId)
+
+  if (error) redirect(`/confession/${postId}?error=comment_save`)
+
+  revalidatePath(`/confession/${postId}`)
+  redirect(`/confession/${postId}#comments`)
+}
+
+/**
+ * docs/08: 작성자 본인 삭제. Soft delete — the row stays so the thread keeps its
+ * shape and a moderator can still review what was said, but the RLS select
+ * policy filters `deleted_at is null`, so no member can read it back.
  */
+export async function deleteComment(form: FormData) {
+  const { supabase, userId } = await requireUser()
+
+  const id = text(form, 'comment_id')
+  const postId = text(form, 'post_id')
+
+  await supabase
+    .from('confession_comments')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', id)
+    .eq('user_id', userId)
+
+  revalidatePath(`/confession/${postId}`)
+  revalidatePath('/confession')
+  redirect(`/confession/${postId}#comments`)
+}
+
+/** Same reason taxonomy as a post report — no spiritual judgment (docs/08). */
+export async function reportComment(form: FormData) {
+  const { supabase, userId } = await requireUser()
+
+  const commentId = text(form, 'comment_id')
+  const postId = text(form, 'post_id')
+  const reasonRaw = text(form, 'reason')
+  const allowed = ['personal_info', 'harassment', 'spam', 'safety'] as const
+
+  if (!(allowed as readonly string[]).includes(reasonRaw)) {
+    redirect(`/confession/${postId}?error=reason`)
+  }
+
+  await supabase.from('reports').insert({
+    reporter_id: userId,
+    comment_id: commentId,
+    reason: reasonRaw as (typeof allowed)[number],
+    detail: text(form, 'detail') || null,
+  })
+
+  redirect(`/confession/${postId}?reported=comment#comments`)
+}

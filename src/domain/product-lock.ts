@@ -131,19 +131,13 @@ export const REACTION_LABELS = {
 } as const
 
 /**
- * [OPEN — Owner decision required]
+ * All three canonical reactions are live.
  *
- * Canonical docs/04 + AC-06 specify Reaction 3종. The Owner execution order of
- * 2026-09-06 specifies "공감 1종". Per that order's source priority the latest
- * Owner decision wins, so the runtime enables exactly one — but the canonical
- * three stay defined above, and enabling them again is this one line.
- *
- * `pray_together` was chosen because it is the only one of the three that
- * describes what the reader will do, rather than rating the post. docs/08
- * forbids using a reaction as an assessment of someone's faith. If the Owner
- * meant a different single reaction, change this constant only.
+ * The 2026-09-06 execution order briefly read as "공감 1종"; the Owner's PM
+ * response of the same date settled it as the canonical three (docs/04, AC-06).
+ * Order here is the canonical order and is what the UI renders.
  */
-export const ENABLED_REACTIONS = ['pray_together'] as const
+export const ENABLED_REACTIONS = ['pray_together', 'received_grace', 'touched'] as const
 
 /** 1 user : 1 reaction per post, changeable. Enforced by the PK in SQL too. */
 export const ONE_REACTION_PER_USER_PER_POST = true
@@ -152,12 +146,17 @@ export const ONE_REACTION_PER_USER_PER_POST = true
 export const CONFESSION_PHOTO_MAX = 1
 
 /**
- * [OPEN — Owner decision required]
- * docs/04 and AC-06 include Comment in the Confession MVP. The Owner execution
- * order lists "Confession comments" under DO NOT INVENT. Disabled in the app
- * and at the database (no INSERT policy exists on confession_comments).
+ * Comment is in the Confession MVP (docs/04, AC-06), confirmed as the Owner's
+ * final decision on 2026-09-06.
+ *
+ * Scope is exactly what docs/08 Comment Safety names — write, read, author
+ * delete, report, block, moderator hide/delete. No threading, no reactions on
+ * comments, no mentions: none of those appear in a canonical source.
  */
-export const CONFESSION_COMMENTS_ENABLED = false
+export const CONFESSION_COMMENTS_ENABLED = true
+
+/** docs/08: a member removes their own comment. Soft delete keeps the thread readable. */
+export const COMMENT_DELETE_IS_SOFT = true
 
 /** docs/04, docs/08: no AI touches Confession at all. */
 export const CONFESSION_USES_AI = false

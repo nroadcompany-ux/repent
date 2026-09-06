@@ -4,16 +4,12 @@ import { AppHeader, HeaderAction } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
 import { EmptyState } from '@/components/ui/state'
 import { SegmentedLinks } from '@/components/ui/segmented-links'
-import {
-  CONFESSION_TYPE_LABELS,
-  ENABLED_REACTIONS,
-  REACTION_LABELS,
-} from '@/domain/product-lock'
+import { CONFESSION_TYPE_LABELS } from '@/domain/product-lock'
 import { formatMonthDay } from '@/lib/date'
 import { signedUrls } from '@/lib/storage'
 import { requireUser } from '@/lib/supabase/server'
 import type { ConfessionType } from '@/lib/supabase/database.types'
-import { toggleReaction } from './actions'
+import { ReactionBar, tallyReactions } from './_components/reaction-bar'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,8 +17,8 @@ export const dynamic = 'force-dynamic'
  * Confession Feed.
  *
  * docs/04 and docs/08: no 인기순, no TOP, no ranking of any kind. The feed is
- * strictly reverse-chronological and the reaction count is shown without any
- * comparison between posts. Confession uses no AI at all.
+ * strictly reverse-chronological, and reaction counts are shown per post
+ * without any comparison between posts. Confession uses no AI.
  */
 
 const SLIDES: readonly EducationSlide[] = [
@@ -66,12 +62,19 @@ export default async function ConfessionPage({
   const postIds = (posts ?? []).map((post) => post.id)
   const authorIds = Array.from(new Set((posts ?? []).map((post) => post.user_id)))
 
-  const [{ data: authors }, { data: reactions }, photoUrls] = await Promise.all([
+  const [{ data: authors }, { data: reactions }, { data: comments }, photoUrls] = await Promise.all([
     authorIds.length
       ? supabase.from('community_profiles').select('id, display_name').in('id', authorIds)
       : Promise.resolve({ data: [] }),
     postIds.length
       ? supabase.from('confession_reactions').select('post_id, user_id, type').in('post_id', postIds)
+      : Promise.resolve({ data: [] }),
+    postIds.length
+      ? supabase
+          .from('confession_comments')
+          .select('post_id')
+          .in('post_id', postIds)
+          .is('deleted_at', null)
       : Promise.resolve({ data: [] }),
     signedUrls(
       supabase,
@@ -81,14 +84,14 @@ export default async function ConfessionPage({
   ])
 
   const authorName = new Map((authors ?? []).map((author) => [author.id, author.display_name]))
-  const reactionCount = new Map<string, number>()
-  const myReaction = new Map<string, string>()
-  for (const reaction of reactions ?? []) {
-    reactionCount.set(reaction.post_id, (reactionCount.get(reaction.post_id) ?? 0) + 1)
-    if (reaction.user_id === userId) myReaction.set(reaction.post_id, reaction.type)
+  const { counts, mine } = tallyReactions(reactions ?? [], userId)
+
+  const commentCount = new Map<string, number>()
+  for (const comment of comments ?? []) {
+    commentCount.set(comment.post_id, (commentCount.get(comment.post_id) ?? 0) + 1)
   }
 
-  const primaryReaction = ENABLED_REACTIONS[0]
+  const returnTo = activeType ? `/confession?type=${activeType}` : '/confession'
 
   return (
     <main>
@@ -97,7 +100,7 @@ export default async function ConfessionPage({
 
       {blocked ? (
         <p className="text-body-sm mx-title-gutter mt-5 rounded-control bg-accent-tint px-4 py-3 leading-[18px] text-accent">
-          차단했어요. 이 사람의 글은 이제 보이지 않습니다.
+          차단했어요. 이 사람의 글과 댓글은 이제 보이지 않습니다.
         </p>
       ) : null}
 
@@ -132,7 +135,7 @@ export default async function ConfessionPage({
           <ul className="flex flex-col gap-row-gap px-gutter">
             {(posts ?? []).map((post) => {
               const photoUrl = post.photo_path ? photoUrls.get(post.photo_path) : null
-              const mine = myReaction.get(post.id) === primaryReaction
+              const replies = commentCount.get(post.id) ?? 0
               return (
                 <li key={post.id} className="rounded-card bg-surface px-4 py-4">
                   <div className="flex items-center justify-between">
@@ -162,26 +165,21 @@ export default async function ConfessionPage({
                     />
                   ) : null}
 
-                  <div className="mt-4 flex items-center gap-3">
-                    <form action={toggleReaction}>
-                      <input type="hidden" name="post_id" value={post.id} />
-                      <input type="hidden" name="type" value={primaryReaction} />
-                      <input
-                        type="hidden"
-                        name="return_to"
-                        value={activeType ? `/confession?type=${activeType}` : '/confession'}
-                      />
-                      <button
-                        type="submit"
-                        aria-pressed={mine}
-                        className={`text-caption rounded-chip px-3 py-[6px] font-medium ${
-                          mine ? 'bg-accent text-white' : 'border border-line bg-surface text-ink-muted'
-                        }`}
-                      >
-                        {REACTION_LABELS[primaryReaction]} {reactionCount.get(post.id) ?? 0}
-                      </button>
-                    </form>
+                  <div className="mt-4">
+                    <ReactionBar
+                      postId={post.id}
+                      counts={counts.get(post.id) ?? new Map()}
+                      mine={mine.get(post.id) ?? null}
+                      returnTo={returnTo}
+                    />
                   </div>
+
+                  <Link
+                    href={`/confession/${post.id}#comments`}
+                    className="text-caption mt-3 inline-block font-medium text-ink-muted"
+                  >
+                    {replies > 0 ? `댓글 ${replies}개` : '댓글 남기기'}
+                  </Link>
                 </li>
               )
             })}

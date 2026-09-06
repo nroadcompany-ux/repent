@@ -211,6 +211,16 @@ export type ConfessionReactionRow = {
   created_at: string
 }
 
+export type ConfessionCommentRow = {
+  id: string
+  post_id: string
+  user_id: string
+  body: string
+  /** Soft delete — docs/08 작성자 본인 삭제, thread shape preserved. */
+  deleted_at: string | null
+  created_at: string
+}
+
 export type CommunityProfileRow = {
   id: string
   display_name: string
@@ -222,6 +232,7 @@ export type ReportRow = {
   id: string
   reporter_id: string
   post_id: string | null
+  comment_id: string | null
   reported_user_id: string | null
   reason: ReportReason
   detail: string | null
@@ -290,6 +301,7 @@ export type Database = {
       bible_reading_progress: Table<BibleReadingProgressRow, 'user_id' | 'book' | 'chapter'>
       confession_posts: Table<ConfessionPostRow, 'user_id' | 'type'>
       confession_reactions: Table<ConfessionReactionRow, 'post_id' | 'user_id' | 'type'>
+      confession_comments: Table<ConfessionCommentRow, 'post_id' | 'user_id' | 'body'>
       post_hashtags: Table<PostHashtagRow, 'post_id' | 'tag'>
       community_profiles: Table<CommunityProfileRow, 'id'>
       reports: Table<ReportRow, 'reporter_id' | 'reason'>
