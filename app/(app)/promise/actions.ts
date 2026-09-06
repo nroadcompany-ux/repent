@@ -16,13 +16,19 @@ function number(form: FormData, key: string, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
-/**
- * Promise / Action writes.
- *
- * docs/04 and AC-05: a missed day is never a failure and never a sin, so no
- * action here writes a "missed" or "failed" row. Absence of a check simply
- * means nothing was recorded that day.
- */
+function repeatType(form: FormData): 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' {
+  const value = text(form, 'repeat_type')
+  return ['daily', 'weekly', 'monthly', 'yearly'].includes(value)
+    ? (value as 'daily' | 'weekly' | 'monthly' | 'yearly')
+    : 'none'
+}
+
+function repeatWeekdays(form: FormData): number[] {
+  return form
+    .getAll('repeat_weekdays')
+    .map((value) => Number(value))
+    .filter((value) => Number.isInteger(value) && value >= 0 && value <= 6)
+}
 
 export async function createPromise(form: FormData) {
   const { supabase, userId } = await requireUser()
@@ -32,19 +38,26 @@ export async function createPromise(form: FormData) {
 
   const groupId = text(form, 'group_id')
   const dueDate = text(form, 'due_date')
-  const dailyTarget = Math.min(Math.max(number(form, 'daily_target', 1), 1), 10)
+  const startedOn = text(form, 'started_on') || todayKst()
+  const recurrence = repeatType(form)
+  const weekdays = recurrence === 'weekly' ? repeatWeekdays(form) : []
+
+  const payload = {
+    user_id: userId,
+    title,
+    group_id: groupId || null,
+    background: text(form, 'background') || null,
+    purpose: text(form, 'purpose') || null,
+    started_on: startedOn,
+    due_date: dueDate || null,
+    daily_target: 1,
+    repeat_type: recurrence,
+    repeat_weekdays: weekdays,
+  }
 
   const { data, error } = await supabase
     .from('promises')
-    .insert({
-      user_id: userId,
-      title,
-      group_id: groupId || null,
-      background: text(form, 'background') || null,
-      purpose: text(form, 'purpose') || null,
-      due_date: dueDate || null,
-      daily_target: dailyTarget,
-    })
+    .insert(payload as never)
     .select('id')
     .single()
 
@@ -64,31 +77,36 @@ export async function updatePromise(form: FormData) {
 
   const dueDate = text(form, 'due_date')
   const groupId = text(form, 'group_id')
+  const recurrence = repeatType(form)
+  const weekdays = recurrence === 'weekly' ? repeatWeekdays(form) : []
+
+  const payload = {
+    title,
+    group_id: groupId || null,
+    background: text(form, 'background') || null,
+    purpose: text(form, 'purpose') || null,
+    started_on: text(form, 'started_on') || todayKst(),
+    due_date: dueDate || null,
+    daily_target: 1,
+    repeat_type: recurrence,
+    repeat_weekdays: weekdays,
+  }
 
   const { error } = await supabase
     .from('promises')
-    .update({
-      title,
-      group_id: groupId || null,
-      background: text(form, 'background') || null,
-      purpose: text(form, 'purpose') || null,
-      due_date: dueDate || null,
-      daily_target: Math.min(Math.max(number(form, 'daily_target', 1), 1), 10),
-    })
+    .update(payload as never)
     .eq('id', id)
     .eq('user_id', userId)
 
   if (error) redirect(`/promise/${id}/edit?error=save`)
 
   revalidatePath(`/promise/${id}`)
+  revalidatePath('/promise')
+  revalidatePath('/journey')
   redirect(`/promise/${id}`)
 }
 
-/**
- * Record one more keep for a given day, wrapping back to zero once the daily
- * target is reached so a mistap is easy to undo. `returnTo` keeps the member
- * where they were — the 3-day strip on Promise Home or the detail screen.
- */
+/** One tap records whether the promise itself was kept on that date. */
 export async function bumpPromiseCheck(form: FormData) {
   const { supabase, userId } = await requireUser()
 
@@ -114,10 +132,10 @@ export async function bumpPromiseCheck(form: FormData) {
 
   revalidatePath('/promise')
   revalidatePath('/journey')
+  revalidatePath(`/promise/${promiseId}`)
   redirect(returnTo)
 }
 
-/** docs/04: user-facing finish label is `마무리됨`. */
 export async function closePromise(form: FormData) {
   const { supabase, userId } = await requireUser()
   const id = text(form, 'id')
@@ -158,7 +176,8 @@ export async function deletePromise(form: FormData) {
 }
 
 /* ---------------------------------------------------------------------------
- * Action — the execution record inside a Promise (docs/00, docs/01).
+ * Legacy Action writes — kept for historical records/backward compatibility.
+ * New promise UX does not ask members to re-enter the same execution sentence.
  * ------------------------------------------------------------------------ */
 
 export async function createAction(form: FormData) {
@@ -183,12 +202,6 @@ export async function createAction(form: FormData) {
   redirect(`/promise/${promiseId}`)
 }
 
-/**
- * Log how an action went. docs/04 requires all five outcomes to stay available
- * and equal: Retry / Modify / Reschedule / Record Only / Optional Repent.
- * `record_only` is the default so that simply noting what happened is always
- * the easiest option.
- */
 export async function recordAction(form: FormData) {
   const { supabase, userId } = await requireUser()
 
@@ -211,7 +224,6 @@ export async function recordAction(form: FormData) {
 
   revalidatePath(`/promise/${promiseId}`)
 
-  // Optional Repent — offered only because the member asked for it.
   if (text(form, 'then') === 'repent') redirect('/repentance')
   redirect(`/promise/${promiseId}`)
 }
