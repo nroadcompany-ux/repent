@@ -85,9 +85,26 @@
       { id: 'r2', type: 'promise', title: '매일 아침 10분 먼저 기도하기', body: '', day: dayOffset(20),
         status: 'active', sourcePrayerId: 'r1',
         // Gaps on purpose: a day without a mark is just empty, not a failure.
+        context: '아침마다 쫓기듯 하루를 시작하는 게 마음에 걸렸습니다.',
+        purpose: '하루를 하나님 앞에서 먼저 시작하고 싶습니다.',
+        // Gaps on purpose: a day without a mark is just empty, not a failure.
         checks: (function () {
           var c = {};
           [1, 2, 4, 5, 8, 9, 11].forEach(function (n) { c[dayOffset(n)] = true; });
+          return c;
+        })() },
+      { id: 'r16', type: 'promise', title: '40일 새벽기도 이어가기', body: '', day: dayOffset(22),
+        status: 'active',
+        context: '올해는 한 번 끝까지 해보고 싶다는 마음이 들었습니다.',
+        purpose: '흔들릴 때마다 돌아올 자리를 만들어두려고 합니다.',
+        due: (function () {
+          var d = new Date();
+          d.setDate(d.getDate() + 18);
+          return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        })(),
+        checks: (function () {
+          var c = {};
+          [0, 1, 3, 4, 6, 7, 10, 12, 13, 15, 16, 18, 19, 21].forEach(function (n) { c[dayOffset(n)] = true; });
           return c;
         })() },
       { id: 'r3', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(14), promiseId: 'r2' },
@@ -652,6 +669,58 @@
     return !!(promise.checks && promise.checks[iso]);
   }
 
+  /**
+   * Keep-table: one row per promise, one column per day, newest column first.
+   * The name column is fixed and only the days scroll, so the table still works
+   * when there are tens of promises.
+   */
+  var TABLE_DAYS = 30;
+
+  function renderKeepTable(host, promises) {
+    if (!promises.length) {
+      host.innerHTML = '<div class="empty"><p class="empty__title">아직 약속이 없습니다.</p>' +
+        '<p class="empty__body">기도에서 마음에 남은 것이 있다면 한 줄로 적어보세요.</p></div>';
+      return;
+    }
+
+    var days = checkDayList(TABLE_DAYS);
+
+    var names = '<div class="ptable__head">약속</div>' +
+      promises.map(function (p) {
+        var acts = byType('action').filter(function (a) { return a.promiseId === p.id; });
+        return '<button class="ptable__name" type="button" data-open-promise="' + p.id + '">' +
+          '<span class="ptable__name-title">' + p.title + '</span>' +
+          '<span class="ptable__name-meta">' +
+          (p.status === 'closed' ? '마무리됨' : '진행 중') + ' · 실행 ' + acts.length + '회' +
+          '</span></button>';
+      }).join('');
+
+    var headRow = '<div class="ptable__row ptable__row--head">' +
+      days.map(function (d) {
+        return '<span class="pcell pcell--head' + (d.isToday ? ' pcell--today' : '') + '">' +
+          '<b>' + (d.isToday ? '오늘' : d.dom) + '</b><span>' + d.wd + '</span></span>';
+      }).join('') + '</div>';
+
+    var rows = promises.map(function (p) {
+      var closed = p.status === 'closed';
+      return '<div class="ptable__row">' +
+        days.map(function (d) {
+          var on = isChecked(p, d.iso);
+          return '<button class="pcell' + (d.isToday ? ' pcell--todaycol' : '') +
+            (closed ? ' pcell--closed' : '') + '" type="button"' +
+            (closed ? ' disabled' : ' data-check="' + p.id + '" data-day="' + d.iso + '"') +
+            ' aria-pressed="' + on + '" aria-label="' + p.title + ' ' + d.dom + '일">' +
+            '<span class="pcell__dot">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4.5 4.5L19 7"/></svg>' +
+            '</span></button>';
+        }).join('') + '</div>';
+    }).join('');
+
+    host.innerHTML = '<div class="ptable">' +
+      '<div class="ptable__names">' + names + '</div>' +
+      '<div class="ptable__scroll"><div class="ptable__grid">' + headRow + rows + '</div></div></div>';
+  }
+
   function checkStripHtml(promise, count, wide) {
     var days = checkDayList(count);
     return '<div class="checks' + (wide ? ' checks--wide' : '') + '">' +
@@ -1128,23 +1197,12 @@
     el('pr-compose').style.display = ctx && ctx.openCompose ? 'block' : 'none';
     el('pr-new-input').value = '';
 
-    el('pr-list').innerHTML = all.length
-      ? all.slice().reverse().map(function (r) {
-          var acts = byType('action').filter(function (a) { return a.promiseId === r.id; });
-          var lastAct = acts[acts.length - 1];
-          return '<div class="card"><div class="card__top"><div>' +
-            '<p class="card__title">' + r.title + '</p>' +
-            '<p class="card__meta" style="margin-top:4px">실행 ' + acts.length + '회' +
-            (lastAct ? ' · 최근 ' + prettyDay(lastAct.day) : '') + '</p></div>' +
-            (r.status === 'closed' ? '<span class="badge badge--done">마무리됨</span>' : '<span class="badge badge--gray">진행 중</span>') +
-            '</div>' +
-            (r.status === 'closed' ? '' : checkStripHtml(r, CHECK_DAYS)) +
-            '<div class="card__actions">' +
-            '<button class="card__action card__action--primary" data-open-promise="' + r.id + '">실행 추가</button>' +
-            '<button class="card__action" data-reflect-promise="' + r.id + '">돌아보기</button></div></div>';
-        }).join('')
-      : '<div class="empty"><p class="empty__title">아직 약속이 없습니다.</p>' +
-        '<p class="empty__body">기도에서 마음에 남은 것이 있다면 한 줄로 적어보세요.</p></div>';
+    // Active promises first, then finished ones.
+    var ordered = all.slice().sort(function (a, b) {
+      if ((a.status === 'closed') !== (b.status === 'closed')) return a.status === 'closed' ? 1 : -1;
+      return a.day < b.day ? 1 : -1;
+    });
+    renderKeepTable(el('pr-list'), ordered);
 
     renderSamples(el('pr-samples'), 'promise', function () {
       el('pr-compose').style.display = 'block';
@@ -1199,6 +1257,11 @@
       }
     }
 
+    el('pd-context').value = p.context || '';
+    el('pd-purpose').value = p.purpose || '';
+    el('pd-due').value = p.due || '';
+    el('pd-deadline').innerHTML = deadlineHtml(p);
+
     el('pd-checks').innerHTML = p.status === 'closed'
       ? '<p class="note">마무리된 약속입니다. 지난 표시는 그대로 남아 있습니다.</p>' +
         checkStripHtml(p, 14, true)
@@ -1218,6 +1281,57 @@
 
     el('pd-return').innerHTML = returnBlock(ctx);
   };
+
+  /**
+   * D-day and kept-days for promises that have a deadline.
+   *
+   * The ratio is days marked out of days elapsed — a count of what the user
+   * ticked, not a verdict. Days still ahead of the deadline are not counted
+   * against them, and nothing here is coloured as failure.
+   */
+  function deadlineHtml(p) {
+    if (!p.due) {
+      return '<p class="note">기한이 없는 약속입니다. 기간을 정하지 않아도 괜찮습니다.</p>';
+    }
+
+    var todayIso = dayOffset(0);
+    var now = new Date(todayIso + 'T00:00:00');
+    var due = new Date(p.due + 'T00:00:00');
+    var start = new Date(p.day + 'T00:00:00');
+    var left = Math.round((due - now) / 86400000);
+    var dday = left > 0 ? 'D-' + left : left === 0 ? 'D-DAY' : 'D+' + -left;
+
+    // Count only the stretch that has actually passed.
+    var boundIso = left >= 0 ? todayIso : p.due;
+    var bound = left >= 0 ? now : due;
+    var elapsed = Math.max(1, Math.round((bound - start) / 86400000) + 1);
+
+    var kept = Object.keys(p.checks || {}).filter(function (iso) {
+      return iso >= p.day && iso <= boundIso;
+    }).length;
+
+    var pct = Math.min(100, Math.round((kept / elapsed) * 100));
+
+    return '<div class="deadline">' +
+      '<div><p class="deadline__dday">' + dday + '</p>' +
+      '<p class="deadline__when">' + prettyDay(p.due) + '까지</p></div>' +
+      '<div class="deadline__rate"><p class="deadline__num">' + pct + '%</p>' +
+      '<p class="deadline__label">' + elapsed + '일 중 ' + kept + '일 표시</p></div>' +
+      '</div>' +
+      '<div class="bar"><span class="bar__fill" style="width:' + pct + '%"></span></div>' +
+      '<p class="note" style="margin-top:10px">' +
+      '지나온 기간 중 지켰다고 표시한 날의 수입니다. 잘하고 못하고를 재는 점수가 아니며, ' +
+      '남은 날은 계산에 넣지 않습니다.</p>';
+  }
+
+  el('pd-save-detail').addEventListener('click', function () {
+    var p = findById(current.ctx.promiseId);
+    p.context = el('pd-context').value.trim();
+    p.purpose = el('pd-purpose').value.trim();
+    p.due = el('pd-due').value || undefined;
+    el('pd-deadline').innerHTML = deadlineHtml(p);
+    markerToast('약속');
+  });
 
   el('pd-action-save').addEventListener('click', function () {
     var p = findById(current.ctx.promiseId);

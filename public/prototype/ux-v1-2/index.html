@@ -473,7 +473,10 @@
 
       <div class="section">
         <p class="section__title">내 약속</p>
-        <div id="pr-list" class="stack"></div>
+        <p class="note" style="margin:-6px 0 12px">
+          날짜 칸을 좌우로 밀면 지난 날들을 볼 수 있어요. 약속 이름을 누르면 자세히 볼 수 있습니다.
+        </p>
+        <div id="pr-list"></div>
       </div>
 
       <div class="section" id="pr-samples"></div>
@@ -494,6 +497,34 @@
         <h1 class="head__title" id="pd-title"></h1>
         <p class="head__sub" id="pd-meta"></p>
         <p style="margin-top:10px" id="pd-status"></p>
+      </div>
+
+      <div class="section">
+        <p class="section__title">이 약속을 하게 된 이유</p>
+        <div class="field">
+          <label class="field__label" for="pd-context">어떤 상황이었나요</label>
+          <p class="field__hint">그때의 상황이나 계기를 적어두면, 나중에 왜 이 약속을 했는지 다시 볼 수 있어요.</p>
+          <textarea class="textarea" id="pd-context" placeholder="예) 아침마다 쫓기듯 하루를 시작하는 게 마음에 걸렸습니다."></textarea>
+        </div>
+        <div class="field">
+          <label class="field__label" for="pd-purpose">무엇을 위한 약속인가요</label>
+          <textarea class="textarea" id="pd-purpose" placeholder="예) 하루를 하나님 앞에서 먼저 시작하고 싶습니다."></textarea>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="section__title">기한 <span class="note">(선택)</span></p>
+        <p class="note" style="margin:-6px 0 12px">
+          정해둔 기간이 있다면 적어보세요. 없으면 비워두셔도 됩니다.
+        </p>
+        <div class="field">
+          <input class="input" id="pd-due" type="date" aria-label="기한" />
+        </div>
+        <div id="pd-deadline"></div>
+      </div>
+
+      <div class="section">
+        <button class="cta cta--soft" id="pd-save-detail" type="button">이 내용 저장</button>
       </div>
 
       <div class="section">
