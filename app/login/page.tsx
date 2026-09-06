@@ -50,9 +50,9 @@ export default async function LoginPage({
           {PRIMARY_BRAND_COPY.wordmark}
         </h1>
         <p className="text-hero mt-3 font-semibold text-ink">{PRIMARY_BRAND_COPY.headline}</p>
-        <p className="text-body-sm mt-3 leading-[18px] text-ink-muted">
-          {PRIMARY_BRAND_COPY.subline}
-        </p>
+        {/* Owner request: subline +2pt. 12px -> 14px using the existing approved
+            token (--text-value, 14/19). No new size value is introduced. */}
+        <p className="text-value mt-3 text-ink-muted">{PRIMARY_BRAND_COPY.subline}</p>
       </div>
 
       <div>
