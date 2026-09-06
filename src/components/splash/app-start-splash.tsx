@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import styles from './app-start-splash.module.css'
+import { SplashLoopMark } from './splash-loop-mark'
 
 const SEQUENCE_END_MS = 420
 const FADE_OUT_MS = 140
@@ -49,8 +50,9 @@ export function AppStartSplash() {
     >
       <div className={styles.stage}>
         <div className={styles.lockup}>
+          <SplashLoopMark className={styles.mark} />
           <div className={styles.wordmark}>RETURN</div>
-          <div className={styles.tagline}>다시 하나님께</div>
+          <div className={styles.tagline}>다시 하나님께로</div>
         </div>
       </div>
     </div>
