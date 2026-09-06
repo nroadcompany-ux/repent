@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import { PageHeader } from '@/components/layout/app-header'
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
 import {
-  REPENTANCE_FLOW,
-  repentanceStep,
-  repentanceStepIndex,
+  REPENTANCE_WRITE_FLOW,
+  repentanceWriteStep,
+  repentanceWriteStepIndex,
 } from '@/domain/repentance'
 import { requireUser } from '@/lib/supabase/server'
 import { saveRepentanceStep } from '../../actions'
@@ -32,10 +32,10 @@ export default async function RepentanceWritePage({
 
   if (!record) notFound()
 
-  const step = repentanceStep(stepParam ?? 'looking_back')
-  const index = repentanceStepIndex(step.key)
+  const step = repentanceWriteStep(stepParam ?? 'looking_back')
+  const index = repentanceWriteStepIndex(step.key)
   const isFirst = index === 0
-  const isLast = index === REPENTANCE_FLOW.length - 1
+  const isLast = index === REPENTANCE_WRITE_FLOW.length - 1
   const value = record[step.column] ?? ''
   const today = new Date().toISOString().slice(0, 10)
   const recordDate = record.recorded_at?.slice(0, 10) ?? today
@@ -45,7 +45,7 @@ export default async function RepentanceWritePage({
       <PageHeader title="회개하기" backHref="/repentance" />
 
       <ol className="flex gap-2 px-title-gutter pt-1" aria-label="회개 기록 단계">
-        {REPENTANCE_FLOW.map((flowStep, flowIndex) => (
+        {REPENTANCE_WRITE_FLOW.map((flowStep, flowIndex) => (
           <li
             key={flowStep.key}
             aria-current={flowStep.key === step.key ? 'step' : undefined}
