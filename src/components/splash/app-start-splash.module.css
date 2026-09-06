@@ -9,7 +9,14 @@
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   transform: translateX(-50%);
-  background: var(--color-canvas);
+  /*
+   * Corrected Figma frames (55:2) fill the splash with #F5F1FF, which the
+   * token set already carries as --color-accent-tint. The Owner's final
+   * correction makes the current Figma source authoritative over the
+   * #F7F7FA (--color-canvas) named in the original issue body, so the splash
+   * uses the tint rather than the app canvas.
+   */
+  background: var(--color-accent-tint);
   opacity: 1;
   transition: opacity 140ms ease-out;
 }

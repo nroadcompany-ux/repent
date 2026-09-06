@@ -3,7 +3,20 @@
 import { useEffect, useState } from 'react'
 
 import styles from './app-start-splash.module.css'
-import { SplashLoopMark } from './splash-loop-mark'
+
+/**
+ * Figma-exported asset, stored verbatim at public/brand/splash-loop-mark.svg —
+ * the same file Figma produced for "[RT] Splash Loop Mark · Source 9:2 Exact"
+ * (frames 59:2 / 59:10 / 59:18), so geometry, colour, opacity and stroke width
+ * are the export itself rather than a transcription.
+ *
+ * This is NOT the brand mark in public/brand/loop-mark.svg, which is exact to
+ * nodes 3:9 + 3:10 and drives Journey and the PWA icons. Two different marks
+ * exist in Figma; both are kept unmodified.
+ */
+const LOOP_MARK_SRC = '/brand/splash-loop-mark.svg'
+const LOOP_MARK_WIDTH = 69.12
+const LOOP_MARK_HEIGHT = 91.3344
 
 const SEQUENCE_END_MS = 420
 const FADE_OUT_MS = 140
@@ -50,7 +63,17 @@ export function AppStartSplash() {
     >
       <div className={styles.stage}>
         <div className={styles.lockup}>
-          <SplashLoopMark className={styles.mark} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={LOOP_MARK_SRC}
+            alt=""
+            aria-hidden="true"
+            className={styles.mark}
+            width={LOOP_MARK_WIDTH}
+            height={LOOP_MARK_HEIGHT}
+            fetchPriority="high"
+            decoding="sync"
+          />
           <div className={styles.wordmark}>RETURN</div>
           <div className={styles.tagline}>다시 하나님께로</div>
         </div>
