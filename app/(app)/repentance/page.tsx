@@ -9,24 +9,24 @@ import { startRepentance } from './actions'
 
 export const dynamic = 'force-dynamic'
 
-/**
- * Repentance Home.
- *
- * docs/03 Empty state: "판단 없는 시작 안내". Nothing on this screen counts
- * records, shows a rate, or suggests the member is behind. An unfinished draft
- * is offered as 이어쓰기 (docs/02), never as an outstanding task.
- */
-
 const SLIDES: readonly EducationSlide[] = [
   {
-    headline: ['돌아보는 일에', '정답은 없습니다'],
-    body: ['천천히 적어두는 것만으로', '충분히 시작한 것입니다.'],
+    headline: ['모든 사람이', '죄를 범했습니다'],
+    body: ['로마서 3장 23절', '회개는 하나님께 다시 돌아가는 시작입니다.'],
   },
   {
-    headline: ['쓰다 멈춰도', '그대로 보관됩니다'],
-    body: ['임시저장한 기록은 언제든', '이어서 쓸 수 있어요.'],
+    headline: ['하나님은', '거룩하십니다'],
+    body: ['베드로전서 1장 16절', '있는 모습 그대로 돌아보고 하나님께 나아갑니다.'],
   },
 ]
+
+function ExamplePill() {
+  return (
+    <span className="text-caption mr-1 inline-flex rounded-chip bg-accent-tint px-2 py-[2px] align-middle font-medium text-accent">
+      예시
+    </span>
+  )
+}
 
 export default async function RepentancePage({
   searchParams,
@@ -55,6 +55,11 @@ export default async function RepentancePage({
           임시저장했어요. 언제든 이어서 쓸 수 있습니다.
         </p>
       ) : null}
+      {saved === 'recorded' ? (
+        <p className="text-body-sm mx-title-gutter mt-5 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
+          회개 기록을 저장했어요.
+        </p>
+      ) : null}
       {error ? (
         <p
           role="alert"
@@ -66,30 +71,46 @@ export default async function RepentancePage({
 
       <div className="mt-7 px-title-gutter">
         <form action={startRepentance}>
-          <Button type="submit">돌아보기 시작하기</Button>
+          <Button type="submit">회개하기</Button>
         </form>
       </div>
 
-      {drafts.length > 0 ? (
-        <>
-          <div className="mt-8">
-            <SectionHeader title="쓰다 만 기록" subtitle="이어서 쓸 수 있어요" />
-          </div>
-          <div className="mt-[13px]">
-            <RowStack>
-              {drafts.map((draft) => (
-                <InfoRow
-                  key={draft.id}
-                  label="이어쓰기"
-                  value={draft.title || '제목 없는 기록'}
-                  caption={`${formatMonthDay(draft.updated_at.slice(0, 10))} 임시저장`}
-                  href={`/repentance/${draft.id}/write?step=looking_back`}
-                />
-              ))}
-            </RowStack>
-          </div>
-        </>
-      ) : null}
+      <div className="mt-8">
+        <SectionHeader title="쓰다 만 기록" subtitle="이어서 쓸 수 있어요" />
+      </div>
+      <div className="mt-[13px]">
+        {drafts.length > 0 ? (
+          <RowStack>
+            {drafts.map((draft) => (
+              <InfoRow
+                key={draft.id}
+                label="이어쓰기"
+                value={draft.title || '제목 없는 기록'}
+                caption={`${formatMonthDay(draft.updated_at.slice(0, 10))} 임시저장`}
+                href={`/repentance/${draft.id}/write?step=looking_back`}
+              />
+            ))}
+          </RowStack>
+        ) : (
+          <RowStack>
+            <InfoRow
+              label={<ExamplePill />}
+              value="화를 내고 후회한 일"
+              caption="이런 식으로 제목을 붙여둘 수 있어요"
+            />
+            <InfoRow
+              label={<ExamplePill />}
+              value="약속을 지키지 못한 일"
+              caption="예시는 실제 기록에 포함되지 않아요"
+            />
+            <InfoRow
+              label={<ExamplePill />}
+              value="마음속 미움을 내려놓고 싶은 일"
+              caption="예시는 저장·검색·통계에 포함되지 않아요"
+            />
+          </RowStack>
+        )}
+      </div>
 
       <div className="mt-8">
         <SectionHeader title="지난 기록" subtitle="언제든 다시 읽어볼 수 있어요" />
@@ -108,7 +129,7 @@ export default async function RepentancePage({
                 key={record.id}
                 label={formatMonthDay((record.recorded_at ?? record.created_at).slice(0, 10))}
                 value={record.title || '제목 없는 기록'}
-                caption={record.turning_promise ?? '돌이킴 약속 없음'}
+                caption={record.turning_promise ?? '저장된 회개 기록'}
                 href={`/repentance/${record.id}`}
               />
             ))}
