@@ -846,6 +846,66 @@ textarea, input { font: inherit; color: inherit; }
 .living__key { font-size: 14px; color: var(--text-2); min-width: 66px; }
 .living__val { font-size: 15px; font-weight: 600; flex: 1; }
 
+/* ---------------- Daily check strip on a promise ---------------- */
+
+.checks {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--border);
+}
+
+.checks__label { font-size: 13px; color: var(--text-3); line-height: 1.4; }
+
+/* Right-aligned, newest first (today is the left-most cell). */
+.checks__strip { display: flex; gap: 6px; margin-left: auto; }
+
+.checkday {
+  width: 32px;
+  min-height: var(--touch);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 9px;
+  background: transparent;
+}
+
+.checkday__d { font-size: 11px; color: var(--text-3); line-height: 1; }
+
+.checkday__dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.6px solid var(--border-2);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkday__dot svg { width: 12px; height: 12px; color: #fff; opacity: 0; }
+
+.checkday[aria-pressed='true'] .checkday__dot {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkday[aria-pressed='true'] .checkday__dot svg { opacity: 1; }
+.checkday[aria-pressed='true'] .checkday__d { color: var(--primary-deep); font-weight: 700; }
+
+.checkday--today .checkday__d { color: var(--text); font-weight: 800; }
+.checkday--today .checkday__dot { border-color: var(--primary); border-width: 2px; }
+
+/* Wider strip on the promise detail screen */
+
+.checks--wide { display: block; border-top: 0; padding-top: 0; margin-top: 0; }
+.checks--wide .checks__strip { margin-left: 0; flex-wrap: wrap; gap: 8px; }
+.checks--wide .checkday { width: 40px; }
+
 /* ---------------- Voice memo (guidance only in this prototype) --------- */
 
 .voice {

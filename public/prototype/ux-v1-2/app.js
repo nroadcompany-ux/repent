@@ -83,7 +83,13 @@
         body: '자꾸 앞서갑니다. 결과부터 계산하다가 하루가 다 갑니다.', day: dayOffset(24),
         hearts: { give: '기다릴 줄 아는 마음', receive: '조급하지 않은 하루', praise: '끝까지 기다렸구나' } },
       { id: 'r2', type: 'promise', title: '매일 아침 10분 먼저 기도하기', body: '', day: dayOffset(20),
-        status: 'active', sourcePrayerId: 'r1' },
+        status: 'active', sourcePrayerId: 'r1',
+        // Gaps on purpose: a day without a mark is just empty, not a failure.
+        checks: (function () {
+          var c = {};
+          [1, 2, 4, 5, 8, 9, 11].forEach(function (n) { c[dayOffset(n)] = true; });
+          return c;
+        })() },
       { id: 'r3', type: 'action', title: '아침 10분 기도', body: '', day: dayOffset(14), promiseId: 'r2' },
       { id: 'r4', type: 'repentance', title: '말로 사람을 아프게 했던 일',
         body: '말로 사람을 아프게 했던 일\n\n지친다는 이유로 아이에게 큰 소리를 냈습니다.\n\n피곤함이 이유가 될 수 없다는 걸 알게 됐습니다.\n\n먼저 미안하다고 말하기',
@@ -615,6 +621,69 @@
       '</span></span></div>';
   }
 
+  /* ------------------------------------------------- promise daily checks */
+
+  /**
+   * Marking the days a promise was kept.
+   *
+   * Deliberately not a streak and not a rate: a kept day is a filled dot, a day
+   * without one is simply empty — never a cross, never red, never counted
+   * against the user. Missing a day is not recorded as fault.
+   */
+  var CHECK_DAYS = 7;
+  var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+
+  function checkDayList(count) {
+    var days = [];
+    for (var i = 0; i < count; i++) {
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push({
+        iso: dayOffset(i),
+        dom: d.getDate(),
+        wd: WEEKDAYS[d.getDay()],
+        isToday: i === 0,
+      });
+    }
+    return days; // newest first
+  }
+
+  function isChecked(promise, iso) {
+    return !!(promise.checks && promise.checks[iso]);
+  }
+
+  function checkStripHtml(promise, count, wide) {
+    var days = checkDayList(count);
+    return '<div class="checks' + (wide ? ' checks--wide' : '') + '">' +
+      (wide ? '' : '<span class="checks__label">지킨 날<br>표시</span>') +
+      '<div class="checks__strip">' +
+      days.map(function (d) {
+        return '<button class="checkday' + (d.isToday ? ' checkday--today' : '') + '" type="button"' +
+          ' data-check="' + promise.id + '" data-day="' + d.iso + '"' +
+          ' aria-pressed="' + isChecked(promise, d.iso) + '"' +
+          ' aria-label="' + d.dom + '일 ' + (d.isToday ? '오늘 ' : '') + '표시">' +
+          '<span class="checkday__d">' + (d.isToday ? '오늘' : d.wd) + '</span>' +
+          '<span class="checkday__dot">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4.5 4.5L19 7"/></svg>' +
+          '</span></button>';
+      }).join('') +
+      '</div></div>';
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-check]');
+    if (!b) return;
+    var p = findById(b.dataset.check);
+    if (!p) return;
+    if (!p.checks) p.checks = {};
+    var iso = b.dataset.day;
+    if (p.checks[iso]) delete p.checks[iso];
+    else p.checks[iso] = true;
+
+    if (current.screen === 'promise-detail') screens['promise-detail'](current.ctx || {});
+    else screens.promise(current.ctx || {});
+  });
+
   /* ------------------------------------------------------------- samples */
 
   /** Shown so a blank page is never the first thing a user meets. */
@@ -1068,7 +1137,9 @@
             '<p class="card__meta" style="margin-top:4px">실행 ' + acts.length + '회' +
             (lastAct ? ' · 최근 ' + prettyDay(lastAct.day) : '') + '</p></div>' +
             (r.status === 'closed' ? '<span class="badge badge--done">마무리됨</span>' : '<span class="badge badge--gray">진행 중</span>') +
-            '</div><div class="card__actions">' +
+            '</div>' +
+            (r.status === 'closed' ? '' : checkStripHtml(r, CHECK_DAYS)) +
+            '<div class="card__actions">' +
             '<button class="card__action card__action--primary" data-open-promise="' + r.id + '">실행 추가</button>' +
             '<button class="card__action" data-reflect-promise="' + r.id + '">돌아보기</button></div></div>';
         }).join('')
@@ -1127,6 +1198,13 @@
         el('pd-meta').textContent += ' · 기도에서 시작됨';
       }
     }
+
+    el('pd-checks').innerHTML = p.status === 'closed'
+      ? '<p class="note">마무리된 약속입니다. 지난 표시는 그대로 남아 있습니다.</p>' +
+        checkStripHtml(p, 14, true)
+      : '<p class="note" style="margin-bottom:12px">지킨 날을 눌러 표시해 두세요. ' +
+        '표시가 없는 날을 잘못으로 기록하지 않습니다.</p>' +
+        checkStripHtml(p, 14, true);
 
     el('pd-action-input').value = '';
 
