@@ -655,3 +655,57 @@ describe('auth routes', () => {
     expect(actions).not.toMatch(/[A-Z].*regex|passwordRegex/)
   })
 })
+
+/** Profile media (docs/04, docs/07, docs/08, AC-07). */
+describe('profile media', () => {
+  const page = readFileSync(join(ROOT, 'app/(app)/settings/profile-media/page.tsx'), 'utf8')
+  const actions = readFileSync(join(ROOT, 'app/(app)/settings/media-actions.ts'), 'utf8')
+
+  it('caps the gallery at the canonical maximum', () => {
+    expect(PROFILE_GALLERY_MAX).toBe(30)
+    expect(actions).toContain('PROFILE_GALLERY_MAX')
+    expect(page).toContain('PROFILE_GALLERY_MAX')
+  })
+
+  it('keeps one representative photo, not a set', () => {
+    expect(actions).toContain('avatar_path')
+    expect(actions).not.toMatch(/avatar_paths|avatars\s*:\s*\[/)
+  })
+
+  it('never presents a photo as proof of church membership', () => {
+    // docs/08 forbids 정상 교인 인증 and forbids treating a photo as verification.
+    expect(stripComments(page)).not.toContain('교인 인증')
+    expect(stripComments(page)).toContain('교인임을 확인하는 수단이 아닙니다')
+  })
+
+  it('only accepts a storage path inside the member own prefix', () => {
+    expect(actions).toContain('ownedPath')
+    expect(actions).toContain('startsWith(`${userId}/`)')
+  })
+})
+
+/** Email enumeration resistance (Owner PM response 2026-09-06 §3). */
+describe('account enumeration', () => {
+  it('never confirms that an address is already registered', () => {
+    const message = AUTH_ERROR_MESSAGES.email_taken
+    expect(message).toContain('입력하신 이메일을 확인해 주세요')
+    expect(message).not.toBe('이미 가입된 이메일입니다. 로그인해 주세요.')
+    // Must stay conditional — "이미 가입된 계정이라면" not "이미 가입된 이메일입니다".
+    expect(message).toContain('계정이라면')
+  })
+
+  it('reports the same outcome whether or not a reset address exists', () => {
+    const actions = readFileSync(join(ROOT, 'app/login/email/actions.ts'), 'utf8')
+    const block = actions.slice(actions.indexOf('export async function requestPasswordReset'))
+    const body = block.slice(0, block.indexOf('\n}'))
+    // Exactly one success redirect, taken regardless of the Supabase result.
+    expect(body.match(/redirect\(/g)?.length).toBe(2) // invalid-format guard + the single outcome
+    expect(body).toContain('sent=1')
+  })
+
+  it('asks Supabase for a bare callback path so the allowlist stays exact', () => {
+    const actions = readFileSync(join(ROOT, 'app/login/email/actions.ts'), 'utf8')
+    expect(actions).toContain('/auth/confirm`')
+    expect(actions).not.toContain('/auth/confirm?type=')
+  })
+})

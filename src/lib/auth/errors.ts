@@ -15,7 +15,12 @@ export const AUTH_ERROR_MESSAGES = {
   email_invalid: '이메일 주소를 확인해 주세요.',
   password_weak: '비밀번호 조건을 확인해 주세요.',
   password_mismatch: '비밀번호가 서로 다릅니다. 다시 확인해 주세요.',
-  email_taken: '이미 가입된 이메일입니다. 로그인해 주세요.',
+  /**
+   * Deliberately non-committal. Saying "이미 가입된 이메일입니다" would confirm
+   * that an address is registered, turning the sign-up form into an account
+   * lookup. The exact cause is recorded server-side instead.
+   */
+  email_taken: '입력하신 이메일을 확인해 주세요. 이미 가입된 계정이라면 로그인해 주세요.',
 
   // Email — sign in
   email_not_confirmed: '이메일 인증 후 로그인할 수 있습니다.',

@@ -60,9 +60,11 @@ export async function signUpWithEmail(form: FormData) {
   }
 
   // Supabase does not error on a duplicate address while email confirmation is
-  // on; it returns a user with an empty identities array instead. The Owner
-  // asked for an explicit "이미 가입된 이메일입니다" message, so we surface it.
+  // on; it returns a user with an empty identities array instead. The member
+  // sees a non-committal message so the form cannot be used to discover which
+  // addresses are registered — the precise cause is logged here instead.
   if (data.user && (data.user.identities?.length ?? 0) === 0) {
+    logAuthFailure('email sign-up (address already registered)', {})
     signUpFailure('email_taken')
   }
 
@@ -111,9 +113,12 @@ export async function requestPasswordReset(form: FormData) {
 
   if (!looksLikeEmail(email)) redirect('/login/email/forgot?error=email_invalid')
 
+  // No query string on redirectTo: Supabase appends `token_hash` and `type`
+  // itself, and a bare path keeps the Redirect URL allowlist to an exact route
+  // rather than needing a wildcard.
   const supabase = await createClient()
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteOrigin()}/auth/confirm?type=recovery`,
+    redirectTo: `${siteOrigin()}/auth/confirm`,
   })
 
   if (error) logAuthFailure('password reset request', error)

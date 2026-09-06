@@ -169,6 +169,16 @@ export default async function SettingsPage({
       </section>
 
       <section className="mt-9 px-title-gutter">
+        <h2 className="text-section font-semibold text-ink">프로필 사진</h2>
+        <Link
+          href="/settings/profile-media"
+          className="text-body-sm mt-3 block font-medium text-accent"
+        >
+          대표 사진 · 갤러리 · 해시태그
+        </Link>
+      </section>
+
+      <section className="mt-9 px-title-gutter">
         <h2 className="text-section font-semibold text-ink">안전</h2>
         <Link href="/settings/blocked" className="text-body-sm mt-3 block font-medium text-accent">
           차단한 사람 {blockedCount ?? 0}명
