@@ -1,14 +1,10 @@
 import Link from 'next/link'
 
-import { toggleReaction } from '../actions'
+import { toggleSimpleReaction } from '../vote-actions'
 
 export type VoteType = 'like' | 'dislike'
 
-/**
- * Owner simplified Confession feedback to familiar social actions:
- *   👍 count / 👎 count / 💬 count
- * Legacy semantic reaction rows are intentionally ignored, not deleted.
- */
+/** Owner simplified Confession feedback to 👍 / 👎 / 💬 + counts. */
 export function ReactionBar({
   postId,
   counts,
@@ -34,7 +30,7 @@ export function ReactionBar({
       {buttons.map(({ type, icon, label }) => {
         const selected = mine === type
         return (
-          <form key={type} action={toggleReaction}>
+          <form key={type} action={toggleSimpleReaction}>
             <input type="hidden" name="post_id" value={postId} />
             <input type="hidden" name="type" value={type} />
             <input type="hidden" name="return_to" value={returnTo} />
