@@ -10,21 +10,8 @@ import { requireUser } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-/**
- * Journey Home — Figma 3:2 "RETURN Journey Home · Premium v0.2".
- *
- * Structure follows docs/01 Journey IA and the approved frame:
- *   Header → Education Banner → TODAY compact dashboard → 나의 여정 graph
- * TODAY carries exactly the four canonical slots (docs/03, AC-02):
- *   나의 말씀 / 이어갈 기도 / 오늘의 약속·실행 / 성경읽기.
- * 회개 is deliberately not a daily tile.
- */
-
 const SLIDES: readonly EducationSlide[] = [
   {
-    // The former Login hero. Owner decision 2026-09-06 moves the Primary brand
-    // copy to 다시 하나님께, and keeps this line here, where its meaning belongs
-    // (docs/01 Journey IA item 2 — Education Banner).
     headline: [...JOURNEY_BANNER_LEGACY_COPY],
     body: ['기도와 말씀, 돌아봄과 약속이', '시간 속에서 하나의 이야기로 이어집니다.'],
   },
@@ -38,6 +25,14 @@ const SLIDES: readonly EducationSlide[] = [
   },
 ]
 
+function ExamplePill() {
+  return (
+    <span className="text-caption mr-1 inline-flex rounded-chip bg-accent-tint px-2 py-[2px] align-middle font-medium text-accent">
+      예시
+    </span>
+  )
+}
+
 export default async function JourneyPage() {
   const { supabase, userId } = await requireUser()
   const home = await getJourneyHome(supabase, userId)
@@ -45,66 +40,74 @@ export default async function JourneyPage() {
   return (
     <main>
       <AppHeader
+        sticky
         actions={
           <>
             <HeaderAction href="/journey/search">검색</HeaderAction>
             <HeaderAction href="/journey/calendar">달력</HeaderAction>
+            <Link href="/journey/menu" aria-label="메뉴" className="text-body font-medium text-ink-muted">
+              ☰
+            </Link>
           </>
         }
       />
 
       <EducationBanner slides={SLIDES} />
 
-      <div className="mt-7">
+      <div className="mt-5">
         <SectionHeader title="오늘" subtitle="오늘 이어갈 기록" actionLabel="전체 보기" actionHref="/journey/timeline" />
       </div>
 
-      <div className="mt-[13px]">
+      <div className="mt-[11px]">
         <RowStack>
           <InfoRow
             label="나의 말씀"
-            value={home.scripture?.reference ?? '아직 담아둔 말씀이 없어요'}
-            caption={home.scripture ? (home.scripture.memo ?? '오늘 붙잡은 말씀') : '말씀 담아두기'}
-            href="/journey/scripture"
-          />
-          <InfoRow
-            label="성경읽기"
             value={
-              home.reading
-                ? `${home.reading.book} ${home.reading.chapter}장`
-                : '아직 기록이 없어요'
+              home.scripture?.reference ?? (
+                <>
+                  <ExamplePill />“두려워하지 말라 내가 너와 함께 함이라”
+                </>
+              )
             }
-            caption={
-              home.reading ? `지금까지 ${home.reading.chaptersRead}장 읽음` : '읽은 장 기록하기'
-            }
-            href="/journey/bible"
+            caption={home.scripture ? (home.scripture.memo ?? '오늘 붙잡은 말씀') : '오늘 마음에 남은 말씀을 담아보세요'}
+            href="/journey/scripture"
           />
           <InfoRow
             label="기도"
             value={
-              home.prayer.activeTopics > 0
-                ? `${home.prayer.activeTopics}개 기도제목`
-                : '기도제목을 시작해 보세요'
+              home.prayer.activeTopics > 0 ? (
+                `${home.prayer.activeTopics}개 기도제목`
+              ) : (
+                <>
+                  <ExamplePill />가족의 건강과 평안을 위해 기도
+                </>
+              )
             }
-            caption={home.prayer.next ? '이어 기도하기' : '첫 기도제목 만들기'}
+            caption={home.prayer.next ? '이어 기도하기' : '오늘의 기도제목을 남겨보세요'}
             href={home.prayer.next ? `/prayer/topic/${home.prayer.next.id}` : '/prayer'}
           />
           <InfoRow
             label="약속 · 실천"
             value={
-              home.promise.active > 0 ? `${home.promise.active}개 진행 중` : '약속을 시작해 보세요'
+              home.promise.active > 0 ? (
+                `${home.promise.active}개 진행 중`
+              ) : (
+                <>
+                  <ExamplePill />오늘은 먼저 사과하기
+                </>
+              )
             }
             caption={
               home.promise.active > 0
                 ? `오늘 ${home.promise.doneToday} / ${home.promise.targetToday}`
-                : '첫 약속 만들기'
+                : '말씀을 삶에서 한 가지 실천해보세요'
             }
             href="/promise"
           />
         </RowStack>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6">
         <SectionHeader
           title="나의 여정"
           subtitle="최근 1개월 · 내 마음과 삶의 흐름"
@@ -113,19 +116,40 @@ export default async function JourneyPage() {
         />
       </div>
 
-      <div className="mt-[11px]">
+      <div className="mt-[9px]">
         {home.moods.length > 0 || home.lifeEvents.length > 0 ? (
           <JourneyGraph moods={home.moods} lifeEvents={home.lifeEvents} days={JOURNEY_GRAPH_DAYS} />
         ) : (
-          <JourneyGraphEmpty />
+          <JourneyGraphEmpty
+            birthDate={home.anchors.birthDate}
+            returnStartedOn={home.anchors.returnStartedOn}
+          />
         )}
       </div>
 
-      {/* [OPEN — NO FIGMA SOURCE] The approved frame's header carries only
-          검색 / 달력, so rather than add a third header action the settings
-          entry sits here as a quiet footer link until an Owner-approved
-          profile entry point exists. */}
-      <div className="mt-9 px-title-gutter">
+      <div className="mt-8">
+        <SectionHeader title="성경읽기" subtitle="읽은 장을 차곡차곡 기록해요" actionLabel="보기" actionHref="/journey/bible" />
+      </div>
+      <div className="mt-[11px]">
+        <RowStack>
+          <InfoRow
+            label="성경읽기"
+            value={
+              home.reading ? (
+                `${home.reading.book} ${home.reading.chapter}장`
+              ) : (
+                <>
+                  <ExamplePill />요한복음 15장
+                </>
+              )
+            }
+            caption={home.reading ? `지금까지 ${home.reading.chaptersRead}장 읽음` : '오늘 읽은 장을 기록해보세요'}
+            href="/journey/bible"
+          />
+        </RowStack>
+      </div>
+
+      <div className="mt-8 px-title-gutter">
         <Link href="/settings" className="text-body-sm font-medium text-ink-muted">
           내 정보
         </Link>

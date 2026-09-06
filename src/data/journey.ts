@@ -32,6 +32,7 @@ export type JourneyHome = {
   promise: { active: number; doneToday: number; targetToday: number }
   moods: JourneyGraphPoint[]
   lifeEvents: JourneyLifeEvent[]
+  anchors: { birthDate: string | null; returnStartedOn: string | null }
   hasAnyRecord: boolean
 }
 
@@ -51,6 +52,7 @@ export async function getJourneyHome(supabase: Supabase, userId: string): Promis
     checksResult,
     moodResult,
     eventResult,
+    profileResult,
   ] = await Promise.all([
       supabase
         .from('saved_scriptures')
@@ -68,8 +70,6 @@ export async function getJourneyHome(supabase: Supabase, userId: string): Promis
         .limit(1)
         .maybeSingle(),
 
-      // Total chapters read. Batched here rather than awaited afterwards: a
-      // trailing query adds a whole extra crossing to the Supabase region.
       supabase
         .from('bible_reading_progress')
         .select('book', { count: 'exact', head: true })
@@ -110,6 +110,12 @@ export async function getJourneyHome(supabase: Supabase, userId: string): Promis
         .gte('occurred_on', from)
         .lte('occurred_on', today)
         .order('occurred_on'),
+
+      supabase
+        .from('profiles')
+        .select('birth_date, created_at')
+        .eq('id', userId)
+        .maybeSingle(),
     ])
 
   const chaptersRead = chaptersReadResult.count
@@ -150,6 +156,10 @@ export async function getJourneyHome(supabase: Supabase, userId: string): Promis
     promise: { active: promisesResult.count ?? 0, doneToday, targetToday },
     moods,
     lifeEvents,
+    anchors: {
+      birthDate: profileResult.data?.birth_date ?? null,
+      returnStartedOn: profileResult.data?.created_at?.slice(0, 10) ?? null,
+    },
     hasAnyRecord:
       Boolean(scriptureResult.data) ||
       Boolean(readingResult.data) ||

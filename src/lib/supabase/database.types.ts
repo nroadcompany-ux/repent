@@ -1,6 +1,6 @@
 /**
  * Database contract for the RETURN Supabase project (hzeabckqzwhqrlbcnhhy).
- * Mirrors supabase/migrations/0001–0006 exactly. When a migration changes a
+ * Mirrors supabase/migrations/0001–0010 exactly. When a migration changes a
  * column, change it here in the same commit.
  */
 
@@ -8,9 +8,10 @@ export type RecordState = 'draft' | 'recorded' | 'archived'
 export type Visibility = 'private' | 'public'
 export type PrayerKind = 'mine' | 'intercession'
 export type PromiseState = 'active' | 'closed'
+export type PromiseRepeatType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
 export type ActionOutcome = 'done' | 'retry' | 'modified' | 'rescheduled' | 'record_only'
 export type ConfessionType = 'prayer' | 'confession' | 'grace' | 'daily'
-export type ReactionType = 'pray_together' | 'received_grace' | 'touched'
+export type ReactionType = 'pray_together' | 'received_grace' | 'touched' | 'like' | 'dislike'
 export type ReportReason = 'personal_info' | 'harassment' | 'spam' | 'safety'
 export type ReportState = 'open' | 'reviewing' | 'actioned' | 'dismissed'
 export type ModerationActionType = 'hide' | 'unhide' | 'delete' | 'restrict' | 'restore'
@@ -40,6 +41,7 @@ export type ProfileRow = {
   avatar_path: string | null
   bio: string | null
   profile_visibility: Visibility
+  birth_date: string | null
   terms_agreed_at: string | null
   privacy_agreed_at: string | null
   onboarding_completed_at: string | null
@@ -116,6 +118,8 @@ export type PromiseRow = {
   started_on: string
   due_date: string | null
   daily_target: number
+  repeat_type: PromiseRepeatType
+  repeat_weekdays: number[]
   state: PromiseState
   closed_at: string | null
 } & Timestamps

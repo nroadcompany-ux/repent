@@ -1,0 +1,136 @@
+.splash {
+  position: fixed;
+  inset-block: 0;
+  left: 50%;
+  z-index: 100;
+  width: min(100vw, 412px);
+  height: 100dvh;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateX(-50%);
+  /*
+   * Corrected Figma frames (55:2) fill the splash with #F5F1FF, which the
+   * token set already carries as --color-accent-tint. The Owner's final
+   * correction makes the current Figma source authoritative over the
+   * #F7F7FA (--color-canvas) named in the original issue body, so the splash
+   * uses the tint rather than the app canvas.
+   */
+  background: var(--color-accent-tint);
+  opacity: 1;
+  transition: opacity 140ms ease-out;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Vertical placement comes from the corrected Figma frames (55:2). The mark is
+ * new, so the lockup is anchored by its own top rather than centred: each
+ * breakpoint's `top` is the Figma mark top as a share of that frame's height
+ * (360: 248.91/800, 390: 266.65/844, 412: 296.26/915). The RETURN wordmark
+ * still lands on its ~47% optical axis, which is what docs called the centre.
+ */
+.lockup {
+  position: absolute;
+  top: 31.11%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* Figma frame 59:2 — 67.2 x 75.6 box, artwork overflowing to 88.8 tall. */
+.mark {
+  display: block;
+  width: 67.2px;
+  height: 88.8px;
+  margin: 0 auto 14.29px;
+}
+
+.wordmark {
+  color: var(--color-accent);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tagline {
+  margin-top: 22px;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: splash-tagline-in 240ms ease-out 180ms both;
+}
+
+.exiting {
+  opacity: 0;
+}
+
+@keyframes splash-tagline-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 390px) {
+  .lockup {
+    top: 31.59%;
+  }
+
+  /* Figma frame 59:10 — 69.12 x 77.76 box, artwork 91.33 tall. */
+  .mark {
+    width: 69.12px;
+    height: 91.33px;
+    margin-bottom: 22.01px;
+  }
+
+  .wordmark {
+    font-size: 38px;
+  }
+
+  .tagline {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 412px) {
+  .lockup {
+    top: 32.38%;
+  }
+
+  /* Figma frame 59:18 — 72 x 81 box, artwork 95.14 tall. */
+  .mark {
+    width: 72px;
+    height: 95.14px;
+    margin-bottom: 24.6px;
+  }
+
+  .wordmark {
+    font-size: 40px;
+  }
+
+  .tagline {
+    margin-top: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash,
+  .tagline {
+    animation: none;
+    transition: none;
+  }
+}

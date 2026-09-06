@@ -18,10 +18,15 @@ import './globals.css'
  *
  * That trade is recorded as a Visual Delta for Owner review: Hangul now
  * renders in the device's own Korean UI font rather than a downloaded one.
+ *
+ * 700 is loaded for the Splash wordmark only, which Figma 55:2 specifies as
+ * Inter Bold; without the real face the browser synthesised it from 600. No
+ * other RETURN surface requests 700, so no other screen's type changes — the
+ * cost is one additional latin-subset woff2.
  */
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
 })

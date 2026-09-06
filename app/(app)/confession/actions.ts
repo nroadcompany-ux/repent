@@ -3,9 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { ENABLED_REACTIONS } from '@/domain/product-lock'
 import { requireUser } from '@/lib/supabase/server'
-import type { ConfessionType, ReactionType, ShareSourceKind } from '@/lib/supabase/database.types'
+import type { ConfessionType, ShareSourceKind } from '@/lib/supabase/database.types'
 
 function text(form: FormData, key: string): string {
   const value = form.get(key)
@@ -92,42 +91,18 @@ export async function deleteConfession(form: FormData) {
   redirect('/confession')
 }
 
-/**
- * Toggle the member's reaction on a post.
+/*
+ * The three-reaction toggle that used to live here was removed on 2026-09-07.
  *
- * 1 user : 1 reaction per post, changeable (docs/04, AC-06) — the table's
- * primary key guarantees it, and pressing the same reaction again removes it.
- * Only reactions in ENABLED_REACTIONS are accepted; see product-lock.ts for
- * the open question about 공감 1종 vs the canonical three.
+ * It was superseded by the Owner's 좋아요 / 싫어요 / 댓글 model and had no
+ * remaining caller, but `'use server'` still published it as a reachable
+ * endpoint that wrote legacy reaction types. The live path is
+ * toggleSimpleReaction in ./vote-actions.ts.
+ *
+ * Existing rows carrying the old types are untouched: tallyReactions ignores
+ * any type outside CONFESSION_VOTES, so history stays readable and is never
+ * rewritten or deleted.
  */
-export async function toggleReaction(form: FormData) {
-  const { supabase, userId } = await requireUser()
-
-  const postId = text(form, 'post_id')
-  const typeRaw = text(form, 'type')
-  const returnTo = text(form, 'return_to') || '/confession'
-
-  if (!(ENABLED_REACTIONS as readonly string[]).includes(typeRaw)) redirect(returnTo)
-  const type = typeRaw as ReactionType
-
-  const { data: existing } = await supabase
-    .from('confession_reactions')
-    .select('type')
-    .eq('post_id', postId)
-    .eq('user_id', userId)
-    .maybeSingle()
-
-  if (existing?.type === type) {
-    await supabase.from('confession_reactions').delete().eq('post_id', postId).eq('user_id', userId)
-  } else {
-    await supabase
-      .from('confession_reactions')
-      .upsert({ post_id: postId, user_id: userId, type }, { onConflict: 'post_id,user_id' })
-  }
-
-  revalidatePath('/confession')
-  redirect(returnTo)
-}
 
 /**
  * Report a post. docs/08: the reason taxonomy carries no spiritual judgment,
