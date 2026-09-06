@@ -20,6 +20,7 @@ const STEP_ORDER: Step[] = ['profile', 'church', 'terms', 'questions']
 
 const ERRORS: Record<string, string> = {
   name: '이름 또는 닉네임을 입력해 주세요.',
+  birth: '생년월일을 확인해 주세요.',
   required: '필요한 항목을 입력해 주세요.',
   save: '저장하지 못했어요. 입력하신 내용은 그대로 있습니다. 다시 시도해 주세요.',
 }
@@ -34,14 +35,15 @@ export default async function OnboardingPage({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('display_name, church_name, denomination, terms_agreed_at, onboarding_completed_at')
+    .select('display_name, birth_date, church_name, denomination, terms_agreed_at, onboarding_completed_at')
     .eq('id', userId)
     .maybeSingle()
 
   if (profile?.onboarding_completed_at) redirect('/journey')
 
-  // Furthest step the stored data justifies.
-  const resumeStep: Step = !profile?.display_name
+  // Furthest step the stored data justifies. Birth date belongs to the first
+  // profile step because it becomes the member's first Journey timeline anchor.
+  const resumeStep: Step = !profile?.display_name || !profile.birth_date
     ? 'profile'
     : !profile.church_name || !profile.denomination
       ? 'church'
@@ -55,6 +57,7 @@ export default async function OnboardingPage({
     STEP_ORDER.indexOf(asked) <= STEP_ORDER.indexOf(resumeStep) ? asked : resumeStep
 
   const stepIndex = STEP_ORDER.indexOf(step) + 1
+  const today = new Date().toISOString().slice(0, 10)
 
   return (
     <main className="flex min-h-dvh flex-col px-title-gutter pb-10 pt-16">
@@ -75,23 +78,39 @@ export default async function OnboardingPage({
       {step === 'profile' ? (
         <form action={saveProfileStep} className="mt-4 flex flex-1 flex-col">
           <h1 className="text-hero font-semibold text-ink">
-            어떻게
+            당신의 여정이
             <br />
-            불러드릴까요?
+            시작된 날부터
           </h1>
           <p className="text-body-sm mt-3 leading-[21px] text-ink-muted">
-            고백 공간에서는 이 이름만 보입니다. 본명이 아니어도 괜찮아요.
+            생년월일은 나의 여정 첫 기준점이 됩니다. 고백 공간에서는 아래 이름만 보입니다.
           </p>
-          <div className="mt-8">
-            <FieldLabel htmlFor="display_name">이름 또는 닉네임</FieldLabel>
-            <TextField
-              id="display_name"
-              name="display_name"
-              defaultValue={profile?.display_name ?? ''}
-              maxLength={20}
-              placeholder="예: 은혜"
-              required
-            />
+          <div className="mt-8 flex flex-col gap-5">
+            <div>
+              <FieldLabel htmlFor="display_name">이름 또는 닉네임</FieldLabel>
+              <TextField
+                id="display_name"
+                name="display_name"
+                defaultValue={profile?.display_name ?? ''}
+                maxLength={20}
+                placeholder="예: 은혜"
+                required
+              />
+            </div>
+            <div>
+              <FieldLabel htmlFor="birth_date">생년월일</FieldLabel>
+              <TextField
+                id="birth_date"
+                name="birth_date"
+                type="date"
+                defaultValue={profile?.birth_date ?? ''}
+                max={today}
+                required
+              />
+              <p className="text-caption mt-2 leading-[19px] text-ink-faint">
+                태어난 날과 RETURN을 시작한 날이 나의 여정 첫 두 기준점이 됩니다.
+              </p>
+            </div>
           </div>
           <div className="mt-auto pt-10">
             <Button type="submit">다음</Button>
