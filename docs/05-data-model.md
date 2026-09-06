@@ -1,25 +1,99 @@
 ---
-status: OPEN
-version: 0.7.2.1
-updated: 2026-09-05
+status: LOCKED_WITH_HOLD
+version: 1.0.0
+updated: 2026-09-06
+owner_approval: 2026-09-06
 ---
 
 # 05 Data Model
 
-> 상태: OPEN — 작성 중 (아래는 Owner/PM 확정 Canonical Decision만 반영. 미확정 영역은 계속 OPEN)
+> Canonical Logical Data Contract. Physical schema/enum 명칭은 Development Documentation 단계에서 확정한다.
 
-## 확정 용어 (Owner Lock)
+## Domain Ownership
 
-| 내부 Data Model | 사용자-facing |
-|---|---|
-| LifeEvent | 삶의 사건 |
-| Season | 시기 (중첩 허용 — 하나의 기간이 복수의 시기에 속할 수 있음) |
-| StoryArc | 이야기 흐름 (하나의 기도·약속이 복수의 StoryArc에 Reference로 연결 가능, 원본 복제 없음) |
+- Account/Profile: 사용자 계정 및 Profile
+- Prayer: 기도함 / 기도 제목 / 날짜별 기도 기록 / 기도문
+- Repentance: Private repentance source / Draft / ShareCopy reference
+- Promise: Promise 원본
+- Action: Promise 1:N 실행 및 실행 기록
+- Journey: Aggregation / Navigation / Mood / Calendar / Life Event reference
+- Scripture: Verse canonical reference / Reading progress
+- Confession: Public/Shared community object / Comment / Reaction / Hashtag / Report
 
-## Confession 데이터 규칙
+Journey는 각 Domain 원본을 복제하는 Owner가 아니다.
 
-- Direct Confession = Live Reference — 직접 작성한 고백은 수정 시 Journey에 최신 내용이 즉시 반영되고, 삭제 시 Journey에서도 제거된다
-- Private Source → ShareCopy = Snapshot — 공유 시 스냅샷(ShareCopy)이 생성되며, Source 수정이 기존 공개본에 자동 반영되지 않는다
-- Share Delete ≠ Source Delete — 공유본 삭제가 원본 삭제로 이어지지 않는다. 원본 삭제는 별도의 명시적 행위 필요
+## Logical Entity Set
 
-(그 외 세부 스키마는 추후 업데이트)
+### Account / Profile
+- users / auth identity
+- profiles
+- church_name
+- denomination
+- representative_profile_image
+- profile_media (Gallery 최대 30장)
+- profile_hashtags
+- profile_visibility
+
+### Prayer
+- prayer_folders
+- prayer_topics
+- prayer_records
+- prayer_texts / prayer documents
+
+### Repentance
+- repentances
+- repentance_drafts 또는 동등 Draft State
+- repentance_share_links / ShareCopy relation
+
+### Promise / Action
+- promises
+- actions
+- action_records
+- reminders
+
+### Journey
+- mood_records
+- life_events
+- journey_references / aggregation index
+- bible_reading_progress
+- saved_scripture_references
+
+### Scripture
+- verses (Canonical Reference)
+- verse_texts (License 확보 후)
+
+### Confession / Community
+- confession_posts
+- confession_comments
+- confession_reactions
+- hashtags
+- post_hashtags
+- reports
+- moderation_actions
+
+### AI / Privacy
+- ai_memory_consent
+- 최소 AI usage/audit metadata (필요 범위)
+
+## ShareCopy Rule
+
+`Private Original → User-selected fields → ShareCopy Draft → Preview → Publish`
+
+- Source와 ShareCopy는 별도 객체다.
+- Source 수정이 기존 ShareCopy에 자동 반영되지 않는다.
+- ShareCopy 삭제가 Source 삭제로 이어지지 않는다.
+- Source 삭제 시 기존 ShareCopy 자동삭제 금지. 사용자에게 처리 선택 제공.
+
+## Confession Reaction
+
+- 1 user : 1 reaction / post
+- 사용자는 Reaction 변경 가능
+- Reaction type: 함께 기도해요 / 은혜받았어요 / 마음이 닿았어요
+
+## State Rule
+
+사용자-facing 의미는 Canonical Lock.
+물리 Enum (`DRAFT`, `RECORDED`, `ARCHIVED` 등)은 개발문서 단계에서 확정한다.
+
+영적 상태 Enum 금지:
+`ANSWERED / FORGIVEN / SAVED / REPENTED / FAITHFUL / SPIRITUALLY_FAILED`
