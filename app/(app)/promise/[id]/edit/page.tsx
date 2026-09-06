@@ -20,6 +20,13 @@ type EditablePromise = {
   repeat_weekdays?: number[]
 }
 
+const ERROR_MESSAGES: Record<string, string> = {
+  title: '약속 내용을 입력해 주세요.',
+  date: '종료일은 시작일보다 빠를 수 없어요.',
+  weekday: '매주 반복할 요일을 하나 이상 선택해 주세요.',
+  save: '저장하지 못했어요. 다시 시도해 주세요.',
+}
+
 export default async function EditPromisePage({
   params,
   searchParams,
@@ -48,7 +55,7 @@ export default async function EditPromisePage({
 
         {error ? (
           <p role="alert" className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger">
-            {error === 'title' ? '약속 내용을 입력해 주세요.' : '저장하지 못했어요. 다시 시도해 주세요.'}
+            {ERROR_MESSAGES[error] ?? ERROR_MESSAGES.save}
           </p>
         ) : null}
 
