@@ -144,7 +144,9 @@
       n.classList.toggle('is-active', n.id === 'screen-' + current.screen);
     });
 
-    el('nav').style.display = current.screen === 'intro' ? 'none' : 'grid';
+    // The comments screen has its own input pinned to the bottom.
+    var hideNav = current.screen === 'intro' || current.screen === 'comments';
+    el('nav').style.display = hideNav ? 'none' : 'grid';
 
     Array.prototype.forEach.call(document.querySelectorAll('.nav__item'), function (n) {
       var owner = current.screen.split('-')[0];
@@ -242,12 +244,29 @@
     ring.style.width = (r.width + pad * 2) + 'px';
     ring.style.height = (r.height + pad * 2) + 'px';
 
-    if (vh - r.bottom > 300) {
-      card.style.top = (r.bottom + 18) + 'px';
+    // Measure the card before choosing a side — a tall target (the life curve)
+    // leaves too little room above, and placing it there clipped the card off
+    // the top of the screen.
+    card.style.top = '0px';
+    card.style.bottom = '';
+    var cardH = card.offsetHeight;
+    var gap = 18;
+    var safeTop = 44; // below the prototype bar
+    var safeBottom = 12;
+
+    var roomBelow = vh - r.bottom - gap - safeBottom;
+    var roomAbove = r.top - gap - safeTop;
+
+    if (roomBelow >= cardH) {
+      card.style.top = (r.bottom + gap) + 'px';
       card.style.bottom = '';
-    } else {
+    } else if (roomAbove >= cardH) {
       card.style.top = '';
-      card.style.bottom = (vh - r.top + 18) + 'px';
+      card.style.bottom = (vh - r.top + gap) + 'px';
+    } else {
+      // Neither side fits: pin it to the bottom above the tab bar.
+      card.style.top = '';
+      card.style.bottom = '84px';
     }
   }
 
@@ -285,7 +304,7 @@
   });
 
   el('coach-skip').addEventListener('click', closeCoach);
-  el('j-help').addEventListener('click', openCoach);
+  // The tour is replayed from the menu sheet now that the app bar is the brand bar.
   window.addEventListener('resize', function () {
     if (el('coach').classList.contains('is-open')) positionCoach();
   });
@@ -336,44 +355,66 @@
 
   /* ------------------------------------------------------------ life curve */
 
+  /**
+   * Four tracks the user marks themselves. `mood` is the event line; the other
+   * three are optional overlays. None of them is computed or scored by the app —
+   * 신앙 included. There is no numeric axis anywhere.
+   */
+  var TRACKS = [
+    { key: 'mood', label: '사건', color: '#6D4AFF', main: true },
+    { key: 'emotion', label: '감정', color: '#E8833A' },
+    { key: 'faith', label: '신앙', color: '#2E9E6B' },
+    { key: 'finance', label: '재정', color: '#3E9BD6' },
+  ];
+
+  var activeTracks = { mood: true, emotion: false, faith: false, finance: false };
+
+  var SCALE = [
+    { v: -2, label: '많이 힘들었어요' },
+    { v: -1, label: '힘들었어요' },
+    { v: 0, label: '보통이었어요' },
+    { v: 1, label: '좋았어요' },
+    { v: 2, label: '많이 좋았어요' },
+  ];
+
   var LIFE_EVENTS = [
-    { age: 7, era: '유년기', title: '초등학교 입학', mood: 1,
+    { age: 7, era: '유년기', title: '초등학교 입학', mood: 1, emotion: 1, faith: 0, finance: 0,
       thought: '학교 가는 길이 멀어서 아침마다 뛰었어요. 엄마가 교문 앞까지 데려다주던 날이 아직 생각납니다.',
       reflection: '그때는 몰랐는데, 누군가 늘 데려다주고 있었다는 게 지금 보면 참 고맙습니다.' },
-    { age: 12, era: '유년기', title: '아버지 사업이 어려워짐', mood: -2,
+    { age: 12, era: '유년기', title: '아버지 사업이 어려워짐', mood: -2, emotion: -2, faith: -1, finance: -2,
       thought: '집 안 공기가 갑자기 달라졌어요. 어른들이 밤늦게까지 이야기하는 소리를 이불 속에서 들었습니다.',
       reflection: '그 시기를 지나며 걱정이 많은 사람이 된 것 같아요. 지금도 미리 불안해하는 버릇이 남아 있습니다.' },
-    { age: 16, era: '청소년기', title: '수련회에서 처음 울며 기도함', mood: 2,
+    { age: 16, era: '청소년기', title: '수련회에서 처음 울며 기도함', mood: 2, emotion: 2, faith: 2, finance: -1,
       thought: '왜 우는지도 모르고 한참 울었습니다. 그날 처음으로 하나님이 계시는구나 싶었어요.',
       reflection: '지금까지 붙잡고 있는 기억입니다. 힘들 때마다 그날로 돌아가 봅니다.' },
-    { age: 19, era: '대학·청년', title: '대학 입학, 집을 떠남', mood: 2,
+    { age: 19, era: '대학·청년', title: '대학 입학, 집을 떠남', mood: 2, emotion: 1, faith: 0, finance: -1,
       thought: '처음으로 혼자 사는 방이 생겼습니다. 자유로우면서도 밤에는 무서웠어요.',
       reflection: '혼자 있는 시간을 견디는 법을 그때 조금 배웠던 것 같습니다.' },
-    { age: 22, era: '대학·청년', title: '어머니 투병', mood: -2,
+    { age: 22, era: '대학·청년', title: '어머니 투병', mood: -2, emotion: -2, faith: -2, finance: -1,
       thought: '병원과 학교를 오갔습니다. 기도가 잘 안 나왔어요.',
       reflection: '그때 하나님께 화가 났었다는 걸 한참 뒤에야 인정했습니다.' },
-    { age: 25, era: '대학·청년', title: '첫 직장', mood: 1,
+    { age: 25, era: '대학·청년', title: '첫 직장', mood: 1, emotion: 1, faith: -1, finance: 1,
       thought: '첫 월급으로 어머니 내복을 샀습니다. 별것 아닌데 뿌듯했어요.',
       reflection: '일에 파묻혀 지내면서 교회와는 조금 멀어졌던 시기이기도 합니다.' },
-    { age: 28, era: '결혼', title: '결혼', mood: 3,
+    { age: 28, era: '결혼', title: '결혼', mood: 2, emotion: 2, faith: 1, finance: 1,
       thought: '앞으로는 혼자가 아니라는 게 가장 좋았습니다.',
       reflection: '그때의 마음이 잘못된 건 아니었어요. 지금도 그날은 좋은 날로 남아 있습니다.' },
-    { age: 30, era: '결혼', title: '첫 아이', mood: 3,
+    { age: 30, era: '결혼', title: '첫 아이', mood: 2, emotion: 2, faith: 1, finance: 0,
       thought: '작은 손이 제 손가락을 쥐던 순간을 잊지 못합니다.',
       reflection: '이 아이 때문에 버틴 날이 정말 많습니다.' },
-    { age: 34, era: '결혼', title: '오래 다투던 시기', mood: -2,
+    { age: 34, era: '결혼', title: '오래 다투던 시기', mood: -2, emotion: -2, faith: -1, finance: 0,
       thought: '같은 이야기를 반복했습니다. 서로 지쳐가는 게 보였어요.',
       reflection: '그 시기에 아이에게 큰 소리를 냈던 일들이 지금도 마음에 남아 있습니다.' },
-    { age: 36, era: '이후', title: '이혼', mood: -3,
+    { age: 36, era: '이후', title: '이혼', mood: -2, emotion: -2, faith: -2, finance: -2,
       thought: '제 인생이 여기서 끝난 것 같았습니다. 한동안 아무에게도 말하지 못했어요.',
       reflection: '오래 지나서야 이 일을 하나님 앞에 꺼내놓을 수 있었습니다. 아직 다 정리되지는 않았습니다.' },
-    { age: 38, era: '이후', title: '다시 교회에 나가기 시작함', mood: 0,
+    { age: 38, era: '이후', title: '다시 교회에 나가기 시작함', mood: 0, emotion: 0, faith: 1, finance: -1,
       thought: '맨 뒷자리에 앉았다가 축도 전에 나왔습니다. 그래도 매주 갔어요.',
       reflection: '돌아간 게 아니라 돌아가는 중이었다고 지금은 생각합니다.' },
-    { age: 39, era: '이후', title: '아이와 둘의 일상이 자리잡음', mood: 1,
+    { age: 39, era: '이후', title: '아이와 둘의 일상이 자리잡음', mood: 1, emotion: 1, faith: 1, finance: 0,
       thought: '저녁마다 같이 밥을 먹고 하루를 이야기합니다.',
       reflection: '화려하지 않아도 이런 하루가 얼마나 귀한지 이제 압니다.' },
-    { age: 40, era: '이후', title: '지금', mood: 1,
+    { age: 40, era: '이후', title: '지금', mood: 1, emotion: 1, faith: 1, finance: 0,
       thought: '조급한 마음이 아직 있지만, 예전보다는 덜합니다.',
       reflection: '오늘부터 남기는 기록이 다음 점이 됩니다.' },
   ];
@@ -381,12 +422,23 @@
   var selectedEvent = null;
 
   function renderLifeCurve(scrollHost, listHost, detailHost, events) {
-    var STEP = 138, padL = 66, padR = 66, H = 214;
+    var STEP = 152, padL = 36, padR = 36, H = 300;
     var W = padL + padR + STEP * (events.length - 1);
-    var baseY = 104, amp = 21;
+    var baseY = 152, amp = 38;
 
-    function yFor(m) { return baseY - m * amp; }
+    function yFor(m) { return baseY - (m || 0) * amp; }
     function xFor(i) { return padL + STEP * i; }
+
+    function pathFor(key) {
+      var pts = events.map(function (e, i) { return [xFor(i), yFor(e[key])]; });
+      var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
+      for (var i = 1; i < pts.length; i++) {
+        var p0 = pts[i - 1], p1 = pts[i];
+        d += ' C ' + (p0[0] + STEP / 2) + ' ' + p0[1] + ', ' + (p1[0] - STEP / 2) + ' ' + p1[1] +
+          ', ' + p1[0] + ' ' + p1[1];
+      }
+      return { d: d, pts: pts };
+    }
 
     var svg = ['<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="지나온 시간의 그래프">'];
 
@@ -409,14 +461,21 @@
 
     svg.push('<line class="lc-base" x1="0" y1="' + baseY + '" x2="' + W + '" y2="' + baseY + '" />');
 
-    var pts = events.map(function (e, i) { return [xFor(i), yFor(e.mood)]; });
-    var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
-    for (var i = 1; i < pts.length; i++) {
-      var p0 = pts[i - 1], p1 = pts[i];
-      d += ' C ' + (p0[0] + STEP / 2) + ' ' + p0[1] + ', ' + (p1[0] - STEP / 2) + ' ' + p1[1] + ', ' + p1[0] + ' ' + p1[1];
+    // Overlay tracks first so the event line stays on top.
+    TRACKS.filter(function (t) { return !t.main && activeTracks[t.key]; }).forEach(function (t) {
+      var p = pathFor(t.key);
+      svg.push('<path class="lc-track-line" d="' + p.d + '" stroke="' + t.color + '" />');
+      p.pts.forEach(function (pt) {
+        svg.push('<circle class="lc-track-dot" cx="' + pt[0] + '" cy="' + pt[1] + '" r="4.5" fill="' + t.color + '" />');
+      });
+    });
+
+    var main = pathFor('mood');
+    if (activeTracks.mood) {
+      svg.push('<path class="lc-area" d="' + main.d + ' L ' + main.pts[main.pts.length - 1][0] + ' ' +
+        (H - 44) + ' L ' + main.pts[0][0] + ' ' + (H - 44) + ' Z" />');
+      svg.push('<path class="lc-line" d="' + main.d + '" />');
     }
-    svg.push('<path class="lc-area" d="' + d + ' L ' + pts[pts.length - 1][0] + ' ' + (H - 44) + ' L ' + pts[0][0] + ' ' + (H - 44) + ' Z" />');
-    svg.push('<path class="lc-line" d="' + d + '" />');
 
     var lastX = xFor(events.length - 1);
     svg.push('<line class="lc-now" x1="' + lastX + '" y1="24" x2="' + lastX + '" y2="' + (H - 44) + '" />');
@@ -424,16 +483,26 @@
     events.forEach(function (e, idx) {
       var x = xFor(idx), y = yFor(e.mood);
       var on = selectedEvent === idx;
-      svg.push('<circle class="lc-dot' + (on ? ' lc-dot--on' : '') + '" cx="' + x + '" cy="' + y + '" r="' + (on ? 8 : 6) + '" data-ev="' + idx + '" />');
-      var stagger = idx % 2 === 0 ? 0 : (e.mood >= 0 ? -14 : 14);
-      var labelY = (e.mood >= 0 ? y - 17 : y + 25) + stagger;
-      var short = e.title.length > 9 ? e.title.slice(0, 8) + '…' : e.title;
-      svg.push('<text class="lc-label' + (on ? ' lc-label--on' : '') + '" x="' + x + '" y="' + labelY + '" text-anchor="middle" data-ev="' + idx + '">' + short + '</text>');
+      // Generous invisible hit area so the point is easy to tap.
+      svg.push('<circle cx="' + x + '" cy="' + y + '" r="22" fill="transparent" data-ev="' + idx + '" />');
+      svg.push('<circle class="lc-dot' + (on ? ' lc-dot--on' : '') + '" cx="' + x + '" cy="' + y +
+        '" r="' + (on ? 9 : 7) + '" data-ev="' + idx + '" />');
+      var stagger = idx % 2 === 0 ? 0 : (e.mood >= 0 ? -16 : 16);
+      var labelY = (e.mood >= 0 ? y - 19 : y + 28) + stagger;
+      var short = e.title.length > 10 ? e.title.slice(0, 9) + '…' : e.title;
+      svg.push('<text class="lc-label' + (on ? ' lc-label--on' : '') + '" x="' + x + '" y="' + labelY +
+        '" text-anchor="middle" data-ev="' + idx + '">' + short + '</text>');
       svg.push('<text class="lc-tick" x="' + x + '" y="' + (H - 22) + '" text-anchor="middle">' + e.age + '세</text>');
     });
 
     svg.push('</svg>');
     scrollHost.innerHTML = svg.join('');
+
+    el('j-tracks').innerHTML = TRACKS.map(function (t) {
+      return '<button class="track" type="button" data-track="' + t.key + '" aria-pressed="' +
+        !!activeTracks[t.key] + '" style="color:' + (activeTracks[t.key] ? t.color : '') + '">' +
+        '<i style="background:' + t.color + '"></i>' + t.label + '</button>';
+    }).join('');
 
     listHost.innerHTML = events.map(function (e, idx) {
       return '<button class="life-item" type="button" data-ev="' + idx + '" aria-expanded="' + (selectedEvent === idx) + '">' +
@@ -442,29 +511,70 @@
         '<span class="life-item__era">' + e.era + '</span></span></button>';
     }).join('');
 
-    if (selectedEvent === null) {
-      detailHost.innerHTML = '';
-    } else {
-      var e = events[selectedEvent];
-      detailHost.innerHTML = '<div class="life-detail">' +
-        '<p class="life-detail__when">' + e.age + '세 · ' + e.era + '</p>' +
-        '<p class="life-detail__title">' + e.title + '</p>' +
-        '<div class="life-detail__section"><p class="life-detail__label">그날의 생각</p>' +
-        '<p class="life-detail__body">' + e.thought + '</p></div>' +
-        '<div class="life-detail__section"><p class="life-detail__label">지금 돌아보면</p>' +
-        '<p class="life-detail__body">' + e.reflection + '</p></div></div>';
-    }
+    detailHost.innerHTML = '';
   }
 
+  /** Tapping a point or a list row opens that moment for reading and writing. */
   document.addEventListener('click', function (e) {
     var hit = e.target.closest ? e.target.closest('[data-ev]') : null;
-    if (!hit) return;
-    var idx = Number(hit.dataset.ev);
-    selectedEvent = selectedEvent === idx ? null : idx;
+    if (hit) { nav('life-event', { eventIndex: Number(hit.dataset.ev) }); return; }
+
+    var t = e.target.closest ? e.target.closest('[data-track]') : null;
+    if (!t) return;
+    var key = t.dataset.track;
+    activeTracks[key] = !activeTracks[key];
     var host = el('j-life-scroll');
     var keep = host.scrollLeft;
     renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
     host.scrollLeft = keep;
+  });
+
+  /* Life event — read and record */
+
+  screens['life-event'] = function (ctx) {
+    var idx = ctx.eventIndex;
+    var e = LIFE_EVENTS[idx];
+    if (!e) { nav('journey'); return; }
+
+    selectedEvent = idx;
+    el('le-when').textContent = e.age + '세 · ' + e.era;
+    el('le-title').textContent = e.title;
+    el('le-thought').value = e.thought || '';
+    el('le-reflection').value = e.reflection || '';
+
+    el('le-scales').innerHTML = TRACKS.map(function (t) {
+      return '<div class="card" style="margin-bottom:12px">' +
+        '<p class="heart__label" style="color:' + t.color + '">' + t.label +
+        (t.main ? ' <span class="note">(그래프의 기본 선)</span>' : '') + '</p>' +
+        '<div class="scale" style="margin-top:10px">' +
+        SCALE.map(function (s) {
+          return '<button class="scale__opt" type="button" data-scale="' + t.key + '" data-val="' + s.v +
+            '" aria-pressed="' + (Number(e[t.key] || 0) === s.v) + '">' + s.label + '</button>';
+        }).join('') + '</div></div>';
+    }).join('');
+
+    el('le-voice').innerHTML = voiceBlock();
+    el('le-privacy').innerHTML = privacyBlock(
+      '인생 그래프에 남긴 내용도 마찬가지입니다.',
+    );
+  };
+
+  el('le-scales').addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-scale]');
+    if (!b) return;
+    var e = LIFE_EVENTS[current.ctx.eventIndex];
+    e[b.dataset.scale] = Number(b.dataset.val);
+    Array.prototype.forEach.call(el('le-scales').querySelectorAll('[data-scale="' + b.dataset.scale + '"]'), function (n) {
+      n.setAttribute('aria-pressed', String(n === b));
+    });
+  });
+
+  el('le-save').addEventListener('click', function () {
+    var e = LIFE_EVENTS[current.ctx.eventIndex];
+    e.thought = el('le-thought').value.trim();
+    e.reflection = el('le-reflection').value.trim();
+    markerToast('인생 그래프');
+    nav('journey');
   });
 
   /* ------------------------------------------- shared blocks (voice/privacy) */
@@ -1184,12 +1294,57 @@
   /* Confession feed */
   var feedTab = 'all';
 
+  /**
+   * Placeholder artwork. No real photo is uploaded in this prototype — this
+   * stands in so the layout with an image can be judged.
+   */
+  function photoSvg(variant) {
+    var sets = {
+      window: ['#EDE7FF', '#D9CCFF', '#BFA9F5'],
+      sky: ['#E6F0FB', '#CFE2F6', '#A8C9EA'],
+    };
+    var c = sets[variant] || sets.window;
+    return '<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="사진 (예시 이미지)">' +
+      '<rect width="320" height="200" fill="' + c[0] + '"/>' +
+      '<circle cx="248" cy="52" r="26" fill="' + c[1] + '"/>' +
+      '<path d="M0 150 L70 108 L130 146 L196 96 L260 138 L320 112 L320 200 L0 200 Z" fill="' + c[2] + '" opacity="0.85"/>' +
+      '<path d="M0 172 L86 134 L152 168 L228 128 L320 158 L320 200 L0 200 Z" fill="' + c[1] + '" opacity="0.9"/>' +
+      '</svg>';
+  }
+
   var SAMPLE_FEED = [
-    { who: '이름 비공개', initial: '비', type: '기도', when: '2시간 전', body: '오래 붙잡고 있던 일을 오늘은 그냥 맡기기로 했습니다.\n\n결정하고 나니 마음이 조금 가벼워졌어요.' },
-    { who: '김은혜', initial: '김', type: '은혜', when: '5시간 전', body: '별일 없는 하루였는데, 저녁에 마음이 이상하게 잔잔했어요.' },
-    { who: '이름 비공개', initial: '비', type: '고백', when: '어제', body: '아이에게 또 큰 소리를 냈습니다.\n\n미안하다고 말하고 왔습니다. 다음에도 잘할 자신은 없지만, 오늘은 말했습니다.' },
-    { who: '박소망', initial: '박', type: '일상', when: '어제', body: '출근길에 라디오에서 나온 찬양 한 소절이 하루 종일 맴돌았습니다.' },
+    {
+      id: 's1', who: '이름 비공개', initial: '비', type: '기도', when: '2시간 전',
+      body: '오래 붙잡고 있던 일을 오늘은 그냥 맡기기로 했습니다.\n\n결정하고 나니 마음이 조금 가벼워졌어요.',
+      comments: [
+        { who: '이름 비공개', initial: '비', when: '1시간 전', body: '저도 요즘 그런 마음입니다. 같이 기도할게요.' },
+        { who: '김은혜', initial: '김', when: '40분 전', body: '읽었습니다. 오늘 하루 평안하시길요.' },
+      ],
+    },
+    {
+      id: 's2', who: '김은혜', initial: '김', type: '은혜', when: '5시간 전',
+      body: '별일 없는 하루였는데, 저녁에 마음이 이상하게 잔잔했어요.',
+      photo: 'sky', photoCap: '퇴근길 하늘',
+      comments: [{ who: '박소망', initial: '박', when: '3시간 전', body: '이런 저녁이 참 귀하죠.' }],
+    },
+    {
+      id: 's3', who: '이름 비공개', initial: '비', type: '고백', when: '어제',
+      body: '아이에게 또 큰 소리를 냈습니다.\n\n미안하다고 말하고 왔습니다. 다음에도 잘할 자신은 없지만, 오늘은 말했습니다.',
+      comments: [{ who: '이름 비공개', initial: '비', when: '어제', body: '말했다는 것만으로도 큰 걸음이라고 생각합니다.' }],
+    },
+    {
+      id: 's4', who: '박소망', initial: '박', type: '일상', when: '어제',
+      body: '출근길에 라디오에서 나온 찬양 한 소절이 하루 종일 맴돌았습니다.',
+      comments: [],
+    },
   ];
+
+  /** Comments the user adds during the session, keyed by post id. */
+  var myComments = {};
+
+  function commentsFor(post) {
+    return (post.comments || []).concat(myComments[post.id] || []);
+  }
 
   screens.confession = function () {
     Array.prototype.forEach.call(document.querySelectorAll('#cf-seg .seg__item'), function (b) {
@@ -1198,31 +1353,89 @@
 
     var mine = byType('confession').slice().reverse().map(function (r) {
       return {
+        id: r.id,
         who: r.privacy === 'named' ? '나' : '이름 비공개',
         initial: '나',
         type: r.ctype || '고백',
         when: prettyDay(r.day),
         body: r.body || r.title,
+        photo: r.photo,
+        photoCap: r.photoCap,
+        comments: [],
         mine: true,
       };
     });
 
-    var list = feedTab === 'mine' ? mine : mine.concat(SAMPLE_FEED);
+    feedPosts = feedTab === 'mine' ? mine : mine.concat(SAMPLE_FEED);
 
-    el('cf-list').innerHTML = list.length
-      ? list.map(function (p) {
-          return '<article class="post"><span class="post__avatar">' + p.initial + '</span>' +
-            '<div class="post__main"><div class="post__meta">' +
-            '<span class="post__who">' + p.who + '</span><span>·</span><span>' + p.when + '</span>' +
-            (p.mine ? '<span>·</span><span>내 기록</span>' : '') + '</div>' +
-            '<p class="post__body">' + p.body + '</p>' +
-            '<span class="post__tag">' + p.type + '</span>' +
-            '<div class="post__actions"><button class="react" aria-pressed="false" type="button">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9.6A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.4c0 5.2-7 9.6-7 9.6z"/></svg>' +
-            '함께 기도해요</button></div></div></article>';
-        }).join('')
+    el('cf-list').innerHTML = feedPosts.length
+      ? feedPosts.map(postHtml).join('')
       : '<div class="empty" style="margin:16px"><p class="empty__title">아직 나눈 기록이 없습니다.</p></div>';
   };
+
+  /** Rendered both in the feed and at the top of the comments screen. */
+  function postHtml(p, opts) {
+    var n = commentsFor(p).length;
+    return '<article class="post"><span class="post__avatar">' + p.initial + '</span>' +
+      '<div class="post__main"><div class="post__meta">' +
+      '<span class="post__who">' + p.who + '</span><span>·</span><span>' + p.when + '</span>' +
+      (p.mine ? '<span>·</span><span>내 기록</span>' : '') + '</div>' +
+      '<p class="post__body">' + p.body + '</p>' +
+      (p.photo
+        ? '<div class="post__photo">' + photoSvg(p.photo) +
+          (p.photoCap ? '<p class="post__photo-cap">' + p.photoCap + '</p>' : '') + '</div>'
+        : '') +
+      '<span class="post__tag">' + p.type + '</span>' +
+      (opts && opts.noActions ? '' :
+        '<div class="post__actions">' +
+        '<button class="react" aria-pressed="false" type="button">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9.6A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.4c0 5.2-7 9.6-7 9.6z"/></svg>' +
+        '함께 기도해요</button>' +
+        '<button class="react" type="button" data-comments="' + p.id + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H5l1.8-1.8A8 8 0 1 1 21 12z"/></svg>' +
+        (n ? '댓글 ' + n : '댓글') + '</button></div>') +
+      '</div></article>';
+  }
+
+  /* Comments */
+  var feedPosts = [];
+
+  function findPost(id) {
+    return feedPosts.filter(function (p) { return p.id === id; })[0];
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-comments]');
+    if (b) nav('comments', { postId: b.dataset.comments });
+  });
+
+  screens.comments = function (ctx) {
+    var p = findPost(ctx.postId);
+    if (!p) { nav('confession'); return; }
+    el('cm-post').innerHTML = postHtml(p, { noActions: true });
+
+    var list = commentsFor(p);
+    el('cm-list').innerHTML = list.length
+      ? list.map(function (c) {
+          return '<div class="comment"><span class="comment__avatar">' + c.initial + '</span>' +
+            '<div class="comment__main"><p class="comment__meta">' +
+            '<span class="comment__who">' + c.who + '</span>' + c.when + '</p>' +
+            '<p class="comment__body">' + c.body + '</p></div></div>';
+        }).join('')
+      : '<div class="empty" style="margin:16px"><p class="empty__title">아직 댓글이 없습니다.</p>' +
+        '<p class="empty__body">먼저 한마디를 남겨보셔도 좋습니다.</p></div>';
+
+    el('cm-input').value = '';
+  };
+
+  el('cm-send').addEventListener('click', function () {
+    var text = el('cm-input').value.trim();
+    if (!text) { el('cm-input').focus(); return; }
+    var id = current.ctx.postId;
+    if (!myComments[id]) myComments[id] = [];
+    myComments[id].push({ who: '나', initial: '나', when: '방금', body: text });
+    screens.comments({ postId: id });
+  });
 
   Array.prototype.forEach.call(document.querySelectorAll('#cf-seg .seg__item'), function (b) {
     b.addEventListener('click', function () { feedTab = b.dataset.feed; screens.confession(); });
@@ -1239,9 +1452,29 @@
   /* Composer */
   var composerType = '기도';
   var composerPrivacy = 'masked';
+  var composerPhoto = null;
+
+  function renderPhotoPreview() {
+    el('cp-photo-preview').innerHTML = composerPhoto
+      ? '<div class="photo-preview"><span class="photo-preview__thumb">' + photoSvg(composerPhoto) + '</span>' +
+        '<span><span class="photo-preview__name">사진 1장</span>' +
+        '<span class="photo-preview__meta">올리기 전에 미리 보여집니다</span></span>' +
+        '<button class="photo-preview__remove" id="cp-photo-remove" type="button">빼기</button></div>'
+      : '';
+    var rm = el('cp-photo-remove');
+    if (rm) rm.addEventListener('click', function () { composerPhoto = null; renderPhotoPreview(); });
+  }
+
+  el('cp-photo-add').addEventListener('click', function () {
+    // A real picker would open here; the prototype attaches a stand-in image.
+    composerPhoto = composerPhoto ? null : 'window';
+    renderPhotoPreview();
+  });
 
   screens.composer = function () {
     el('cp-input').value = '';
+    composerPhoto = null;
+    renderPhotoPreview();
     Array.prototype.forEach.call(document.querySelectorAll('#cp-types .chip'), function (c) {
       c.setAttribute('aria-pressed', String(c.dataset.type === composerType));
     });
@@ -1271,7 +1504,12 @@
   el('cp-save').addEventListener('click', function () {
     var text = el('cp-input').value.trim();
     if (!text) { el('cp-input').focus(); return; }
-    add('confession', text.slice(0, 24), text, { privacy: composerPrivacy, ctype: composerType });
+    add('confession', text.slice(0, 24), text, {
+      privacy: composerPrivacy,
+      ctype: composerType,
+      photo: composerPhoto || undefined,
+      photoCap: composerPhoto ? '내가 올린 사진' : undefined,
+    });
     markerToast('고백');
     nav('confession', null, { replace: true });
   });
@@ -1319,6 +1557,48 @@
     nav('confession', null, { replace: true });
   });
 
+  /* --------------------------------------------------------------- sheets */
+
+  function openSheet(kind) {
+    var panel = el('sheet-panel');
+
+    if (kind === 'me') {
+      var total = store.records.length;
+      panel.innerHTML = '<div class="sheet__handle"></div>' +
+        '<div class="sheet__profile"><span class="sheet__avatar">나</span>' +
+        '<span><span class="sheet__name">나</span><br>' +
+        '<span class="sheet__meta">지금까지 남긴 기록 ' + total + '개</span></span></div>' +
+        ['내 기록 모아보기', '개인정보와 공개 범위', '알림 설정', '계정'].map(function (t) {
+          return '<button class="sheet__item" type="button"><span>' + t + '</span><span>›</span></button>';
+        }).join('') +
+        '<p class="note" style="padding:12px 20px 0">프로토타입이라 아직 열리지 않는 항목이 있습니다.</p>';
+    } else {
+      panel.innerHTML = '<div class="sheet__handle"></div>' +
+        '<p class="sheet__title">메뉴</p>' +
+        '<button class="sheet__item" type="button" data-sheet-action="coach"><span>사용법 다시 보기</span><span>›</span></button>' +
+        '<a class="sheet__item" href="./repent-app-spec.md" download="REPENT-앱내용.md"><span>앱 내용 내려받기</span><span>›</span></a>' +
+        ['공지', '문의하기', '설정'].map(function (t) {
+          return '<button class="sheet__item" type="button"><span>' + t + '</span><span>›</span></button>';
+        }).join('') +
+        '<p class="note" style="padding:12px 20px 0">프로토타입이라 아직 열리지 않는 항목이 있습니다.</p>';
+    }
+
+    el('sheet').classList.add('is-open');
+  }
+
+  function closeSheet() { el('sheet').classList.remove('is-open'); }
+
+  document.addEventListener('click', function (e) {
+    var open = e.target.closest && e.target.closest('[data-sheet]');
+    if (open) { openSheet(open.dataset.sheet); return; }
+    if (e.target.closest && e.target.closest('[data-sheet-close]')) { closeSheet(); return; }
+    var act = e.target.closest && e.target.closest('[data-sheet-action]');
+    if (act) {
+      closeSheet();
+      if (act.dataset.sheetAction === 'coach') { nav('journey'); setTimeout(openCoach, 200); }
+    }
+  });
+
   /* ------------------------------------------------------------ nav/chrome */
 
   Array.prototype.forEach.call(document.querySelectorAll('.nav__item'), function (n) {
@@ -1337,7 +1617,8 @@
     ['01 Intro', 'intro', 'reset'],
     ['02 홈 + 사용법 코치마크', 'journey', 'coach'],
     ['03 여정 (홈)', 'journey', 'seed'],
-    ['04 첫 기록 → 여정 안착', 'first-saved', 'first'],
+    ['04 인생 그래프 — 사건 기록/편집', 'life-event', 'seed-event'],
+    ['05 첫 기록 → 여정 안착', 'first-saved', 'first'],
     ['05 기도 — 묶음 목록', 'prayer', 'seed'],
     ['06 기도 — 묶음 안 제목들', 'prayer-group', 'seed'],
     ['07 기도 — 제목 상세', 'prayer-detail', 'seed'],
@@ -1353,9 +1634,10 @@
     ['17 회개 — 실행에서 이어짐', 'repentance', 'seed-linked'],
     ['18 회개 → 나누기 브릿지', 'repentance-bridge', 'seed'],
     ['19 지난 회개 기록', 'repentance-history', 'seed'],
-    ['20 고백 피드', 'confession', 'seed'],
-    ['21 고백 작성', 'composer', 'seed'],
-    ['22 ShareCopy → 고백 미리보기', 'sharecopy', 'seed'],
+    ['20 고백 피드 (사진·댓글)', 'confession', 'seed'],
+    ['21 고백 — 댓글', 'comments', 'seed-comments'],
+    ['22 고백 작성 (사진 첨부)', 'composer', 'seed'],
+    ['23 ShareCopy → 고백 미리보기', 'sharecopy', 'seed'],
   ];
 
   el('proto-index-list').innerHTML = INDEX.map(function (row, i) {
@@ -1370,7 +1652,11 @@
 
     if (mode === 'reset') resetData();
     if (mode === 'first') { resetData(); add('prayer', '조급한 마음을 내려놓게 해주세요', '', { group: 'self' }); }
-    if (mode === 'seed' || mode === 'seed-linked' || mode === 'coach' || mode === 'seed-scripts') seedData();
+    if (mode === 'seed' || mode === 'seed-linked' || mode === 'coach' ||
+        mode === 'seed-scripts' || mode === 'seed-comments' || mode === 'seed-event') seedData();
+
+    // The comments screen needs the feed list built first.
+    if (mode === 'seed-comments') { feedTab = 'all'; screens.confession(); }
 
     stack = [];
     selectedEvent = null;
@@ -1380,6 +1666,8 @@
     if (row[1] === 'prayer-group') ctx = { groupId: 'self' };
     if (row[1] === 'prayer-detail') ctx = { prayerId: 'r1' };
     if (row[1] === 'script-detail') ctx = { scriptId: 'r14' };
+    if (row[1] === 'comments') ctx = { postId: 's2' };
+    if (row[1] === 'life-event') ctx = { eventIndex: 9 };
     if (row[1] === 'prayer-bridge') ctx = { prayerId: 'r1', title: '조급한 마음을 내려놓게 해주세요' };
     if (row[1] === 'first-saved') ctx = { label: '기도' };
     if (row[1] === 'reflection') {

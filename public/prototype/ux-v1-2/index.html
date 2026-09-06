@@ -65,11 +65,14 @@
 
   <!-- ============================= JOURNEY (HOME) ======================= -->
   <section class="screen" id="screen-journey">
-    <header class="appbar">
-      <span class="appbar__title">여정</span>
+    <header class="appbar appbar--brand">
+      <span class="appbar__brand">REPENT</span>
       <span class="appbar__spacer"></span>
-      <button class="appbar__btn" id="j-help" type="button" aria-label="사용법 다시 보기">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.3 2.5c-.6.2-.8.6-.8 1.2v.4" stroke-linecap="round"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/></svg>
+      <button class="appbar__btn" data-sheet="menu" type="button" aria-label="메뉴">
+        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <button class="appbar__btn" data-sheet="me" type="button" aria-label="마이페이지">
+        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
       </button>
     </header>
 
@@ -81,11 +84,13 @@
           <span class="life__title">인생 그래프</span>
           <span class="badge badge--sample">예시</span>
         </div>
-        <p class="life__hint">좌우로 밀어보세요. 지나온 시간이 순서대로 이어집니다.</p>
+        <p class="life__hint">좌우로 밀어보세요. 점을 누르면 그때를 자세히 보고 기록할 수 있어요.</p>
+        <div class="tracks" id="j-tracks"></div>
         <div class="life__scroll" id="j-life-scroll"></div>
         <p class="life__axis-note">
-          위아래 높낮이는 <b>그때의 마음</b>을 본인이 직접 표시한 것입니다.
-          신앙의 수준이나 점수가 아니며, 앱이 판단하지 않습니다.
+          위아래 높낮이는 <b>그때 스스로 어떻게 느꼈는지</b>를 본인이 직접 표시한 것입니다.
+          앱이나 AI가 계산하거나 평가하지 않으며, 신앙의 수준을 재는 점수가 아닙니다.
+          숫자나 눈금을 두지 않은 것도 그 때문입니다.
         </p>
       </div>
 
@@ -160,10 +165,16 @@
 
   <!-- ========================= PRAYER — GROUP LIST ====================== -->
   <section class="screen" id="screen-prayer">
-    <header class="appbar">
-      <span class="appbar__title">기도</span>
-      <span class="appbar__spacer"></span>
-    </header>
+    <header class="appbar appbar--brand">
+          <span class="appbar__brand">REPENT</span>
+          <span class="appbar__spacer"></span>
+          <button class="appbar__btn" data-sheet="menu" type="button" aria-label="메뉴">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <button class="appbar__btn" data-sheet="me" type="button" aria-label="마이페이지">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+          </button>
+        </header>
 
     <div class="seg" id="p-seg">
       <button class="seg__item" data-ptab="titles" aria-selected="true" type="button">기도 제목</button>
@@ -426,10 +437,16 @@
 
   <!-- ========================= PROMISE DASHBOARD ======================== -->
   <section class="screen" id="screen-promise">
-    <header class="appbar">
-      <span class="appbar__title">약속</span>
-      <span class="appbar__spacer"></span>
-    </header>
+    <header class="appbar appbar--brand">
+          <span class="appbar__brand">REPENT</span>
+          <span class="appbar__spacer"></span>
+          <button class="appbar__btn" data-sheet="menu" type="button" aria-label="메뉴">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <button class="appbar__btn" data-sheet="me" type="button" aria-label="마이페이지">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+          </button>
+        </header>
 
     <div class="scroll">
       <div class="context" data-context></div>
@@ -547,10 +564,16 @@
 
   <!-- ============================ REPENTANCE ============================ -->
   <section class="screen" id="screen-repentance">
-    <header class="appbar">
-      <span class="appbar__title">회개</span>
-      <span class="appbar__spacer"></span>
-    </header>
+    <header class="appbar appbar--brand">
+          <span class="appbar__brand">REPENT</span>
+          <span class="appbar__spacer"></span>
+          <button class="appbar__btn" data-sheet="menu" type="button" aria-label="메뉴">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <button class="appbar__btn" data-sheet="me" type="button" aria-label="마이페이지">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+          </button>
+        </header>
 
     <div class="scroll">
       <div class="context" data-context></div>
@@ -680,10 +703,16 @@
 
   <!-- ========================== CONFESSION FEED ========================= -->
   <section class="screen" id="screen-confession">
-    <header class="appbar">
-      <span class="appbar__title">고백</span>
-      <span class="appbar__spacer"></span>
-    </header>
+    <header class="appbar appbar--brand">
+          <span class="appbar__brand">REPENT</span>
+          <span class="appbar__spacer"></span>
+          <button class="appbar__btn" data-sheet="menu" type="button" aria-label="메뉴">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <button class="appbar__btn" data-sheet="me" type="button" aria-label="마이페이지">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+          </button>
+        </header>
 
     <div class="seg" id="cf-seg">
       <button class="seg__item" data-feed="all" aria-selected="true" type="button">전체</button>
@@ -733,10 +762,47 @@
         </div>
       </div>
 
+      <div class="field">
+        <span class="field__label">사진 <span class="note">(선택)</span></span>
+        <button class="photo-add" id="cp-photo-add" type="button">
+          <span class="photo-add__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m5 17 4.5-4.5L13 16l2.5-2.5L20 18"/></svg>
+          </span>
+          <span><span class="photo-add__label">사진 넣기</span>
+          <span class="photo-add__hint">한 장까지 · 얼굴이나 개인정보가 담긴 사진은 피해 주세요</span></span>
+        </button>
+        <div id="cp-photo-preview"></div>
+      </div>
+
       <div id="cp-voice"></div>
       <div id="cp-privacy-note" style="margin:16px 0"></div>
 
       <button class="cta" id="cp-save" type="button">남기기</button>
+    </div>
+  </section>
+
+  <!-- ============================== COMMENTS ============================ -->
+  <section class="screen" id="screen-comments">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title">댓글</span>
+    </header>
+
+    <div class="scroll scroll--flush" style="padding-bottom:0">
+      <div class="feed" id="cm-post"></div>
+
+      <p class="comment-guide">
+        판단하거나 조언하려 하지 않아도 됩니다. 읽었다는 것만 전해도 충분합니다.
+      </p>
+
+      <div id="cm-list"></div>
+
+      <div style="height:80px"></div>
+    </div>
+
+    <div class="comment-form">
+      <input class="input" id="cm-input" type="text" placeholder="함께 나눌 한마디" aria-label="댓글" />
+      <button class="comment-form__send" id="cm-send" type="button">남기기</button>
     </div>
   </section>
 
@@ -764,6 +830,48 @@
         <p class="note">
           원본은 그대로 남습니다. 사본은 원본과 분리되어, 원본을 고쳐도 함께 바뀌지 않습니다.
         </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== LIFE EVENT — VIEW & EDIT ==================== -->
+  <section class="screen" id="screen-life-event">
+    <header class="appbar">
+      <button class="appbar__back" data-back type="button" aria-label="뒤로">‹</button>
+      <span class="appbar__title" id="le-bar">그때 기록하기</span>
+    </header>
+
+    <div class="scroll">
+      <div class="head">
+        <p class="head__eyebrow" id="le-when"></p>
+        <h1 class="head__title" id="le-title"></h1>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="le-thought">그날의 생각</label>
+        <p class="field__hint">그때 무슨 생각을 했는지, 기억나는 대로 적어보세요.</p>
+        <textarea class="textarea" id="le-thought"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="le-reflection">지금 돌아보면</label>
+        <p class="field__hint">시간이 지난 지금은 그 일이 어떻게 보이나요?</p>
+        <textarea class="textarea" id="le-reflection"></textarea>
+      </div>
+
+      <div class="section">
+        <p class="section__title">그때의 상태</p>
+        <p class="note" style="margin:-6px 0 12px">
+          네 가지 모두 본인이 직접 표시합니다. 앱은 계산하지도, 평가하지도 않습니다.
+        </p>
+        <div id="le-scales"></div>
+      </div>
+
+      <div id="le-voice" style="margin-top:16px"></div>
+      <div id="le-privacy" style="margin-top:16px"></div>
+
+      <div class="section stack">
+        <button class="cta" id="le-save" type="button">이 기록 저장</button>
       </div>
     </div>
   </section>
@@ -806,6 +914,12 @@
         <button class="coach__next" id="coach-next" type="button">다음</button>
       </div>
     </div>
+  </div>
+
+  <!-- ========================= SHEETS (menu / me) ======================= -->
+  <div class="sheet" id="sheet" role="dialog" aria-label="메뉴">
+    <div class="sheet__scrim" data-sheet-close></div>
+    <div class="sheet__panel" id="sheet-panel"></div>
   </div>
 
   <div class="toast" id="toast" role="status">
