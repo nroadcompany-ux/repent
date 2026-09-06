@@ -1,76 +1,83 @@
-import { ENABLED_REACTIONS, REACTION_LABELS } from '@/domain/product-lock'
-import type { ReactionType } from '@/lib/supabase/database.types'
-import { toggleReaction } from '../actions'
+import Link from 'next/link'
 
-/**
- * Confession reactions — the canonical three (docs/04, AC-06):
- *   함께 기도해요 / 은혜받았어요 / 마음이 닿았어요
- *
- * Rules held here:
- *   · 1 user : 1 reaction per post, changeable — picking a second one replaces
- *     the first; picking the same one again clears it. The composite primary
- *     key on confession_reactions enforces the same thing in the database.
- *   · Counts are shown per reaction, never summed into a rank and never used
- *     to order the feed (docs/04, docs/08 forbid 인기순 / TOP / 영적 Ranking).
- *   · A count is a count of people, not a measure of the writer's faith.
- */
+import { toggleSimpleReaction } from '../vote-actions'
+
+export type VoteType = 'like' | 'dislike'
+
+/** Owner simplified Confession feedback to 👍 / 👎 / 💬 + counts. */
 export function ReactionBar({
   postId,
   counts,
   mine,
   returnTo,
+  commentCount = 0,
+  commentHref,
 }: {
   postId: string
-  /** reaction type -> number of members who chose it */
-  counts: Map<ReactionType, number>
-  /** the reaction this member currently has on this post, if any */
-  mine: ReactionType | null
+  counts: Map<VoteType, number>
+  mine: VoteType | null
   returnTo: string
+  commentCount?: number
+  commentHref?: string
 }) {
+  const buttons: Array<{ type: VoteType; icon: string; label: string }> = [
+    { type: 'like', icon: '👍', label: '좋아요' },
+    { type: 'dislike', icon: '👎', label: '싫어요' },
+  ]
+
   return (
-    <div className="flex flex-wrap gap-2">
-      {ENABLED_REACTIONS.map((type) => {
+    <div className="flex items-center gap-2">
+      {buttons.map(({ type, icon, label }) => {
         const selected = mine === type
-        const count = counts.get(type) ?? 0
         return (
-          <form key={type} action={toggleReaction}>
+          <form key={type} action={toggleSimpleReaction}>
             <input type="hidden" name="post_id" value={postId} />
             <input type="hidden" name="type" value={type} />
             <input type="hidden" name="return_to" value={returnTo} />
             <button
               type="submit"
+              aria-label={label}
               aria-pressed={selected}
-              className={`text-caption inline-flex items-center gap-[6px] rounded-chip px-3 py-[7px] font-medium transition-colors ${
-                selected
-                  ? 'bg-accent text-white'
-                  : 'border border-line bg-surface text-ink-muted'
+              className={`text-body-sm inline-flex min-h-9 items-center gap-1 rounded-chip px-3 font-medium ${
+                selected ? 'bg-accent-tint text-accent' : 'text-ink-muted'
               }`}
             >
-              <span>{REACTION_LABELS[type]}</span>
-              {count > 0 ? (
-                <span className={selected ? 'text-white/80' : 'text-ink-faint'}>{count}</span>
-              ) : null}
+              <span aria-hidden="true">{icon}</span>
+              <span>{counts.get(type) ?? 0}</span>
             </button>
           </form>
         )
       })}
+
+      {commentHref ? (
+        <Link
+          href={commentHref}
+          aria-label="댓글"
+          className="text-body-sm inline-flex min-h-9 items-center gap-1 rounded-chip px-3 font-medium text-ink-muted"
+        >
+          <span aria-hidden="true">💬</span>
+          <span>{commentCount}</span>
+        </Link>
+      ) : null}
     </div>
   )
 }
 
-/** Groups reaction rows into per-type counts plus this member's own choice. */
 export function tallyReactions(
-  rows: ReadonlyArray<{ post_id: string; user_id: string; type: ReactionType }>,
+  rows: ReadonlyArray<{ post_id: string; user_id: string; type: unknown }>,
   userId: string,
 ) {
-  const counts = new Map<string, Map<ReactionType, number>>()
-  const mine = new Map<string, ReactionType>()
+  const counts = new Map<string, Map<VoteType, number>>()
+  const mine = new Map<string, VoteType>()
 
   for (const row of rows) {
-    const perPost = counts.get(row.post_id) ?? new Map<ReactionType, number>()
-    perPost.set(row.type, (perPost.get(row.type) ?? 0) + 1)
+    const type = String(row.type)
+    if (type !== 'like' && type !== 'dislike') continue
+    const vote = type as VoteType
+    const perPost = counts.get(row.post_id) ?? new Map<VoteType, number>()
+    perPost.set(vote, (perPost.get(vote) ?? 0) + 1)
     counts.set(row.post_id, perPost)
-    if (row.user_id === userId) mine.set(row.post_id, row.type)
+    if (row.user_id === userId) mine.set(row.post_id, vote)
   }
 
   return { counts, mine }
