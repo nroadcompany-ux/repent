@@ -42,8 +42,16 @@ export async function getJourneyHome(supabase: Supabase, userId: string): Promis
   const today = todayKst()
   const from = addDays(today, -(JOURNEY_GRAPH_DAYS - 1))
 
-  const [scriptureResult, readingResult, topicsResult, promisesResult, checksResult, moodResult, eventResult] =
-    await Promise.all([
+  const [
+    scriptureResult,
+    readingResult,
+    chaptersReadResult,
+    topicsResult,
+    promisesResult,
+    checksResult,
+    moodResult,
+    eventResult,
+  ] = await Promise.all([
       supabase
         .from('saved_scriptures')
         .select('reference, memo')
@@ -59,6 +67,13 @@ export async function getJourneyHome(supabase: Supabase, userId: string): Promis
         .order('read_on', { ascending: false })
         .limit(1)
         .maybeSingle(),
+
+      // Total chapters read. Batched here rather than awaited afterwards: a
+      // trailing query adds a whole extra crossing to the Supabase region.
+      supabase
+        .from('bible_reading_progress')
+        .select('book', { count: 'exact', head: true })
+        .eq('user_id', userId),
 
       supabase
         .from('prayer_topics')
@@ -97,10 +112,7 @@ export async function getJourneyHome(supabase: Supabase, userId: string): Promis
         .order('occurred_on'),
     ])
 
-  const { count: chaptersRead } = await supabase
-    .from('bible_reading_progress')
-    .select('book', { count: 'exact', head: true })
-    .eq('user_id', userId)
+  const chaptersRead = chaptersReadResult.count
 
   const nextTopic = topicsResult.data?.[0] ?? null
   const activePromises = promisesResult.data ?? []

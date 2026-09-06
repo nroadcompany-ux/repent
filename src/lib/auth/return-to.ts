@@ -1,6 +1,6 @@
-import 'server-only'
-
 import { cookies } from 'next/headers'
+
+import { DEFAULT_RETURN_PATH, safeReturnPath } from './safe-path'
 
 /**
  * Where to send a member once authentication finishes.
@@ -12,14 +12,14 @@ import { cookies } from 'next/headers'
  *   https://repent-app.vercel.app/auth/callback
  *   https://repent-app.vercel.app/auth/confirm
  *
- * with no wildcard, which is what the minimal-scope rule asks for.
+ * with no wildcard. The open-redirect guard lives in ./safe-path.ts.
  */
 
 export const AUTH_NEXT_COOKIE = 'return_auth_next'
 
-/** Only same-site paths are stored; an absolute URL would be an open redirect. */
+/** Only same-site paths are stored; anything else is silently dropped. */
 export async function rememberReturnTo(next: string | null, secure: boolean) {
-  const safe = next && next.startsWith('/') && !next.startsWith('//') ? next : null
+  const safe = safeReturnPath(next)
   if (!safe) return
 
   const cookieStore = await cookies()
@@ -32,11 +32,15 @@ export async function rememberReturnTo(next: string | null, secure: boolean) {
   })
 }
 
-/** Reads and clears the cookie. Falls back to Journey. */
-export async function takeReturnTo(fallback = '/journey'): Promise<string> {
+/**
+ * Reads and clears the cookie. The stored value is validated again on the way
+ * out, so a cookie written by an older build - or tampered with - still cannot
+ * produce an off-site redirect.
+ */
+export async function takeReturnTo(fallback: string = DEFAULT_RETURN_PATH): Promise<string> {
   const cookieStore = await cookies()
   const value = cookieStore.get(AUTH_NEXT_COOKIE)?.value
   if (value) cookieStore.delete(AUTH_NEXT_COOKIE)
 
-  return value && value.startsWith('/') && !value.startsWith('//') ? value : fallback
+  return safeReturnPath(value) ?? fallback
 }

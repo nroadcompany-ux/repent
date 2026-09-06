@@ -3,6 +3,7 @@ import 'server-only'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
 
 import { requirePublicEnv } from '../env'
 import type { Database } from './database.types'
@@ -14,7 +15,7 @@ import type { Database } from './database.types'
  * Level Security. Nothing in the app bypasses RLS except the explicitly
  * server-only admin client in ./admin.ts.
  */
-export async function createClient() {
+export const createClient = cache(async () => {
   const cookieStore = await cookies()
   const { supabaseUrl, supabaseAnonKey } = requirePublicEnv()
 
@@ -35,28 +36,33 @@ export async function createClient() {
       },
     },
   })
-}
+})
 
-/** The signed-in user, or null. Never throws for an anonymous visitor. */
-export async function getUser() {
+/**
+ * The signed-in user, or null. Never throws for an anonymous visitor.
+ *
+ * Wrapped in React `cache` because `auth.getUser()` is a network round trip to
+ * Supabase, and a single page render asks for the user more than once — the
+ * (app) layout checks the onboarding gate and the page itself calls
+ * requireUser(). Without this the same journey costs two crossings to the
+ * Supabase region instead of one.
+ */
+export const getUser = cache(async () => {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
   return user
-}
+})
 
 /**
  * Guard for every authenticated route. Returns the user id and a client, or
  * redirects to the login screen.
  */
 export async function requireUser() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const user = await getUser()
   if (!user) redirect('/login')
 
+  const supabase = await createClient()
   return { supabase, user, userId: user.id }
 }

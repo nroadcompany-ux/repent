@@ -785,10 +785,11 @@ describe('redirect allowlist scope', () => {
     expect(callback).toContain('takeReturnTo')
   })
 
-  it('refuses an absolute return path', () => {
+  it('routes the return path through the open-redirect guard', () => {
+    // The guard itself is exercised behaviourally in tests/safe-return-path.test.ts;
+    // this only proves both ends actually call it.
     const returnTo = readFileSync(join(ROOT, 'src/lib/auth/return-to.ts'), 'utf8')
-    // Blocks both http://evil and protocol-relative //evil.
-    expect(returnTo).toContain("startsWith('/')")
-    expect(returnTo).toContain("startsWith('//')")
+    expect(returnTo).toContain("from './safe-path'")
+    expect(returnTo.match(/safeReturnPath\(/g)?.length).toBe(2)
   })
 })
