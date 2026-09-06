@@ -55,13 +55,13 @@ export const ACTION_IS_BOTTOM_TAB = false
 export const SEARCH_LIVES_IN_JOURNEY = true
 
 /* -------------------------------------------------------------------------
- * Repentance (docs/01, docs/02, docs/04, AC-04)
+ * Repentance (Owner UX simplification 2026-09-06)
  * ---------------------------------------------------------------------- */
 
-/** Korean is the primary flow. 4R is an internal framework only. */
-export const REPENTANCE_STEPS = ['돌아보기', '깨닫기', '돌이킴 약속', '돌아가기'] as const
+/** New records use three plain-language writing steps. Legacy DB fields remain. */
+export const REPENTANCE_STEPS = ['있었던 일', '깨달은 것', '돌아가기'] as const
 
-/** Exact final CTA. AC-04: "Final CTA는 정확히 `회개 기록 마치기`다." */
+/** Exact final CTA stays simple and explicit. */
 export const REPENTANCE_FINAL_CTA = '회개 기록 마치기'
 
 /** No progress %, no completion rate, no score on the repentance flow. */
