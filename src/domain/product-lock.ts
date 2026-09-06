@@ -123,23 +123,44 @@ export const CONFESSION_TYPE_LABELS = {
   daily: '일상',
 } as const
 
-/** Canonical 3종 (docs/04, AC-06). */
-export const REACTION_LABELS = {
+/**
+ * Confession feedback — Owner decision 2026-09-06.
+ *
+ * The live model is 좋아요 / 싫어요 / 댓글 수. It supersedes the earlier
+ * three-reaction set (함께 기도해요 / 은혜받았어요 / 마음이 닿았어요), which is
+ * kept below only so historical rows stay readable.
+ */
+export const CONFESSION_VOTES = ['like', 'dislike'] as const
+export type ConfessionVote = (typeof CONFESSION_VOTES)[number]
+
+export const CONFESSION_VOTE_LABELS: Record<ConfessionVote, string> = {
+  like: '좋아요',
+  dislike: '싫어요',
+}
+
+export const CONFESSION_VOTE_ICONS: Record<ConfessionVote, string> = {
+  like: '👍',
+  dislike: '👎',
+}
+
+/** The comment count sits beside the votes as a third, non-voting figure. */
+export const CONFESSION_SHOWS_COMMENT_COUNT = true
+
+/**
+ * Superseded reaction values. Rows written under the old model are still in
+ * confession_reactions and are NEVER deleted or rewritten — the feed simply
+ * ignores any type outside CONFESSION_VOTES when tallying. Kept here so the
+ * supersession is recorded rather than silently forgotten.
+ */
+export const LEGACY_REACTION_TYPES = ['pray_together', 'received_grace', 'touched'] as const
+
+export const LEGACY_REACTION_LABELS = {
   pray_together: '함께 기도해요',
   received_grace: '은혜받았어요',
   touched: '마음이 닿았어요',
 } as const
 
-/**
- * All three canonical reactions are live.
- *
- * The 2026-09-06 execution order briefly read as "공감 1종"; the Owner's PM
- * response of the same date settled it as the canonical three (docs/04, AC-06).
- * Order here is the canonical order and is what the UI renders.
- */
-export const ENABLED_REACTIONS = ['pray_together', 'received_grace', 'touched'] as const
-
-/** 1 user : 1 reaction per post, changeable. Enforced by the PK in SQL too. */
+/** 1 user : 1 vote per post, changeable. Enforced by the PK in SQL too. */
 export const ONE_REACTION_PER_USER_PER_POST = true
 
 /** docs/04: 게시물 Photo 최대 1장. */

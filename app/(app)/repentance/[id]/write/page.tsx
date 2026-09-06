@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 
 import { PageHeader } from '@/components/layout/app-header'
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
+import { REPENTANCE_FINAL_CTA } from '@/domain/product-lock'
 import {
   REPENTANCE_WRITE_FLOW,
   repentanceWriteStep,
@@ -122,7 +123,7 @@ export default async function RepentanceWritePage({
         <div className="mt-8 flex flex-col gap-3">
           {isLast ? (
             <Button type="submit" name="intent" value="finish">
-              회개 기록 마치기
+              {REPENTANCE_FINAL_CTA}
             </Button>
           ) : (
             <Button type="submit" name="intent" value="next">

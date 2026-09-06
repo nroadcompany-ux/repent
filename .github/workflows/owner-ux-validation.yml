@@ -20,7 +20,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # @supabase/ssr and @supabase/supabase-js declare engines node >=22.
+          # Node 20 installed with an engine warning and could break on a patch
+          # release that starts relying on a 22-only API.
+          node-version: 22
           cache: npm
 
       - name: Install dependencies

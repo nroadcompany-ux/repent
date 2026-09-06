@@ -1,10 +1,20 @@
 import Link from 'next/link'
 
+import {
+  CONFESSION_VOTES,
+  CONFESSION_VOTE_ICONS,
+  CONFESSION_VOTE_LABELS,
+  type ConfessionVote,
+} from '@/domain/product-lock'
 import { toggleSimpleReaction } from '../vote-actions'
 
-export type VoteType = 'like' | 'dislike'
+export type VoteType = ConfessionVote
 
-/** Owner simplified Confession feedback to 👍 / 👎 / 💬 + counts. */
+/**
+ * Owner simplified Confession feedback to 👍 / 👎 / 💬 + counts.
+ * The vote set comes from the Product Lock so the bar and the contract cannot
+ * drift apart; legacy reaction rows are ignored by tallyReactions below.
+ */
 export function ReactionBar({
   postId,
   counts,
@@ -20,10 +30,11 @@ export function ReactionBar({
   commentCount?: number
   commentHref?: string
 }) {
-  const buttons: Array<{ type: VoteType; icon: string; label: string }> = [
-    { type: 'like', icon: '👍', label: '좋아요' },
-    { type: 'dislike', icon: '👎', label: '싫어요' },
-  ]
+  const buttons = CONFESSION_VOTES.map((type) => ({
+    type,
+    icon: CONFESSION_VOTE_ICONS[type],
+    label: CONFESSION_VOTE_LABELS[type],
+  }))
 
   return (
     <div className="flex items-center gap-2">

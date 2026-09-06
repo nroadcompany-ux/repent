@@ -9,19 +9,24 @@ import {
   COMMENT_DELETE_IS_SOFT,
   CONFESSION_COMMENTS_ENABLED,
   CONFESSION_PHOTO_MAX,
+  CONFESSION_SHOWS_COMMENT_COUNT,
   CONFESSION_TYPE_LABELS,
   CONFESSION_USES_AI,
-  ENABLED_REACTIONS,
+  CONFESSION_VOTES,
+  CONFESSION_VOTE_ICONS,
+  CONFESSION_VOTE_LABELS,
   FORBIDDEN_COMMUNITY_SHAPES,
   FORBIDDEN_METRICS,
   FORBIDDEN_STATES,
+  LEGACY_REACTION_LABELS,
+  LEGACY_REACTION_TYPES,
   MAIN_NAV,
   MOOD_MISSING_DAY_IS_INTERPOLATED,
   ONE_REACTION_PER_USER_PER_POST,
+  ONLY_LIFE_EVENTS_ARE_LINE_CONNECTED,
   PROFILE_GALLERY_MAX,
   PROMISE_CLOSE_LABEL,
   PROMISE_DEFAULT_GROUPS,
-  REACTION_LABELS,
   REPENTANCE_FINAL_CTA,
   REPENTANCE_IS_DAILY_DUTY_TILE,
   REPENTANCE_SHOWS_PROGRESS_PERCENT,
@@ -42,7 +47,7 @@ import {
   SOCIAL_LOGIN_PROVIDERS,
 } from '../src/domain/copy'
 import { AUTH_ERROR_MESSAGES } from '../src/lib/auth/errors'
-import { REPENTANCE_FLOW } from '../src/domain/repentance'
+import { REPENTANCE_FLOW, REPENTANCE_WRITE_FLOW } from '../src/domain/repentance'
 
 /**
  * Product Lock regression.
@@ -155,14 +160,66 @@ describe('repentance (docs/01, AC-04)', () => {
     expect(REPENTANCE_FINAL_CTA).toBe('회개 기록 마치기')
   })
 
-  it('renders that CTA verbatim on the last step', () => {
-    const write = readFileSync(join(ROOT, 'app/(app)/repentance/[id]/write/page.tsx'), 'utf8')
+  it('renders that CTA verbatim on the last step, from the shared constant', () => {
+    const write = stripComments(
+      readFileSync(join(ROOT, 'app/(app)/repentance/[id]/write/page.tsx'), 'utf8'),
+    )
     expect(write).toContain('REPENTANCE_FINAL_CTA')
+    // It labels the finishing submit, not some other control.
+    expect(write).toMatch(/value="finish">\s*\{REPENTANCE_FINAL_CTA\}/)
+    // And it is the shared constant rather than a second copy of the string.
+    expect(write).not.toContain('회개 기록 마치기')
   })
 
-  it('keeps the Korean four-step flow in order', () => {
+  /**
+   * The four-field record contract (docs/01) still shapes a stored repentance —
+   * detail and share read those columns. It is a DATA contract, not the writing
+   * UX, so it stays as it is.
+   */
+  it('keeps the Korean four-step record contract in order', () => {
     expect(REPENTANCE_STEPS).toEqual(['돌아보기', '깨닫기', '돌이킴 약속', '돌아가기'])
     expect(REPENTANCE_FLOW.map((step) => step.label)).toEqual([...REPENTANCE_STEPS])
+  })
+
+  /**
+   * Owner UX decision 2026-09-06: writing a NEW record is three plain-language
+   * steps. This supersedes the four-screen writing flow. Do not restore the old
+   * flow to satisfy an older assertion — the record contract above is separate.
+   */
+  it('writes a new record in the three Owner steps', () => {
+    expect(REPENTANCE_WRITE_FLOW.map((step) => step.label)).toEqual([
+      '있었던 일',
+      '깨달은 것',
+      '돌아가기',
+    ])
+    // 돌이킴 약속 is no longer a writing step; it is not a screen the member sees.
+    expect(REPENTANCE_WRITE_FLOW.map((step) => step.key)).not.toContain('turning_promise')
+
+    const write = stripComments(
+      readFileSync(join(ROOT, 'app/(app)/repentance/[id]/write/page.tsx'), 'utf8'),
+    )
+    expect(write).toContain('REPENTANCE_WRITE_FLOW')
+    expect(write).not.toContain('REPENTANCE_FLOW.map')
+  })
+
+  /**
+   * Finishing saves the record and returns to the list. There is no review or
+   * confirmation screen in front of the save: the member's own words are never
+   * held back pending an extra approval step.
+   */
+  it('saves directly on finish instead of routing through a review screen', () => {
+    const actions = stripComments(
+      readFileSync(join(ROOT, 'app/(app)/repentance/actions.ts'), 'utf8'),
+    )
+    const finish = actions.slice(actions.indexOf("intent === 'finish'"))
+    const block = finish.slice(0, finish.indexOf("redirect('/repentance?saved=recorded')"))
+    expect(block).toContain("state: 'recorded'")
+    expect(block).not.toContain('/review')
+
+    const write = stripComments(
+      readFileSync(join(ROOT, 'app/(app)/repentance/[id]/write/page.tsx'), 'utf8'),
+    )
+    expect(write).not.toContain('/review')
   })
 
   it('never shows a progress percentage', () => {
@@ -212,15 +269,40 @@ describe('journey (docs/04, AC-02)', () => {
     expect(MOOD_MISSING_DAY_IS_INTERPOLATED).toBe(false)
   })
 
+  /**
+   * The rule is semantic, not a polyline headcount: real mood history must never
+   * become a connected line, and the only line drawn from member data is the
+   * life-event layer. The empty-state preview draws its own sample line from
+   * hardcoded coordinates — that is UI illustration, not member data, so it is
+   * checked for exactly that rather than merely being counted.
+   */
   it('draws mood as points and only life events as a line', () => {
-    const graph = stripComments(
+    expect(ONLY_LIFE_EVENTS_ARE_LINE_CONNECTED).toBe(true)
+
+    const source = stripComments(
       readFileSync(join(ROOT, 'src/components/journey/journey-graph.tsx'), 'utf8'),
     )
-    // Exactly one polyline exists, and it belongs to the life-event layer.
+    const emptyStateAt = source.indexOf('export function JourneyGraphEmpty')
+    expect(emptyStateAt).toBeGreaterThan(0)
+
+    const graph = source.slice(0, emptyStateAt)
+    const emptyState = source.slice(emptyStateAt)
+
+    // The real chart joins exactly one layer, and it is the life-event layer.
     expect(graph.match(/<polyline/g)?.length).toBe(1)
-    const polylineIndex = graph.indexOf('<polyline')
-    const moodIndex = graph.indexOf('moods.map')
-    expect(polylineIndex).toBeLessThan(moodIndex)
+    expect(graph).toMatch(/<polyline\s+points=\{eventPath\}/)
+    expect(graph.indexOf('<polyline')).toBeLessThan(graph.indexOf('moods.map'))
+
+    // Mood is plotted as discrete circles, and nothing after it is joined up.
+    expect(graph.slice(graph.indexOf('moods.map'))).not.toContain('<polyline')
+    expect(graph).toMatch(/moods\.map\([\s\S]{0,80}<circle/)
+    // No mood path is ever computed — a missing day cannot be bridged.
+    expect(graph).not.toMatch(/moods[\s\S]{0,120}\.join\(' '\)/)
+
+    // The preview line is illustration only: fixed coordinates, no member data.
+    expect(emptyState).toMatch(/<polyline\s+points="[\d\s,.]+"/)
+    expect(emptyState).not.toContain('moods')
+    expect(emptyState).not.toContain('lifeEvents')
   })
 
   it('keeps the four canonical TODAY slots', () => {
@@ -233,31 +315,74 @@ describe('confession (docs/04, docs/08, AC-06)', () => {
     expect(Object.values(CONFESSION_TYPE_LABELS)).toEqual(['기도', '고백', '은혜', '일상'])
   })
 
-  it('keeps the three canonical reaction labels defined', () => {
-    expect(Object.values(REACTION_LABELS)).toEqual([
+  /**
+   * Owner decision 2026-09-06 replaced the three semantic reactions with
+   * 좋아요 / 싫어요 / 댓글 수. This is the live contract; the earlier set is
+   * superseded, not merely disabled, and must not be restored to satisfy an
+   * older assertion.
+   */
+  it('ships the Owner 좋아요 / 싫어요 / 댓글 model', () => {
+    expect([...CONFESSION_VOTES]).toEqual(['like', 'dislike'])
+    expect(Object.values(CONFESSION_VOTE_LABELS)).toEqual(['좋아요', '싫어요'])
+    expect(Object.values(CONFESSION_VOTE_ICONS)).toEqual(['👍', '👎'])
+    // The comment count sits beside them as a third figure, and it is not a vote.
+    expect(CONFESSION_SHOWS_COMMENT_COUNT).toBe(true)
+    expect(Object.keys(CONFESSION_VOTE_LABELS)).not.toContain('comment')
+  })
+
+  /**
+   * Rows written under the superseded model stay in the table. Ignoring them is
+   * the contract; deleting or rewriting a member's past feedback is not.
+   */
+  it('keeps superseded reaction rows readable instead of rewriting them', () => {
+    expect([...LEGACY_REACTION_TYPES]).toEqual(['pray_together', 'received_grace', 'touched'])
+    expect(Object.values(LEGACY_REACTION_LABELS)).toEqual([
       '함께 기도해요',
       '은혜받았어요',
       '마음이 닿았어요',
     ])
+    // 0010 only widens the enum — no backfill, no delete, no type rewrite.
+    const migration = readFileSync(
+      join(ROOT, 'supabase/migrations/0010_confession_like_dislike.sql'),
+      'utf8',
+    )
+    for (const value of CONFESSION_VOTES) {
+      expect(migration).toContain(`add value if not exists '${value}'`)
+    }
+    expect(migration).not.toMatch(/delete\s+from|update\s+public\.confession_reactions|drop\s+type/i)
+
+    // No live code path can write a legacy value any more.
+    const writers = SOURCES.filter(
+      ({ path, code }) =>
+        path !== 'src/domain/product-lock.ts' &&
+        path !== 'src/lib/supabase/database.types.ts' &&
+        !path.startsWith('supabase/migrations/') &&
+        LEGACY_REACTION_TYPES.some((type) => code.includes(type)),
+    )
+    expect(writers.map((file) => file.path)).toEqual([])
   })
 
-  /**
-   * Owner final decision 2026-09-06: all three canonical reactions ship.
-   * A single-reaction build is a Canonical Delta, so this asserts the full set
-   * rather than merely "a subset of the canonical set".
-   */
-  it('enables all three canonical reactions', () => {
-    expect([...ENABLED_REACTIONS]).toEqual(['pray_together', 'received_grace', 'touched'])
-    expect([...ENABLED_REACTIONS]).toEqual(Object.keys(REACTION_LABELS))
-  })
-
-  it('renders every enabled reaction from the shared bar', () => {
+  it('renders every vote from the shared bar', () => {
     const bar = stripComments(
       readFileSync(join(ROOT, 'app/(app)/confession/_components/reaction-bar.tsx'), 'utf8'),
     )
-    expect(bar).toContain('ENABLED_REACTIONS.map')
+    // Derived from the contract, so the bar and the Product Lock cannot drift.
+    expect(bar).toContain('CONFESSION_VOTES.map')
+    expect(bar).toContain('CONFESSION_VOTE_ICONS')
+    expect(bar).toContain('CONFESSION_VOTE_LABELS')
+    expect(bar).toContain('💬')
+    // A tally counts only live votes; a legacy row is skipped, never coerced.
+    expect(bar).toMatch(/type !== 'like' && type !== 'dislike'/)
     // Counts are rendered, but never sorted or compared across posts.
     expect(bar).not.toMatch(/\.sort\(/)
+  })
+
+  it('shows the same three figures on the feed and on the detail screen', () => {
+    for (const file of ['app/(app)/confession/page.tsx', 'app/(app)/confession/[id]/page.tsx']) {
+      const code = stripComments(readFileSync(join(ROOT, file), 'utf8'))
+      expect(code, file).toContain('ReactionBar')
+      expect(code, file).toContain('commentCount')
+    }
   })
 
   it('never orders the feed by reaction or comment volume', () => {
