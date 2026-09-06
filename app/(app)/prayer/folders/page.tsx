@@ -17,16 +17,11 @@ export default async function PrayerFoldersPage({
   const { supabase, userId } = await requireUser()
   const { error } = await searchParams
 
-  const { data: folders } = await supabase
-    .from('prayer_folders')
-    .select('id, name')
-    .eq('user_id', userId)
-    .order('sort_order')
-
-  const { data: topics } = await supabase
-    .from('prayer_topics')
-    .select('folder_id')
-    .eq('user_id', userId)
+  // Independent reads — batched so the screen pays one round trip, not two.
+  const [{ data: folders }, { data: topics }] = await Promise.all([
+    supabase.from('prayer_folders').select('id, name').eq('user_id', userId).order('sort_order'),
+    supabase.from('prayer_topics').select('folder_id').eq('user_id', userId),
+  ])
 
   const countByFolder = new Map<string, number>()
   let unfiled = 0

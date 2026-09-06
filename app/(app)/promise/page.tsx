@@ -48,12 +48,6 @@ export default async function PromisePage({
   const today = todayKst()
   const strip = [today, addDays(today, -1), addDays(today, -2)]
 
-  const { data: groups } = await supabase
-    .from('promise_groups')
-    .select('id, name')
-    .eq('user_id', userId)
-    .order('sort_order')
-
   let query = supabase
     .from('promises')
     .select('id, title, group_id, due_date, daily_target, state, started_on')
@@ -62,10 +56,15 @@ export default async function PromisePage({
   if (filter !== 'all') query = query.eq('state', filter)
   if (groupId) query = query.eq('group_id', groupId)
 
-  const { data: promises } = await query
-    .order('state')
-    .order('due_date', { ascending: true, nullsFirst: false })
-    .order('created_at', { ascending: false })
+  // The group list and the promise list do not depend on each other, so they
+  // are batched rather than awaited one after the other.
+  const [{ data: groups }, { data: promises }] = await Promise.all([
+    supabase.from('promise_groups').select('id, name').eq('user_id', userId).order('sort_order'),
+    query
+      .order('state')
+      .order('due_date', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false }),
+  ])
 
   const promiseIds = (promises ?? []).map((promise) => promise.id)
   const checksByPromise = new Map<string, Map<string, number>>()
