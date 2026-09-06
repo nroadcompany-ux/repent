@@ -90,8 +90,11 @@
    * No button in the Figma file, so no approved control height exists.     */
   --spacing-control: 48px; /* [OPEN] no Figma source */
 
-  --font-sans: var(--font-inter), var(--font-noto-kr), -apple-system,
-    'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  /* Inter carries Latin (Figma spec). Hangul falls through to the platform's
+   * own Korean UI font: Noto Sans CJK KR on Android, Apple SD Gothic Neo on
+   * iOS, Malgun Gothic on Windows. */
+  --font-sans: var(--font-inter), -apple-system, 'Segoe UI',
+    'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
 }
 
 html,

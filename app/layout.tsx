@@ -1,24 +1,25 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Noto_Sans_KR } from 'next/font/google'
+import { Inter } from 'next/font/google'
 
 import './globals.css'
 
 /**
- * Figma specifies Inter. Korean glyphs are not in Inter's Latin subset, so
- * Noto Sans KR carries them at the matching weights. Both are self-hosted by
- * next/font, so no external stylesheet is fetched at runtime.
+ * Figma specifies Inter, and Inter is the only webfont RETURN ships.
+ *
+ * Hangul is left to the platform. Measured on the live site, bundling
+ * Noto Sans KR alongside Inter cost ~127KB across five extra files and
+ * declared 395 @font-face rules, because Google splits the Korean face into
+ * a hundred-odd unicode-range subsets per weight. On Android the system
+ * Korean font IS Noto Sans CJK KR, so the download bought nothing there; on
+ * iOS the platform font is Apple SD Gothic Neo.
+ *
+ * That trade is recorded as a Visual Delta for Owner review: Hangul now
+ * renders in the device's own Korean UI font rather than a downloaded one.
  */
 const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   variable: '--font-inter',
-  display: 'swap',
-})
-
-const notoSansKr = Noto_Sans_KR({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-noto-kr',
   display: 'swap',
 })
 
@@ -38,7 +39,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className={`${inter.variable} ${notoSansKr.variable}`}>
+    <html lang="ko" className={inter.variable}>
       <body>
         {/* The design is a 390px mobile frame; centre it instead of stretching. */}
         <div className="mx-auto min-h-dvh max-w-frame bg-canvas">{children}</div>
