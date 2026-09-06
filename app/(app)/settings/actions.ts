@@ -16,10 +16,15 @@ export async function updateProfile(form: FormData) {
   const displayName = text(form, 'display_name')
   if (!displayName) redirect('/settings?error=name')
 
+  const birthDate = text(form, 'birth_date')
+  const today = new Date().toISOString().slice(0, 10)
+  if (birthDate && birthDate > today) redirect('/settings?error=birth')
+
   const { error } = await supabase
     .from('profiles')
     .update({
       display_name: displayName,
+      birth_date: birthDate || null,
       church_name: text(form, 'church_name') || null,
       denomination: text(form, 'denomination') || null,
       bio: text(form, 'bio') || null,
@@ -32,6 +37,7 @@ export async function updateProfile(form: FormData) {
   if (error) redirect('/settings?error=save')
 
   revalidatePath('/settings')
+  revalidatePath('/journey')
   redirect('/settings?saved=1')
 }
 
