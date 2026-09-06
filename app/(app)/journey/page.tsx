@@ -4,6 +4,7 @@ import { AppHeader, HeaderAction } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
 import { JourneyGraph, JourneyGraphEmpty } from '@/components/journey/journey-graph'
 import { InfoRow, RowStack, SectionHeader } from '@/components/ui/surface'
+import { JOURNEY_BANNER_LEGACY_COPY } from '@/domain/copy'
 import { getJourneyHome, JOURNEY_GRAPH_DAYS } from '@/data/journey'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -21,7 +22,10 @@ export const dynamic = 'force-dynamic'
 
 const SLIDES: readonly EducationSlide[] = [
   {
-    headline: ['오늘의 기록이', '당신의 여정이 됩니다'],
+    // The former Login hero. Owner decision 2026-09-06 moves the Primary brand
+    // copy to 다시 하나님께, and keeps this line here, where its meaning belongs
+    // (docs/01 Journey IA item 2 — Education Banner).
+    headline: [...JOURNEY_BANNER_LEGACY_COPY],
     body: ['기도와 말씀, 돌아봄과 약속이', '시간 속에서 하나의 이야기로 이어집니다.'],
   },
   {

@@ -30,6 +30,13 @@ import {
   SHARECOPY_CASCADES_FROM_SOURCE,
   TODAY_SLOTS,
 } from '../src/domain/product-lock'
+import {
+  FORBIDDEN_COPY,
+  JOURNEY_BANNER_LEGACY_COPY,
+  PRIMARY_BRAND_COPY,
+  SOCIAL_LOGIN_LABELS,
+  SOCIAL_LOGIN_PROVIDERS,
+} from '../src/domain/copy'
 import { REPENTANCE_FLOW } from '../src/domain/repentance'
 
 /**
@@ -461,5 +468,73 @@ describe('row level security', () => {
 
   it('gives moderation_actions no policy at all', () => {
     expect(allSql).not.toMatch(/create policy[^;]*on public\.moderation_actions/)
+  })
+})
+
+/**
+ * Brand copy — Owner Final Decision 2026-09-06.
+ * The Entry hero is a fixed string; screens must not paraphrase it, and the
+ * system must never render wording that judges a member's spiritual state.
+ */
+describe('brand copy', () => {
+  const login = readFileSync(join(ROOT, 'app/login/page.tsx'), 'utf8')
+  const journey = readFileSync(join(ROOT, 'app/(app)/journey/page.tsx'), 'utf8')
+
+  it('states the primary brand copy exactly', () => {
+    expect(PRIMARY_BRAND_COPY.wordmark).toBe('RETURN')
+    expect(PRIMARY_BRAND_COPY.headline).toBe('다시 하나님께.')
+    expect(PRIMARY_BRAND_COPY.subline).toBe('하나님과 함께한 삶의 순간을 기록합니다.')
+  })
+
+  it('renders the Entry hero from the shared constant, not a literal', () => {
+    expect(login).toContain('PRIMARY_BRAND_COPY.wordmark')
+    expect(login).toContain('PRIMARY_BRAND_COPY.headline')
+    expect(login).toContain('PRIMARY_BRAND_COPY.subline')
+  })
+
+  it('no longer uses the former hero line on the Entry screen', () => {
+    expect(stripComments(login)).not.toContain('오늘의 기록이')
+    expect(stripComments(login)).not.toContain('당신의 여정이 됩니다')
+  })
+
+  it('keeps the former hero line in the Journey Education Banner', () => {
+    expect(JOURNEY_BANNER_LEGACY_COPY).toEqual(['오늘의 기록이', '당신의 여정이 됩니다'])
+    expect(journey).toContain('JOURNEY_BANNER_LEGACY_COPY')
+  })
+
+  it('offers exactly the two canonical providers on the Entry screen', () => {
+    expect([...SOCIAL_LOGIN_PROVIDERS]).toEqual(['google', 'naver'])
+    expect(SOCIAL_LOGIN_LABELS.google).toBe('Google로 시작하기')
+    expect(SOCIAL_LOGIN_LABELS.naver).toBe('Naver로 시작하기')
+    expect(login).toContain('SOCIAL_LOGIN_LABELS.google')
+    expect(login).toContain('SOCIAL_LOGIN_LABELS.naver')
+  })
+
+  it('builds no email/password sign-up path', () => {
+    const offenders = SOURCES.filter(({ code }) =>
+      /signUp\(|signInWithPassword\(/.test(code),
+    )
+    expect(offenders.map((offender) => offender.path)).toEqual([])
+  })
+
+  it.each(FORBIDDEN_COPY)('never renders the phrase %s', (phrase) => {
+    const offenders = SOURCES.filter(({ code, path }) => {
+      if (path === 'src/domain/copy.ts') return false
+      return code.includes(phrase)
+    })
+    expect(offenders.map((offender) => offender.path)).toEqual([])
+  })
+
+  /**
+   * The Entry privacy note is Safety copy, so it has to be legible.
+   * ink-faint (#a2a4ad) on the canvas (#f7f7fa) measures 2.32:1, below WCAG AA;
+   * ink-muted (#6f717a) measures 4.55:1 and passes.
+   */
+  it('renders the Entry safety note in a legible token', () => {
+    const noteBlock = login.slice(login.indexOf('ENTRY_SAFETY_NOTE[0]') - 300)
+    expect(noteBlock).toContain('text-ink-muted')
+    expect(noteBlock.slice(0, noteBlock.indexOf('ENTRY_SAFETY_NOTE[0]'))).not.toContain(
+      'text-ink-faint',
+    )
   })
 })

@@ -1,15 +1,22 @@
 import { LoopMark } from '@/components/brand/loop-mark'
-import { ButtonLink } from '@/components/ui/control'
+import { Button, ButtonLink } from '@/components/ui/control'
+import { ENTRY_SAFETY_NOTE, PRIMARY_BRAND_COPY, SOCIAL_LOGIN_LABELS } from '@/domain/copy'
 import { publicEnv } from '@/lib/env'
 import { featureFlags } from '@/lib/env.server'
 
 /**
- * Sign-in. Canonical docs/00 + AC-07: Social Login is 네이버 / 구글 only.
+ * Entry / Login.
  *
- * [OPEN — NO FIGMA SOURCE] The Figma file has no login screen and no provider
- * button. Rather than invent Naver green / Google white brand buttons, this
- * screen uses RETURN's own tokens and the quiet-premium principle from the
- * Design Notes. Awaiting an Owner-approved login frame.
+ * Brand copy is Owner Final Decision (2026-09-06) and comes from
+ * src/domain/copy.ts — see PRIMARY_BRAND_COPY. Structure, in order:
+ *   RETURN → 다시 하나님께. → 하나님과 함께한 삶의 순간을 기록합니다.
+ *   → Google → Naver → privacy note
+ *
+ * Canonical social login is Google and Naver only (docs/00, AC-07). There is no
+ * email/password path, because Canonical does not define one.
+ *
+ * Design Guide v1.0 is FINAL LOCK: this screen changes text hierarchy only —
+ * no layout, colour, Loop Mark, card, or hero-treatment change.
  */
 
 const ERRORS: Record<string, string> = {
@@ -39,16 +46,12 @@ export default async function LoginPage({
     <main className="flex min-h-dvh flex-col justify-between px-title-gutter pb-10 pt-24">
       <div>
         <LoopMark width={88} />
-        <h1 className="text-brand mt-8 font-semibold text-accent">RETURN</h1>
-        <p className="text-hero mt-3 font-semibold text-ink">
-          오늘의 기록이
-          <br />
-          당신의 여정이 됩니다
-        </p>
+        <h1 className="text-brand mt-8 font-semibold text-accent">
+          {PRIMARY_BRAND_COPY.wordmark}
+        </h1>
+        <p className="text-hero mt-3 font-semibold text-ink">{PRIMARY_BRAND_COPY.headline}</p>
         <p className="text-body-sm mt-3 leading-[18px] text-ink-muted">
-          기도와 말씀, 돌아봄과 약속이
-          <br />
-          시간 속에서 하나의 이야기로 이어집니다.
+          {PRIMARY_BRAND_COPY.subline}
         </p>
       </div>
 
@@ -68,19 +71,38 @@ export default async function LoginPage({
           </p>
         ) : (
           <div className="flex flex-col gap-3">
-            {featureFlags.naverLogin ? (
-              <ButtonLink href={`/auth/naver/start${nextParam}`}>네이버로 시작하기</ButtonLink>
-            ) : null}
-            <ButtonLink href={`/auth/google/start${nextParam}`} variant="quiet">
-              구글로 시작하기
+            <ButtonLink href={`/auth/google/start${nextParam}`}>
+              {SOCIAL_LOGIN_LABELS.google}
             </ButtonLink>
+
+            {/* Canonical lists both providers, so both CTAs are always present.
+                Until NAVER_CLIENT_ID / NAVER_CLIENT_SECRET are registered the
+                Naver CTA uses the disabled state rather than linking to a route
+                that can only bounce back with an error. */}
+            {featureFlags.naverLogin ? (
+              <ButtonLink href={`/auth/naver/start${nextParam}`} variant="quiet">
+                {SOCIAL_LOGIN_LABELS.naver}
+              </ButtonLink>
+            ) : (
+              <>
+                <Button variant="quiet" disabled>
+                  {SOCIAL_LOGIN_LABELS.naver}
+                </Button>
+                <p className="text-caption -mt-1 text-center text-ink-muted">
+                  네이버 로그인은 준비 중이에요.
+                </p>
+              </>
+            )}
           </div>
         )}
 
-        <p className="text-caption mt-6 text-center leading-[17px] text-ink-faint">
-          기도와 회개 기록은 기본적으로 나만 볼 수 있습니다.
+        {/* Safety copy uses ink-muted rather than ink-faint: at 11px on the
+            canvas, ink-faint measures ~2.2:1 contrast. See the Visual Delta
+            note in the implementation report. */}
+        <p className="text-caption mt-6 text-center leading-[17px] text-ink-muted">
+          {ENTRY_SAFETY_NOTE[0]}
           <br />
-          공개는 내가 직접 선택할 때만 이루어집니다.
+          {ENTRY_SAFETY_NOTE[1]}
         </p>
       </div>
     </main>
