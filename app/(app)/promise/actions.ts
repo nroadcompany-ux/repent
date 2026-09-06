@@ -42,6 +42,9 @@ export async function createPromise(form: FormData) {
   const recurrence = repeatType(form)
   const weekdays = recurrence === 'weekly' ? repeatWeekdays(form) : []
 
+  if (dueDate && dueDate < startedOn) redirect('/promise/new?error=date')
+  if (recurrence === 'weekly' && weekdays.length === 0) redirect('/promise/new?error=weekday')
+
   const payload = {
     user_id: userId,
     title,
@@ -77,15 +80,19 @@ export async function updatePromise(form: FormData) {
 
   const dueDate = text(form, 'due_date')
   const groupId = text(form, 'group_id')
+  const startedOn = text(form, 'started_on') || todayKst()
   const recurrence = repeatType(form)
   const weekdays = recurrence === 'weekly' ? repeatWeekdays(form) : []
+
+  if (dueDate && dueDate < startedOn) redirect(`/promise/${id}/edit?error=date`)
+  if (recurrence === 'weekly' && weekdays.length === 0) redirect(`/promise/${id}/edit?error=weekday`)
 
   const payload = {
     title,
     group_id: groupId || null,
     background: text(form, 'background') || null,
     purpose: text(form, 'purpose') || null,
-    started_on: text(form, 'started_on') || todayKst(),
+    started_on: startedOn,
     due_date: dueDate || null,
     daily_target: 1,
     repeat_type: recurrence,
