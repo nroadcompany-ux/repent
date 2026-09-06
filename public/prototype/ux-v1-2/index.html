@@ -106,6 +106,9 @@
         <p class="note" style="margin:-6px 0 12px">눌러보면 그날의 생각과 돌아봄이 나옵니다.</p>
         <div class="life-list" id="j-life-list"></div>
         <div id="j-life-detail"></div>
+        <button class="cta cta--soft" id="j-life-add" type="button" style="margin-top:12px">
+          지나온 순간 추가하기
+        </button>
       </div>
 
       <div class="section">
@@ -920,6 +923,33 @@
       </div>
 
       <div class="field">
+        <label class="field__label" for="le-name">무슨 일이었나요</label>
+        <input class="input" id="le-name" type="text" placeholder="예) 첫 아이가 태어난 해" />
+      </div>
+
+      <div class="field">
+        <label class="field__label">언제였나요</label>
+        <p class="field__hint">한 시점이면 시작 나이만, 한동안 이어진 일이면 끝 나이까지 적어주세요.</p>
+        <div style="display:flex; gap:10px; align-items:center">
+          <input class="input" id="le-age" type="number" min="0" max="120" placeholder="나이" style="flex:1" />
+          <span class="note">~</span>
+          <input class="input" id="le-age-end" type="number" min="0" max="120" placeholder="끝 (선택)" style="flex:1" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label">어느 시기인가요</label>
+        <div class="chips" id="le-era"></div>
+      </div>
+
+      <div class="field">
+        <button class="choice" id="le-tp" type="button" aria-pressed="false">
+          <span>터닝포인트로 표시<span class="choice__hint">그래프에 큰 점으로 남고, 여정에서 따로 모아 볼 수 있어요</span></span>
+          <span class="choice__arrow" id="le-tp-mark">○</span>
+        </button>
+      </div>
+
+      <div class="field">
         <label class="field__label" for="le-thought">그날의 생각</label>
         <p class="field__hint">그때 무슨 생각을 했는지, 기억나는 대로 적어보세요.</p>
         <textarea class="textarea" id="le-thought"></textarea>
@@ -944,6 +974,7 @@
 
       <div class="section stack">
         <button class="cta" id="le-save" type="button">이 기록 저장</button>
+        <button class="cta cta--ghost" id="le-delete" type="button">이 순간 지우기</button>
       </div>
     </div>
   </section>

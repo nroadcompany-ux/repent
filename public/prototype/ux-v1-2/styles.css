@@ -664,6 +664,20 @@ textarea, input { font: inherit; color: inherit; }
 
 .life-list { }
 
+/* Era group header inside the moments list */
+.life-era {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3) var(--s4);
+  background: var(--bg);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--text-2);
+}
+
+.life-era span:last-child { margin-left: auto; color: var(--text-3); font-weight: 600; }
+
 .life-item {
   width: 100%;
   display: flex;
@@ -674,6 +688,21 @@ textarea, input { font: inherit; color: inherit; }
   background: var(--card);
   min-height: var(--touch);
 }
+
+.life-item__flag {
+  margin-left: auto;
+  align-self: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary-deep);
+  background: var(--primary-soft);
+  border-radius: 6px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+.lc-dot--tp { stroke-width: 4; }
+.lc-span { stroke-width: 6; stroke-linecap: round; opacity: 0.28; }
 
 .life-item + .life-item { border-top: 1px solid var(--border); }
 .life-item:first-child { border-radius: var(--r-card) var(--r-card) 0 0; }

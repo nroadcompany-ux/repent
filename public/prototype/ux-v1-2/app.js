@@ -422,13 +422,13 @@
     { age: 12, era: '유년기', title: '아버지 사업이 어려워짐', mood: -2, emotion: -2, faith: -1, finance: -2,
       thought: '집 안 공기가 갑자기 달라졌어요. 어른들이 밤늦게까지 이야기하는 소리를 이불 속에서 들었습니다.',
       reflection: '그 시기를 지나며 걱정이 많은 사람이 된 것 같아요. 지금도 미리 불안해하는 버릇이 남아 있습니다.' },
-    { age: 16, era: '청소년기', title: '수련회에서 처음 울며 기도함', mood: 2, emotion: 2, faith: 2, finance: -1,
+    { age: 16, era: '청소년기', title: '수련회에서 처음 울며 기도함', turningPoint: true, mood: 2, emotion: 2, faith: 2, finance: -1,
       thought: '왜 우는지도 모르고 한참 울었습니다. 그날 처음으로 하나님이 계시는구나 싶었어요.',
       reflection: '지금까지 붙잡고 있는 기억입니다. 힘들 때마다 그날로 돌아가 봅니다.' },
     { age: 19, era: '대학·청년', title: '대학 입학, 집을 떠남', mood: 2, emotion: 1, faith: 0, finance: -1,
       thought: '처음으로 혼자 사는 방이 생겼습니다. 자유로우면서도 밤에는 무서웠어요.',
       reflection: '혼자 있는 시간을 견디는 법을 그때 조금 배웠던 것 같습니다.' },
-    { age: 22, era: '대학·청년', title: '어머니 투병', mood: -2, emotion: -2, faith: -2, finance: -1,
+    { age: 22, ageEnd: 24, era: '대학·청년', title: '어머니 투병', mood: -2, emotion: -2, faith: -2, finance: -1,
       thought: '병원과 학교를 오갔습니다. 기도가 잘 안 나왔어요.',
       reflection: '그때 하나님께 화가 났었다는 걸 한참 뒤에야 인정했습니다.' },
     { age: 25, era: '대학·청년', title: '첫 직장', mood: 1, emotion: 1, faith: -1, finance: 1,
@@ -440,13 +440,13 @@
     { age: 30, era: '결혼', title: '첫 아이', mood: 2, emotion: 2, faith: 1, finance: 0,
       thought: '작은 손이 제 손가락을 쥐던 순간을 잊지 못합니다.',
       reflection: '이 아이 때문에 버틴 날이 정말 많습니다.' },
-    { age: 34, era: '결혼', title: '오래 다투던 시기', mood: -2, emotion: -2, faith: -1, finance: 0,
+    { age: 34, ageEnd: 36, era: '결혼', title: '오래 다투던 시기', mood: -2, emotion: -2, faith: -1, finance: 0,
       thought: '같은 이야기를 반복했습니다. 서로 지쳐가는 게 보였어요.',
       reflection: '그 시기에 아이에게 큰 소리를 냈던 일들이 지금도 마음에 남아 있습니다.' },
-    { age: 36, era: '이후', title: '이혼', mood: -2, emotion: -2, faith: -2, finance: -2,
+    { age: 36, era: '이후', title: '이혼', turningPoint: true, mood: -2, emotion: -2, faith: -2, finance: -2,
       thought: '제 인생이 여기서 끝난 것 같았습니다. 한동안 아무에게도 말하지 못했어요.',
       reflection: '오래 지나서야 이 일을 하나님 앞에 꺼내놓을 수 있었습니다. 아직 다 정리되지는 않았습니다.' },
-    { age: 38, era: '이후', title: '다시 교회에 나가기 시작함', mood: 0, emotion: 0, faith: 1, finance: -1,
+    { age: 38, era: '이후', title: '다시 교회에 나가기 시작함', turningPoint: true, mood: 0, emotion: 0, faith: 1, finance: -1,
       thought: '맨 뒷자리에 앉았다가 축도 전에 나왔습니다. 그래도 매주 갔어요.',
       reflection: '돌아간 게 아니라 돌아가는 중이었다고 지금은 생각합니다.' },
     { age: 39, era: '이후', title: '아이와 둘의 일상이 자리잡음', mood: 1, emotion: 1, faith: 1, finance: 0,
@@ -456,6 +456,20 @@
       thought: '조급한 마음이 아직 있지만, 예전보다는 덜합니다.',
       reflection: '오늘부터 남기는 기록이 다음 점이 됩니다.' },
   ];
+
+  // Ids so events survive being added, removed and re-sorted.
+  LIFE_EVENTS.forEach(function (e, i) { if (!e.id) e.id = 'e' + (i + 1); });
+  var lifeSeq = LIFE_EVENTS.length;
+
+  var LIFE_ERAS = ['유년기', '청소년기', '대학·청년', '결혼', '이후'];
+
+  function sortedEvents() {
+    return LIFE_EVENTS.slice().sort(function (a, b) { return a.age - b.age; });
+  }
+
+  function findEvent(id) {
+    return LIFE_EVENTS.filter(function (e) { return e.id === id; })[0];
+  }
 
   var selectedEvent = null;
 
@@ -518,19 +532,35 @@
     var lastX = xFor(events.length - 1);
     svg.push('<line class="lc-now" x1="' + lastX + '" y1="24" x2="' + lastX + '" y2="' + (H - 44) + '" />');
 
+    // Events that span a period get a bar under the point.
+    events.forEach(function (e, idx) {
+      if (!e.ageEnd || e.ageEnd <= e.age) return;
+      var next = events.filter(function (o) { return o.age > e.age; })[0];
+      var span = next ? Math.min(1, (e.ageEnd - e.age) / (next.age - e.age)) : 0.5;
+      var x0 = xFor(idx);
+      svg.push('<line class="lc-span" x1="' + x0 + '" y1="' + (H - 56) + '" x2="' +
+        (x0 + STEP * span) + '" y2="' + (H - 56) + '" stroke="' + TRACKS[0].color + '" />');
+    });
+
     events.forEach(function (e, idx) {
       var x = xFor(idx), y = yFor(e.mood);
-      var on = selectedEvent === idx;
-      // Generous invisible hit area so the point is easy to tap.
-      svg.push('<circle cx="' + x + '" cy="' + y + '" r="22" fill="transparent" data-ev="' + idx + '" />');
-      svg.push('<circle class="lc-dot' + (on ? ' lc-dot--on' : '') + '" cx="' + x + '" cy="' + y +
-        '" r="' + (on ? 9 : 7) + '" data-ev="' + idx + '" />');
+      var on = selectedEvent === e.id;
+      var tp = !!e.turningPoint;
+      svg.push('<circle cx="' + x + '" cy="' + y + '" r="22" fill="transparent" data-ev="' + e.id + '" />');
+      if (tp) {
+        svg.push('<circle cx="' + x + '" cy="' + y + '" r="' + (on ? 14 : 12) +
+          '" fill="none" stroke="' + TRACKS[0].color + '" stroke-opacity="0.28" stroke-width="2" data-ev="' + e.id + '" />');
+      }
+      svg.push('<circle class="lc-dot' + (on ? ' lc-dot--on' : '') + (tp ? ' lc-dot--tp' : '') +
+        '" cx="' + x + '" cy="' + y + '" r="' + (tp ? (on ? 10 : 9) : (on ? 9 : 7)) +
+        '" data-ev="' + e.id + '" />');
       var stagger = idx % 2 === 0 ? 0 : (e.mood >= 0 ? -16 : 16);
       var labelY = (e.mood >= 0 ? y - 19 : y + 28) + stagger;
       var short = e.title.length > 10 ? e.title.slice(0, 9) + '…' : e.title;
       svg.push('<text class="lc-label' + (on ? ' lc-label--on' : '') + '" x="' + x + '" y="' + labelY +
-        '" text-anchor="middle" data-ev="' + idx + '">' + short + '</text>');
-      svg.push('<text class="lc-tick" x="' + x + '" y="' + (H - 22) + '" text-anchor="middle">' + e.age + '세</text>');
+        '" text-anchor="middle" data-ev="' + e.id + '">' + short + '</text>');
+      svg.push('<text class="lc-tick" x="' + x + '" y="' + (H - 22) + '" text-anchor="middle">' +
+        e.age + (e.ageEnd && e.ageEnd > e.age ? '~' + e.ageEnd : '') + '세</text>');
     });
 
     svg.push('</svg>');
@@ -542,12 +572,26 @@
         '<i style="background:' + t.color + '"></i>' + t.label + '</button>';
     }).join('');
 
-    listHost.innerHTML = events.map(function (e, idx) {
-      return '<button class="life-item" type="button" data-ev="' + idx + '" aria-expanded="' + (selectedEvent === idx) + '">' +
-        '<span class="life-item__age">' + e.age + '세</span>' +
+    // Grouped by era, with a count per group.
+    var html = '';
+    var lastEra = null;
+    events.forEach(function (e) {
+      if (e.era !== lastEra) {
+        lastEra = e.era;
+        var n = events.filter(function (o) { return o.era === e.era; }).length;
+        html += '<div class="life-era"><span>' + e.era + '</span><span>' + n + '개</span></div>';
+      }
+      html += '<button class="life-item" type="button" data-ev="' + e.id + '">' +
+        '<span class="life-item__age">' + e.age +
+        (e.ageEnd && e.ageEnd > e.age ? '~' + e.ageEnd : '') + '세</span>' +
         '<span><span class="life-item__title">' + e.title + '</span><br>' +
-        '<span class="life-item__era">' + e.era + '</span></span></button>';
-    }).join('');
+        '<span class="life-item__era">' +
+        (e.thought ? e.thought.slice(0, 22) + (e.thought.length > 22 ? '…' : '') : '아직 적지 않았어요') +
+        '</span></span>' +
+        (e.turningPoint ? '<span class="life-item__flag">터닝포인트</span>' : '') +
+        '</button>';
+    });
+    listHost.innerHTML = html;
 
     detailHost.innerHTML = '';
   }
@@ -555,7 +599,7 @@
   /** Tapping a point or a list row opens that moment for reading and writing. */
   document.addEventListener('click', function (e) {
     var hit = e.target.closest ? e.target.closest('[data-ev]') : null;
-    if (hit) { nav('life-event', { eventIndex: Number(hit.dataset.ev) }); return; }
+    if (hit) { nav('life-event', { eventId: hit.dataset.ev }); return; }
 
     var t = e.target.closest ? e.target.closest('[data-track]') : null;
     if (!t) return;
@@ -563,22 +607,62 @@
     activeTracks[key] = !activeTracks[key];
     var host = el('j-life-scroll');
     var keep = host.scrollLeft;
-    renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
+    renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), sortedEvents());
     host.scrollLeft = keep;
   });
 
   /* Life event — read and record */
 
-  screens['life-event'] = function (ctx) {
-    var idx = ctx.eventIndex;
-    var e = LIFE_EVENTS[idx];
-    if (!e) { nav('journey'); return; }
+  /** A blank moment the user is about to fill in. */
+  function newLifeEvent() {
+    lifeSeq += 1;
+    return {
+      id: 'e' + lifeSeq,
+      age: 40,
+      era: '이후',
+      title: '',
+      mood: 0, emotion: 0, faith: 0, finance: 0,
+      thought: '',
+      reflection: '',
+      isNew: true,
+    };
+  }
 
-    selectedEvent = idx;
-    el('le-when').textContent = e.age + '세 · ' + e.era;
-    el('le-title').textContent = e.title;
+  var draftEvent = null;
+
+  function currentEvent() {
+    if (draftEvent) return draftEvent;
+    return findEvent(current.ctx && current.ctx.eventId);
+  }
+
+  el('j-life-add').addEventListener('click', function () {
+    draftEvent = newLifeEvent();
+    nav('life-event', { eventId: draftEvent.id, isNew: true });
+  });
+
+  screens['life-event'] = function (ctx) {
+    var e = ctx.isNew ? draftEvent : findEvent(ctx.eventId);
+    if (!e) { nav('journey'); return; }
+    if (!ctx.isNew) draftEvent = null;
+
+    selectedEvent = e.id;
+    el('le-bar').textContent = ctx.isNew ? '순간 추가하기' : '그때 기록하기';
+    el('le-when').textContent = ctx.isNew ? '새로 남기는 순간' : e.age + '세 · ' + e.era;
+    el('le-title').textContent = e.title || '무슨 일이었나요';
+
+    el('le-name').value = e.title || '';
+    el('le-age').value = e.age;
+    el('le-age-end').value = e.ageEnd || '';
     el('le-thought').value = e.thought || '';
     el('le-reflection').value = e.reflection || '';
+
+    el('le-era').innerHTML = LIFE_ERAS.map(function (era) {
+      return '<button class="chip chip--sm" type="button" data-era="' + era + '" aria-pressed="' +
+        (e.era === era) + '">' + era + '</button>';
+    }).join('');
+
+    el('le-tp').setAttribute('aria-pressed', String(!!e.turningPoint));
+    el('le-tp-mark').textContent = e.turningPoint ? '●' : '○';
 
     el('le-scales').innerHTML = TRACKS.map(function (t) {
       return '<div class="card" style="margin-bottom:12px">' +
@@ -592,15 +676,34 @@
     }).join('');
 
     el('le-voice').innerHTML = voiceBlock();
-    el('le-privacy').innerHTML = privacyBlock(
-      '인생 그래프에 남긴 내용도 마찬가지입니다.',
-    );
+    el('le-privacy').innerHTML = privacyBlock('인생 그래프에 남긴 내용도 마찬가지입니다.');
+    el('le-delete').style.display = ctx.isNew ? 'none' : 'flex';
   };
+
+  el('le-era').addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-era]');
+    if (!b) return;
+    var e = currentEvent();
+    if (!e) return;
+    e.era = b.dataset.era;
+    Array.prototype.forEach.call(el('le-era').children, function (c) {
+      c.setAttribute('aria-pressed', String(c.dataset.era === e.era));
+    });
+  });
+
+  el('le-tp').addEventListener('click', function () {
+    var e = currentEvent();
+    if (!e) return;
+    e.turningPoint = !e.turningPoint;
+    el('le-tp').setAttribute('aria-pressed', String(!!e.turningPoint));
+    el('le-tp-mark').textContent = e.turningPoint ? '●' : '○';
+  });
 
   el('le-scales').addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-scale]');
     if (!b) return;
-    var e = LIFE_EVENTS[current.ctx.eventIndex];
+    var e = currentEvent();
+    if (!e) return;
     e[b.dataset.scale] = Number(b.dataset.val);
     Array.prototype.forEach.call(el('le-scales').querySelectorAll('[data-scale="' + b.dataset.scale + '"]'), function (n) {
       n.setAttribute('aria-pressed', String(n === b));
@@ -608,10 +711,36 @@
   });
 
   el('le-save').addEventListener('click', function () {
-    var e = LIFE_EVENTS[current.ctx.eventIndex];
+    var e = currentEvent();
+    if (!e) return;
+
+    var title = el('le-name').value.trim();
+    if (!title) { el('le-name').focus(); return; }
+
+    e.title = title;
+    e.age = Math.max(0, Number(el('le-age').value) || 0);
+    var end = Number(el('le-age-end').value);
+    e.ageEnd = end > e.age ? end : undefined;
     e.thought = el('le-thought').value.trim();
     e.reflection = el('le-reflection').value.trim();
+
+    if (e.isNew) {
+      delete e.isNew;
+      LIFE_EVENTS.push(e);
+      draftEvent = null;
+    }
+
     markerToast('인생 그래프');
+    nav('journey');
+  });
+
+  el('le-delete').addEventListener('click', function () {
+    var e = currentEvent();
+    if (!e) return;
+    var i = LIFE_EVENTS.indexOf(e);
+    if (i >= 0) LIFE_EVENTS.splice(i, 1);
+    selectedEvent = null;
+    draftEvent = null;
     nav('journey');
   });
 
@@ -897,7 +1026,7 @@
 
     var host = el('j-life-scroll');
     var first = !host.firstChild;
-    renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), LIFE_EVENTS);
+    renderLifeCurve(host, el('j-life-list'), el('j-life-detail'), sortedEvents());
     if (first) host.scrollLeft = host.scrollWidth;
 
     renderToday();
@@ -918,12 +1047,16 @@
 
     el('j-caption').textContent = '기록이 있는 날에만 점이 남습니다. 비어 있는 날은 표시되지 않아요.';
 
-    el('j-tp').innerHTML = '<div class="card"><div class="card__top"><div>' +
-      '<p class="card__title">이 시기를 터닝포인트로 표시할까요?</p>' +
-      '<p class="card__meta" style="margin-top:4px">' + prettyDay(dayOffset(5)) + ' 전후 · 표시하면 인생 그래프에 큰 점으로 남습니다</p>' +
-      '</div></div><div class="card__actions">' +
-      '<button class="card__action card__action--primary">표시하기</button>' +
-      '<button class="card__action">나중에</button></div></div>';
+    // Real turning points, taken from the life events the user marked.
+    var tps = sortedEvents().filter(function (e) { return e.turningPoint; });
+    el('j-tp').innerHTML = tps.length
+      ? '<div class="rows">' + tps.map(function (e) {
+          return '<button class="row" type="button" data-ev="' + e.id + '" style="width:100%;text-align:left">' +
+            '<span class="row__date">' + e.age + '세</span>' +
+            '<span class="row__text">' + e.title + '</span></button>';
+        }).join('') + '</div>'
+      : '<div class="empty"><p class="empty__title">아직 표시한 터닝포인트가 없습니다.</p>' +
+        '<p class="empty__body">지나온 순간에서 하나를 열고 <b>터닝포인트로 표시</b>를 눌러보세요.</p></div>';
   };
 
   Array.prototype.forEach.call(document.querySelectorAll('#j-ranges .chip'), function (c) {
@@ -1991,7 +2124,7 @@
     if (row[1] === 'prayer-detail') ctx = { prayerId: 'r1' };
     if (row[1] === 'script-detail') ctx = { scriptId: 'r14' };
     if (row[1] === 'comments') ctx = { postId: 's2' };
-    if (row[1] === 'life-event') ctx = { eventIndex: 9 };
+    if (row[1] === 'life-event') ctx = { eventId: 'e10' };
     if (row[1] === 'prayer-bridge') ctx = { prayerId: 'r1', title: '조급한 마음을 내려놓게 해주세요' };
     if (row[1] === 'first-saved') ctx = { label: '기도' };
     if (row[1] === 'reflection') {
