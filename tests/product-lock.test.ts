@@ -31,12 +31,14 @@ import {
   TODAY_SLOTS,
 } from '../src/domain/product-lock'
 import {
+  AUTH_PROVIDERS,
   FORBIDDEN_COPY,
   JOURNEY_BANNER_LEGACY_COPY,
   PRIMARY_BRAND_COPY,
   SOCIAL_LOGIN_LABELS,
   SOCIAL_LOGIN_PROVIDERS,
 } from '../src/domain/copy'
+import { AUTH_ERROR_MESSAGES } from '../src/lib/auth/errors'
 import { REPENTANCE_FLOW } from '../src/domain/repentance'
 
 /**
@@ -510,11 +512,10 @@ describe('brand copy', () => {
     expect(login).toContain('SOCIAL_LOGIN_LABELS.naver')
   })
 
-  it('builds no email/password sign-up path', () => {
-    const offenders = SOURCES.filter(({ code }) =>
-      /signUp\(|signInWithPassword\(/.test(code),
-    )
-    expect(offenders.map((offender) => offender.path)).toEqual([])
+  it('offers all three canonical auth entries on the Entry screen', () => {
+    // Owner decision 2026-09-06 expanded Canonical auth to include Email.
+    expect([...AUTH_PROVIDERS]).toEqual(['google', 'naver', 'email'])
+    expect(login).toContain('SOCIAL_LOGIN_LABELS.email')
   })
 
   it.each(FORBIDDEN_COPY)('never renders the phrase %s', (phrase) => {
@@ -536,5 +537,121 @@ describe('brand copy', () => {
     expect(noteBlock.slice(0, noteBlock.indexOf('ENTRY_SAFETY_NOTE[0]'))).not.toContain(
       'text-ink-faint',
     )
+  })
+})
+
+
+/**
+ * Auth Route Test Matrix (Owner directive 2026-09-06 §11).
+ *
+ * A real OAuth or mailbox round trip cannot run here, so these pin the parts
+ * that are checkable without one: every route exists, every user-visible error
+ * is a known key rather than a provider message, and no disabled provider can
+ * be linked out to.
+ */
+describe('auth routes', () => {
+  const read = (relative: string) => readFileSync(join(ROOT, relative), 'utf8')
+
+  const AUTH_FILES = [
+    'app/login/page.tsx',
+    'app/login/email/page.tsx',
+    'app/login/email/actions.ts',
+    'app/login/email/forgot/page.tsx',
+    'app/login/email/sent/page.tsx',
+    'app/reset-password/page.tsx',
+    'app/auth/confirm/route.ts',
+    'app/auth/callback/route.ts',
+    'app/auth/google/start/route.ts',
+    'app/auth/naver/start/route.ts',
+    'app/auth/naver/callback/route.ts',
+    'app/auth/signout/route.ts',
+  ]
+
+  it('has every route the matrix names', () => {
+    for (const file of AUTH_FILES) {
+      expect(() => read(file), `${file} is missing`).not.toThrow()
+    }
+  })
+
+  it('implements the full email MVP surface', () => {
+    const actions = read('app/login/email/actions.ts')
+    for (const fn of [
+      'signUpWithEmail',
+      'signInWithEmail',
+      'requestPasswordReset',
+      'updatePassword',
+    ]) {
+      expect(actions).toContain(`export async function ${fn}`)
+    }
+    // 비밀번호 확인 is verified before anything is sent to Supabase.
+    expect(actions).toContain('password_confirm')
+    expect(actions).toContain('password_mismatch')
+    // 중복 이메일: Supabase returns an empty identities array rather than erroring.
+    expect(actions).toContain('identities')
+    expect(actions).toContain('email_taken')
+    // 성공 후 Canonical Onboarding 연결
+    expect(actions).toContain('onboarding_completed_at')
+  })
+
+  it('guards the Google start route so a disabled provider cannot be linked out to', () => {
+    const route = read('app/auth/google/start/route.ts')
+    expect(route).toContain('isSupabaseProviderEnabled')
+    const guardIndex = route.indexOf('isSupabaseProviderEnabled')
+    const redirectIndex = route.indexOf('signInWithOAuth')
+    expect(guardIndex).toBeLessThan(redirectIndex)
+  })
+
+  it('keeps a pending provider visible instead of hiding it', () => {
+    const page = stripComments(read('app/login/page.tsx'))
+    expect(page).toContain('PROVIDER_PENDING_NOTE')
+    // Disabled button, never a link, when unavailable.
+    expect(page).toMatch(/providers\.google \?[\s\S]{0,200}<Button disabled>/)
+    expect(page).toMatch(/providers\.naver \?[\s\S]{0,240}<Button variant="quiet" disabled>/)
+  })
+
+  it('never sends a provider or database message to the browser', () => {
+    for (const file of AUTH_FILES) {
+      const code = stripComments(read(file))
+      // Redirects carry a short key; the original error stays in the server log.
+      expect(code, file).not.toMatch(/error=\$\{[^}]*\.message/)
+      expect(code, file).not.toMatch(/error\.message/)
+      expect(code, file).not.toContain('JSON.stringify(error')
+    }
+  })
+
+  it('renders only error keys that have a calm message', () => {
+    const known = new Set(Object.keys(AUTH_ERROR_MESSAGES))
+    const seen = new Set<string>()
+
+    for (const file of AUTH_FILES) {
+      const code = stripComments(read(file))
+      for (const match of code.matchAll(/[?&]error=([a-z_]+)/g)) {
+        seen.add(match[1] as string)
+      }
+      // signUpFailure('key') / signInFailure('key', next)
+      for (const match of code.matchAll(/sign(?:Up|In)Failure\('([a-z_]+)'/g)) {
+        seen.add(match[1] as string)
+      }
+    }
+
+    expect(seen.size).toBeGreaterThan(5)
+    expect([...seen].filter((key) => !known.has(key))).toEqual([])
+  })
+
+  it('logs auth failures without a credential or token in the line', () => {
+    const errors = read('src/lib/auth/errors.ts')
+    const block = errors.slice(errors.indexOf('export function logAuthFailure'))
+    expect(block).toContain('code')
+    expect(block).toContain('status')
+    expect(block).not.toContain('password')
+    expect(block).not.toContain('token')
+    expect(block).not.toContain('message')
+  })
+
+  it('does not invent a local password rule', () => {
+    const actions = stripComments(read('app/login/email/actions.ts'))
+    // No hardcoded length/complexity policy: Supabase is the authority.
+    expect(actions).not.toMatch(/length\s*[<>]=?\s*(6|8|10|12)/)
+    expect(actions).not.toMatch(/[A-Z].*regex|passwordRegex/)
   })
 })

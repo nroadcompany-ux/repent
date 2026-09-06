@@ -34,13 +34,30 @@ export const ENTRY_SAFETY_NOTE = [
  */
 export const JOURNEY_BANNER_LEGACY_COPY = ['오늘의 기록이', '당신의 여정이 됩니다'] as const
 
-/** Canonical social login. Email/password is not in Canonical and is not built. */
+/**
+ * Canonical auth. Owner Decision 2026-09-06 expanded this from
+ * Google + Naver to Google + Naver + Email/Password
+ * (Canonical Meaning Change: AUTH SCOPE ONLY / OWNER APPROVED).
+ */
+export const AUTH_PROVIDERS = ['google', 'naver', 'email'] as const
+export type AuthProvider = (typeof AUTH_PROVIDERS)[number]
+
+/** The two external providers. Email is handled in-app, not by an OAuth hop. */
 export const SOCIAL_LOGIN_PROVIDERS = ['google', 'naver'] as const
 
 export const SOCIAL_LOGIN_LABELS = {
   google: 'Google로 시작하기',
   naver: 'Naver로 시작하기',
+  email: '이메일로 시작하기',
 } as const
+
+/**
+ * A provider that cannot complete a login yet stays VISIBLE and disabled.
+ * Hiding it would misrepresent what RETURN supports; letting it link out would
+ * drop the member on a provider error page.
+ */
+export const PROVIDER_PENDING_NOTE = (labels: readonly string[]) =>
+  `${labels.join(' · ')} 로그인은 준비 중입니다.`
 
 /**
  * Wording that must never reach a screen: the system does not judge the
