@@ -793,3 +793,110 @@ describe('redirect allowlist scope', () => {
     expect(returnTo.match(/safeReturnPath\(/g)?.length).toBe(2)
   })
 })
+
+/**
+ * PWA privacy boundary (Owner directive, PWA MVP §6 / §13).
+ *
+ * The Service Worker must never place a member's records or session anywhere a
+ * later visitor to the same device could read them.
+ */
+describe('service worker', () => {
+  const sw = readFileSync(join(ROOT, 'public/sw.js'), 'utf8')
+  const code = stripComments(sw)
+
+  it('caches by allowlist, not by excluding known-bad paths', () => {
+    expect(code).toContain('CACHEABLE_PREFIXES')
+    const list = code.slice(code.indexOf('CACHEABLE_PREFIXES'), code.indexOf(']', code.indexOf('CACHEABLE_PREFIXES')))
+    expect(list).toContain('/_next/static/')
+    expect(list).toContain('/icons/')
+    expect(list).toContain('/brand/')
+    // Nothing else may be listed.
+    expect(list.match(/'\/[^']*'/g)).toEqual(["'/_next/static/'", "'/icons/'", "'/brand/'"])
+  })
+
+  it('never caches a document, so no user-specific HTML is stored', () => {
+    // Navigations go to the network and fall back only to the static offline page.
+    expect(code).toContain("request.mode === 'navigate'")
+    const navBlock = code.slice(code.indexOf("request.mode === 'navigate'"))
+    expect(navBlock.slice(0, navBlock.indexOf('return'))).toContain('fetch(request)')
+    expect(code).toContain('OFFLINE_URL')
+  })
+
+  it('only ever handles GET', () => {
+    expect(code).toContain("request.method !== 'GET'")
+  })
+
+  it('implements no offline write, background sync, or push', () => {
+    // Checked as real API surfaces rather than substrings — "async" contains "sync".
+    for (const event of ['sync', 'periodicsync', 'push', 'pushsubscriptionchange', 'notificationclick']) {
+      expect(code, event).not.toMatch(new RegExp(`addEventListener\\(\\s*['"]${event}['"]`))
+    }
+    for (const api of ['indexedDB', 'localStorage', 'sessionStorage', 'registration.sync']) {
+      expect(code, api).not.toContain(api)
+    }
+  })
+
+  it('cannot reach an auth route or a private path through the allowlist', () => {
+    for (const path of ['/auth/callback', '/auth/confirm', '/api/anything', '/journey', '/prayer']) {
+      const allowed = ['/_next/static/', '/icons/', '/brand/'].some((p) => path.startsWith(p))
+      expect(allowed, `${path} must not be cacheable`).toBe(false)
+    }
+  })
+})
+
+/** PWA manifest (Owner directive §5). */
+describe('pwa manifest', () => {
+  const manifest = readFileSync(join(ROOT, 'app/manifest.ts'), 'utf8')
+
+  it('uses the production design tokens, not invented hex', () => {
+    const css = readFileSync(join(ROOT, 'app/globals.css'), 'utf8')
+    expect(manifest).toContain("theme_color: '#6C43F3'")
+    expect(manifest).toContain("background_color: '#F7F7FA'")
+    expect(css.toLowerCase()).toContain('#6c43f3')
+    expect(css.toLowerCase()).toContain('#f7f7fa')
+  })
+
+  it('declares the canonical app identity and launch behaviour', () => {
+    expect(manifest).toContain("display: 'standalone'")
+    expect(manifest).toContain("orientation: 'portrait'")
+    expect(manifest).toContain("start_url: '/'")
+    expect(manifest).toContain("scope: '/'")
+    expect(manifest).toContain('PRIMARY_BRAND_COPY.wordmark')
+    expect(manifest).toContain('PRIMARY_BRAND_COPY.subline')
+  })
+
+  it('ships both standard and maskable icons', () => {
+    for (const icon of [
+      'icon-192.png',
+      'icon-512.png',
+      'icon-maskable-192.png',
+      'icon-maskable-512.png',
+    ]) {
+      expect(manifest).toContain(icon)
+      expect(() => readFileSync(join(ROOT, 'public/icons', icon))).not.toThrow()
+    }
+    expect(() => readFileSync(join(ROOT, 'public/icons/apple-touch-icon.png'))).not.toThrow()
+  })
+
+  it('builds icons from the official Loop Mark, unmodified', () => {
+    const script = readFileSync(join(ROOT, 'scripts/build-icons.mjs'), 'utf8')
+    const component = readFileSync(join(ROOT, 'src/components/brand/loop-mark.tsx'), 'utf8')
+    // Same circle, same leaf path, same rotation as the approved mark.
+    expect(script).toContain('cx="39.84" cy="35" r="31"')
+    expect(script).toContain('translate(34.43 55.5) rotate(24) translate(-23 -33)')
+    expect(component).toContain('translate(34.43 55.5) rotate(24) translate(-23 -33)')
+    const leaf = 'M23 3.5C27.8888 3.5 32.6783 6.33918 36.3916 11.667'
+    expect(script).toContain(leaf)
+    expect(component).toContain(leaf)
+  })
+
+  it('keeps PWA plumbing outside the auth gate', () => {
+    const middleware = readFileSync(join(ROOT, 'middleware.ts'), 'utf8')
+    // The matcher escapes its own dots for the regex; compare without them.
+    const unescaped = middleware.replace(/\\/g, '')
+    for (const excluded of ['sw.js', 'manifest.webmanifest', 'icons/']) {
+      expect(unescaped, excluded).toContain(excluded)
+    }
+    expect(middleware).toContain("'/offline'")
+  })
+})

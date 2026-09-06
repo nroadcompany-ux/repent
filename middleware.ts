@@ -13,7 +13,7 @@ import { NextResponse, type NextRequest } from 'next/server'
  * per request keeps navigation fast).
  */
 
-const PUBLIC_PREFIXES = ['/login', '/auth', '/legal']
+const PUBLIC_PREFIXES = ['/login', '/auth', '/legal', '/offline']
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request })
@@ -71,5 +71,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|brand/|.*\\.(?:svg|png|jpg|jpeg|webp|ico)$).*)'],
+  // PWA plumbing is excluded outright: a Service Worker and a manifest must be
+  // reachable with no session, and a redirect on /sw.js would break install.
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.webmanifest|icons/|brand/|.*\\.(?:svg|png|jpg|jpeg|webp|ico)$).*)',
+  ],
 }
