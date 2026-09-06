@@ -24,6 +24,17 @@ export function RecurrenceFields({
   defaultWeekdays?: number[]
 }) {
   const [repeatType, setRepeatType] = useState<RepeatType>(defaultType)
+  const [weekdays, setWeekdays] = useState<number[]>(defaultWeekdays)
+
+  const weekdayLabels = WEEKDAYS.filter((day) => weekdays.includes(day.value)).map((day) => day.label)
+
+  function toggleWeekday(value: number) {
+    setWeekdays((current) =>
+      current.includes(value)
+        ? current.filter((day) => day !== value)
+        : [...current, value],
+    )
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -51,19 +62,35 @@ export function RecurrenceFields({
         <fieldset>
           <legend className="text-body-sm mb-2 font-medium text-accent">매주 무슨 요일인가요?</legend>
           <div className="flex flex-wrap gap-2">
-            {WEEKDAYS.map((day) => (
-              <label key={day.value} className="text-body-sm flex items-center gap-2 rounded-chip border border-line bg-surface px-3 py-2 text-ink">
-                <input
-                  type="checkbox"
-                  name="repeat_weekdays"
-                  value={day.value}
-                  defaultChecked={defaultWeekdays.includes(day.value)}
-                  className="accent-accent"
-                />
-                {day.label}
-              </label>
-            ))}
+            {WEEKDAYS.map((day) => {
+              const checked = weekdays.includes(day.value)
+              return (
+                <label
+                  key={day.value}
+                  className={`text-body-sm flex items-center gap-2 rounded-chip border px-3 py-2 ${
+                    checked
+                      ? 'border-accent bg-accent-tint text-accent'
+                      : 'border-line bg-surface text-ink'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    name="repeat_weekdays"
+                    value={day.value}
+                    checked={checked}
+                    onChange={() => toggleWeekday(day.value)}
+                    className="accent-accent"
+                  />
+                  {day.label}
+                </label>
+              )
+            })}
           </div>
+          <p className="text-caption mt-2 font-medium text-ink-muted">
+            {weekdays.length > 0
+              ? `주 ${weekdays.length}회 · ${weekdayLabels.join(' · ')}`
+              : '요일을 하나 이상 선택해 주세요.'}
+          </p>
         </fieldset>
       ) : null}
     </div>
