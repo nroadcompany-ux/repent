@@ -113,8 +113,8 @@ describe('segmented links accessibility (Issue #19 §2)', () => {
 
   it('can name the group of links for assistive tech', () => {
     expect(control).toContain('aria-label={label}')
-    // Both filter surfaces name their control.
-    expect(stripComments(read('app/(app)/confession/page.tsx'))).toContain('label="고백 유형 필터"')
+    // The promise filter still names its control. Confession no longer has a
+    // fixed filter at all (Owner decision 2026-09-08), so it is not asserted.
     expect(stripComments(read('app/(app)/promise/page.tsx'))).toContain('label="약속 상태 필터"')
   })
 })
@@ -195,17 +195,31 @@ describe('promise four-state filter (Issue #19 §6)', () => {
 describe('confession feed (Issue #19 §5)', () => {
   const feed = read('app/(app)/confession/page.tsx')
 
-  it('keeps the taxonomy identical to the database enum, defaulting to 전체', () => {
-    expect(feed).toContain('CONFESSION_TYPE_LABELS')
-    expect(Object.values(CONFESSION_TYPE_LABELS)).toEqual(['기도', '고백', '은혜', '일상'])
-    expect(feed).toContain("{ value: '', label: '전체' }")
-    // Empty type is the default, so the feed opens on 전체.
-    expect(feed).toMatch(/typeParam\s*\?\?\s*''/)
+  /**
+   * Owner decision 2026-09-08 removed the fixed category filter entirely and
+   * replaced it with one optional free-text 주제. The old assertions are
+   * inverted here rather than the product being pulled back to them.
+   */
+  it('has no fixed category filter', () => {
+    const code = stripComments(feed)
+    expect(code).not.toContain('SegmentedLinks')
+    expect(code).not.toContain("label: '전체'")
+    expect(code).not.toMatch(/eq\('type',/)
   })
 
-  it('puts the filter at the upper right with the selection as the pill', () => {
-    expect(feed).toContain('align="end"')
-    expect(feed).toContain('active={activeType}')
+  it('carries one optional topic from the existing post_hashtags source', () => {
+    expect(feed).toContain("from('post_hashtags')")
+    expect(feed).toContain('topicByPost')
+    // Rendered only when the post actually has one.
+    expect(feed).toContain('{topicByPost.get(post.id) ? (')
+    // One topic per post, not a tag list.
+    const actions = read('app/(app)/confession/actions.ts')
+    expect(actions).toContain('.slice(0, 1)')
+  })
+
+  it('shows no fabricated handle', () => {
+    expect(feed).not.toMatch(/@\{|'@'|"@"/)
+    expect(read('src/lib/supabase/database.types.ts')).not.toMatch(/username|handle/)
   })
 
   it('keeps every seed example UI-only and unpersisted', () => {
@@ -227,10 +241,18 @@ describe('confession feed (Issue #19 §5)', () => {
   })
 
   it('shows zeroed counts on the example row', () => {
-    const sampleRow = feed.slice(feed.indexOf('function SampleReactionRow'))
+    const at = feed.indexOf('function SampleReactionRow')
+    const sampleRow = feed.slice(at, at + 800)
     for (const icon of ['👍', '👎', '💬']) {
-      expect(sampleRow.slice(0, 800)).toMatch(new RegExp(`\\['${icon}', 0,`))
+      expect(sampleRow, icon).toContain("['" + icon + "', 0,")
     }
+  })
+
+  it('gives each post room to be read', () => {
+    // Owner decision 2026-09-08: lower the feed density.
+    expect(feed).toContain('leading-[26px]')
+    expect(feed).toContain('px-4 py-5')
+    expect(feed).not.toContain('leading-[25px]')
   })
 
   it('renders the reaction row achromatically without changing the glyphs', () => {

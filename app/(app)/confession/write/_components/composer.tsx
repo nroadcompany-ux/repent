@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
-import { CONFESSION_PHOTO_MAX, CONFESSION_TYPE_LABELS } from '@/domain/product-lock'
+import { CONFESSION_PHOTO_MAX } from '@/domain/product-lock'
 import { createClient } from '@/lib/supabase/client'
 import type { ConfessionType, ShareSourceKind } from '@/lib/supabase/database.types'
 import { publishConfession } from '../../actions'
@@ -49,7 +49,8 @@ export function ShareCopyComposer({
   const [selected, setSelected] = useState<string[]>([])
   const [body, setBody] = useState('')
   const [manual, setManual] = useState(false)
-  const [type, setType] = useState<ConfessionType>(initialType)
+  // Kept for the NOT NULL column; no longer a member-facing choice.
+  const type = initialType
   const [hashtags, setHashtags] = useState('')
   const [photoPath, setPhotoPath] = useState('')
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
@@ -141,29 +142,11 @@ export function ShareCopyComposer({
         </section>
       ) : null}
 
-      <div className="mb-5">
-        <FieldLabel>어떤 이야기인가요</FieldLabel>
-        <div className="flex flex-wrap gap-2">
-          {(Object.entries(CONFESSION_TYPE_LABELS) as Array<[ConfessionType, string]>).map(
-            ([value, label]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setType(value)}
-                aria-pressed={type === value}
-                className={`text-body-sm h-[34px] rounded-chip px-4 font-medium ${
-                  type === value
-                    ? 'bg-accent text-white'
-                    : 'border border-line bg-surface text-ink-muted'
-                }`}
-              >
-                {label}
-              </button>
-            ),
-          )}
-        </div>
-      </div>
-
+      {/*
+        Owner decision 2026-09-08: the fixed category is no longer chosen by the
+        member. confession_posts.type is still NOT NULL, so the hidden field
+        above keeps carrying a valid value until a migration makes it optional.
+      */}
       {/* 3. ShareCopy Draft */}
       <div className="mb-5">
         <FieldLabel htmlFor="body">나눌 내용</FieldLabel>
@@ -211,22 +194,25 @@ export function ShareCopyComposer({
       </div>
 
       <div className="mb-6">
-        <FieldLabel htmlFor="hashtags">해시태그 (선택)</FieldLabel>
+        <FieldLabel htmlFor="hashtags">주제 (선택 · 1개)</FieldLabel>
         <TextField
           id="hashtags"
           name="hashtags"
           value={hashtags}
           onChange={(event) => setHashtags(event.target.value)}
-          maxLength={200}
-          placeholder="예: 감사 새벽기도"
+          maxLength={30}
+          placeholder="예: 직장생활, 기도부탁, 오늘의말씀"
         />
+        <p className="text-caption mt-2 text-ink-faint">
+          주제를 적지 않아도 올릴 수 있어요. 주제는 글의 종류가 아니라 찾아보기 위한 표시입니다.
+        </p>
       </div>
 
       {/* 4. Preview → Publish */}
       {showPreview ? (
         <section className="mb-5 rounded-card bg-surface px-4 py-4">
           <p className="text-caption font-medium text-accent">
-            {CONFESSION_TYPE_LABELS[type]} · 이렇게 보입니다
+            이렇게 보입니다
           </p>
           <p className="text-body mt-2 whitespace-pre-wrap leading-[25px] text-ink">
             {draft || '아직 내용이 없어요.'}

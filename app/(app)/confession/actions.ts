@@ -71,7 +71,8 @@ export async function publishConfession(form: FormData) {
     .split(/[\s,]+/)
     .map((tag) => tag.replace(/^#/, '').trim())
     .filter((tag) => tag.length > 0 && tag.length <= 30)
-    .slice(0, 10)
+    // Owner decision 2026-09-08: one optional topic, not a tag list.
+    .slice(0, 1)
 
   if (tags.length > 0) {
     await supabase.from('post_hashtags').insert(tags.map((tag) => ({ post_id: data.id, tag })))
