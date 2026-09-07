@@ -6,6 +6,14 @@ import { describe, expect, it } from 'vitest'
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8')
 
 const component = read('src/components/splash/app-start-splash.tsx')
+
+/** Comments name the forbidden concepts in order to record their absence. */
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, ' ')
+    .replace(/(^|[^:])\/\/.*$/gm, '$1')
+}
 const styles = read('src/components/splash/app-start-splash.module.css')
 const splashMark = read('public/brand/splash-loop-mark.svg')
 const brandMark = read('src/components/brand/loop-mark.tsx')
@@ -23,7 +31,7 @@ describe('Issue #18 — Owner-approved Splash C', () => {
   it('locks the only visible copy to RETURN and 다시 하나님께로', () => {
     expect(component).toContain('>RETURN</div>')
     expect(component).toContain('>다시 하나님께로</div>')
-    expect(component).not.toMatch(/로딩|질문|설명문구|spinner/i)
+    expect(stripComments(component)).not.toMatch(/로딩|질문|설명문구|spinner/i)
   })
 
   it('no longer renders the superseded tagline', () => {
@@ -36,27 +44,32 @@ describe('Issue #18 — Owner-approved Splash C', () => {
    * animation only. The tagline reveal ends exactly when the sequence ends, so
    * there is no dead frame and no artificial minimum-exposure hold.
    */
-  it('implements the approved motion timing without an extra hold', () => {
-    expect(component).toContain('const SEQUENCE_END_MS = 960')
-    expect(component).toContain('const FADE_OUT_MS = 140')
-    expect(styles).toContain('600ms ease-out 360ms')
+  it('implements the approved motion timing', () => {
+    expect(component).toContain('const SEQUENCE_END_MS = 2000')
+    expect(component).toContain('const FADE_OUT_MS = 200')
+    expect(styles).toContain('600ms ease-out 600ms')
     expect(styles).toContain('translateY(6px)')
-    expect(styles).toContain('transition: opacity 140ms ease-out')
+    expect(styles).toContain('transition: opacity 200ms ease-out')
   })
 
-  it('reaches about 1.1s in total and holds nothing after the animation', () => {
+  it('reaches about 2.2s and holds the finished frame', () => {
     const sequence = Number(/const SEQUENCE_END_MS = (\d+)/.exec(component)?.[1])
     const fade = Number(/const FADE_OUT_MS = (\d+)/.exec(component)?.[1])
     const [, duration, delay] = /animation: splash-tagline-in (\d+)ms ease-out (\d+)ms/.exec(
       styles,
     ) as unknown as [string, string, string]
 
-    expect(sequence + fade).toBeGreaterThanOrEqual(1050)
-    expect(sequence + fade).toBeLessThanOrEqual(1200)
-    // The tagline animation finishes exactly as the splash starts leaving:
-    // the extra time is animation, not a wait.
-    expect(Number(delay) + Number(duration)).toBe(sequence)
-    // Nothing in the component waits on a timer other than these two.
+    expect(sequence + fade).toBeGreaterThanOrEqual(2100)
+    expect(sequence + fade).toBeLessThanOrEqual(2300)
+
+    // Owner decision 2026-09-08: the tagline finishes before the sequence ends
+    // and the completed frame dwells. This supersedes the v2 rule that forbade
+    // any hold, so the assertion is inverted rather than the product changed.
+    const animationEnd = Number(delay) + Number(duration)
+    expect(animationEnd).toBeLessThan(sequence)
+    expect(sequence - animationEnd).toBeGreaterThanOrEqual(600)
+
+    // Still only the two timers; nothing waits on readiness.
     expect(component.match(/setTimeout\(/g)?.length).toBe(2)
   })
 

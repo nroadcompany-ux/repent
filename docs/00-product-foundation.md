@@ -15,7 +15,7 @@ RETURN은 개인의 신앙생활을 `기도 → 회개 → 약속 → 실행 →
 
 ## Main Navigation (Owner Lock)
 
-여정 | 기도 | 회개 | 약속 | 고백
+여정 | 기도 | 회개 | 약속 | SNS  <!-- Owner decision 2026-09-08: 고백 -> SNS (라벨만, 도메인 불변) -->
 
 - Action은 독립 Bottom Tab이 아니다.
 - Action은 Promise 내부 실행 기록으로 유지한다.

@@ -45,7 +45,11 @@ export const FORBIDDEN_COMMUNITY_SHAPES = ['인기순', '영적 랭킹'] as cons
  * Navigation (docs/00 Owner Lock, docs/01, AC-01)
  * ---------------------------------------------------------------------- */
 
-export const MAIN_NAV = ['여정', '기도', '회개', '약속', '고백'] as const
+/**
+ * Owner decision 2026-09-08: the fifth tab is `SNS`. It replaces `고백` as the
+ * user-facing label only — the domain, its routes and its tables are unchanged.
+ */
+export const MAIN_NAV = ['여정', '기도', '회개', '약속', 'SNS'] as const
 
 /**
  * Action is not a bottom tab. It is an execution record inside Promise.
@@ -116,7 +120,7 @@ export const MOOD_MISSING_DAY_IS_INTERPOLATED = false
 export const ONLY_LIFE_EVENTS_ARE_LINE_CONNECTED = true
 
 /** docs/03 TODAY 4-slot. 회개 is deliberately absent — it is not a daily duty tile. */
-export const TODAY_SLOTS = ['나의 말씀', '이어갈 기도', '오늘의 약속·실행', '성경읽기'] as const
+export const TODAY_SLOTS = ['나의 말씀', '이어갈 기도', '오늘의 약속·실행', '성경통독'] as const
 export const REPENTANCE_IS_DAILY_DUTY_TILE = false
 
 /* -------------------------------------------------------------------------

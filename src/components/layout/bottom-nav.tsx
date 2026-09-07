@@ -20,7 +20,7 @@ const TABS = [
   { href: '/prayer', label: '기도' },
   { href: '/repentance', label: '회개' },
   { href: '/promise', label: '약속' },
-  { href: '/confession', label: '고백' },
+  { href: '/confession', label: 'SNS' },
 ] as const
 
 export function BottomNav() {

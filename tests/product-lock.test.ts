@@ -138,7 +138,8 @@ describe('source scan', () => {
 
 describe('navigation (docs/00, AC-01)', () => {
   it('locks the five main tabs in order', () => {
-    expect(MAIN_NAV).toEqual(['여정', '기도', '회개', '약속', '고백'])
+    // Owner decision 2026-09-08 renamed the fifth tab 고백 -> SNS.
+    expect(MAIN_NAV).toEqual(['여정', '기도', '회개', '약속', 'SNS'])
   })
 
   it('does not expose Action as a bottom tab', () => {
@@ -307,7 +308,8 @@ describe('journey (docs/04, AC-02)', () => {
   })
 
   it('keeps the four canonical TODAY slots', () => {
-    expect(TODAY_SLOTS).toEqual(['나의 말씀', '이어갈 기도', '오늘의 약속·실행', '성경읽기'])
+    // Owner decision 2026-09-08 renamed 성경읽기 -> 성경통독.
+    expect(TODAY_SLOTS).toEqual(['나의 말씀', '이어갈 기도', '오늘의 약속·실행', '성경통독'])
   })
 })
 

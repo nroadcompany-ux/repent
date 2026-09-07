@@ -10,7 +10,7 @@ owner_approval: 2026-09-06
 > Canonical Product/UX Acceptance Criteria. Legal/Production 세부 HOLD는 별도 Gate에서 검증한다.
 
 ## AC-01 Main Navigation
-- Bottom Nav는 `여정 | 기도 | 회개 | 약속 | 고백`이다.
+- Bottom Nav는 `여정 | 기도 | 회개 | 약속 | SNS`이다.  <!-- Owner decision 2026-09-08 -->
 - Action은 독립 Bottom Tab으로 노출하지 않는다.
 
 ## AC-02 Journey
