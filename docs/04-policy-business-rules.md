@@ -31,7 +31,7 @@ owner_approval: 2026-09-06
 ## Promise / Action
 
 - 기본 그룹: 나의 삶 / 사람과 관계 / 신앙생활
-- Promise user-facing finish: `마무리됨`
+- Promise user-facing finish: `완료`  <!-- Owner decision 2026-09-07 (#21 §G): 기존 `마무리됨` 대체. DB state(active/closed)는 불변 -->
 - Promise 1:N Action
 - 이행률은 행동 측정치만 허용.
 - Retry / Modify / Reschedule / Record Only / Optional Repent 의미 유지.

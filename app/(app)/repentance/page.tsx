@@ -1,11 +1,10 @@
 import { AppHeader } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
-import { Button } from '@/components/ui/control'
+import { ButtonLink } from '@/components/ui/control'
 import { EmptyState } from '@/components/ui/state'
 import { InfoRow, RowStack, SectionHeader } from '@/components/ui/surface'
 import { formatMonthDay } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
-import { startRepentance } from './actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,10 +68,12 @@ export default async function RepentancePage({
         </p>
       ) : null}
 
+      {/*
+        Issue #21 §B: a plain link. Pressing this no longer writes anything —
+        the row is created by the first save on /repentance/write.
+      */}
       <div className="mt-7 px-title-gutter">
-        <form action={startRepentance}>
-          <Button type="submit">회개하기</Button>
-        </form>
+        <ButtonLink href="/repentance/write">회개하기</ButtonLink>
       </div>
 
       <div className="mt-8">

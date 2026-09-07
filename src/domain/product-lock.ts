@@ -73,8 +73,15 @@ export const REPENTANCE_SHOWS_PROGRESS_PERCENT = false
 
 export const PROMISE_DEFAULT_GROUPS = ['나의 삶', '사람과 관계', '신앙생활'] as const
 
-/** User-facing finish label. docs/04: "Promise user-facing finish: `마무리됨`". */
-export const PROMISE_CLOSE_LABEL = '마무리됨'
+/**
+ * User-facing finish label.
+ *
+ * Owner decision 2026-09-07 (Issue #21 §G) replaced `마무리됨` with `완료`.
+ * This is wording only — promise_state is still `active` / `closed` and no
+ * migration is involved. docs/01, docs/04, docs/09 and docs/10 record the
+ * supersession.
+ */
+export const PROMISE_CLOSE_LABEL = '완료'
 export const PROMISE_ACTIVE_LABEL = '진행 중'
 
 /**

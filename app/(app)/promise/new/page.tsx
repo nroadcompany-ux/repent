@@ -1,6 +1,7 @@
 import { PageHeader } from '@/components/layout/app-header'
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
 import { todayKst } from '@/lib/date'
+import { isShareSourceKind, isUuid } from '@/domain/provenance'
 import { requireUser } from '@/lib/supabase/server'
 import { RecurrenceFields } from '../_components/recurrence-fields'
 import { createPromise } from '../actions'
@@ -17,10 +18,15 @@ const ERROR_MESSAGES: Record<string, string> = {
 export default async function NewPromisePage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; title?: string; source?: string }>
+  searchParams: Promise<{ error?: string; title?: string; source?: string; sourceId?: string }>
 }) {
   const { supabase, userId } = await requireUser()
-  const { error, title: prefilledTitle } = await searchParams
+  const { error, title: prefilledTitle, source, sourceId } = await searchParams
+
+  // Provenance is carried through, not trusted: createPromise re-validates the
+  // kind against the enum allowlist and the id against the UUID shape, and
+  // stores null/null unless both hold (0011 pair CHECK).
+  const provenance = isShareSourceKind(source) && isUuid(sourceId ?? '') ? { source, sourceId } : null
 
   const { data: groups } = await supabase
     .from('promise_groups')
@@ -33,6 +39,12 @@ export default async function NewPromisePage({
       <PageHeader title="새 약속" backHref="/promise" />
 
       <form action={createPromise} className="px-title-gutter pt-4">
+        {provenance ? (
+          <>
+            <input type="hidden" name="source_kind" value={provenance.source} />
+            <input type="hidden" name="source_id" value={provenance.sourceId} />
+          </>
+        ) : null}
         {error ? (
           <p role="alert" className="text-body-sm mb-5 rounded-control bg-danger-tint px-4 py-3 leading-[21px] text-danger">
             {ERROR_MESSAGES[error] ?? ERROR_MESSAGES.save}

@@ -122,6 +122,10 @@ export type PromiseRow = {
   repeat_weekdays: number[]
   state: PromiseState
   closed_at: string | null
+  // 0011 — soft pointer to the private record this promise came from.
+  // Deliberately not a foreign key: deleting the source must not delete this.
+  source_kind: ShareSourceKind | null
+  source_id: string | null
 } & Timestamps
 
 export type PromiseCheckRow = {

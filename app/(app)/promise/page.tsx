@@ -14,7 +14,7 @@ import { requireUser } from '@/lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 /**
- * Promise Home. docs/01: 진행 중 / 마무리됨 / 전체 + 기본 그룹 3종.
+ * Promise Home. docs/01: 진행 중 / 완료 / 전체 + 기본 그룹 3종.
  * docs/03: Home Primary CTA is 새 약속.
  *
  * Each row carries the 3-day keep strip so the daily record can be made from
