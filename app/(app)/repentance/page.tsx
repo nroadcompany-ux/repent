@@ -1,9 +1,11 @@
+import Link from 'next/link'
+
 import { AppHeader } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
 import { ButtonLink } from '@/components/ui/control'
 import { EmptyState } from '@/components/ui/state'
-import { InfoRow, RowStack, SectionHeader } from '@/components/ui/surface'
-import { formatMonthDay } from '@/lib/date'
+import { SectionHeader } from '@/components/ui/surface'
+import { formatFullDate, formatMonthDay } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -18,14 +20,6 @@ const SLIDES: readonly EducationSlide[] = [
     body: ['베드로전서 1장 16절', '있는 모습 그대로 돌아보고 하나님께 나아갑니다.'],
   },
 ]
-
-function ExamplePill() {
-  return (
-    <span className="text-caption mr-1 inline-flex rounded-chip bg-accent-tint px-2 py-[2px] align-middle font-medium text-accent">
-      예시
-    </span>
-  )
-}
 
 export default async function RepentancePage({
   searchParams,
@@ -76,45 +70,38 @@ export default async function RepentancePage({
         <ButtonLink href="/repentance/write">회개하기</ButtonLink>
       </div>
 
-      <div className="mt-8">
-        <SectionHeader title="쓰다 만 기록" subtitle="이어서 쓸 수 있어요" />
-      </div>
-      <div className="mt-[13px]">
-        {drafts.length > 0 ? (
-          <RowStack>
+      {/*
+        Owner decision 2026-09-08. Drafts are secondary to 회개하기: one quiet
+        row that expands in place. A native <details> means no new route, no
+        client state and correct keyboard and screen-reader behaviour. With no
+        drafts the row is not rendered at all — an unwritten record is not a
+        thing to be reminded of.
+      */}
+      {drafts.length > 0 ? (
+        <details className="mx-gutter mt-5 rounded-row bg-surface px-4">
+          <summary className="text-body flex cursor-pointer items-center justify-between py-4 font-medium text-ink-muted">
+            <span>작성 중인 기록 {drafts.length}개</span>
+            <span aria-hidden="true" className="text-chevron text-ink-faint">
+              ›
+            </span>
+          </summary>
+          <ul className="border-t border-line py-1">
             {drafts.map((draft) => (
-              <InfoRow
-                key={draft.id}
-                label="이어쓰기"
-                value={draft.title || '제목 없는 기록'}
-                caption={`${formatMonthDay(draft.updated_at.slice(0, 10))} 임시저장`}
-                href={`/repentance/${draft.id}/write?step=looking_back`}
-              />
+              <li key={draft.id}>
+                <Link href={`/repentance/${draft.id}/write?step=looking_back`} className="block py-3">
+                  <span className="text-body-sm block text-ink">{draft.title || '제목 없는 기록'}</span>
+                  <span className="text-caption mt-[2px] block text-ink-faint">
+                    {formatMonthDay(draft.updated_at.slice(0, 10))}
+                  </span>
+                </Link>
+              </li>
             ))}
-          </RowStack>
-        ) : (
-          <RowStack>
-            <InfoRow
-              label="이어쓰기"
-              value={<><ExamplePill />화를 내고 후회한 일</>}
-              caption="이런 식으로 제목을 붙여둘 수 있어요"
-            />
-            <InfoRow
-              label="이어쓰기"
-              value={<><ExamplePill />약속을 지키지 못한 일</>}
-              caption="예시는 실제 기록에 포함되지 않아요"
-            />
-            <InfoRow
-              label="이어쓰기"
-              value={<><ExamplePill />마음속 미움을 내려놓고 싶은 일</>}
-              caption="예시는 저장·검색·통계에 포함되지 않아요"
-            />
-          </RowStack>
-        )}
-      </div>
+          </ul>
+        </details>
+      ) : null}
 
       <div className="mt-8">
-        <SectionHeader title="지난 기록" subtitle="언제든 다시 읽어볼 수 있어요" />
+        <SectionHeader title="나의 회개 기록" subtitle="지난 돌이킴을 다시 읽어볼 수 있어요" />
       </div>
 
       <div className="mt-[13px]">
@@ -124,17 +111,25 @@ export default async function RepentancePage({
             description="잘 쓰지 않아도 됩니다. 마음에 걸리는 것 한 가지부터 적어보세요."
           />
         ) : (
-          <RowStack>
+          <ul className="flex flex-col gap-row-gap px-gutter">
             {recorded.map((record) => (
-              <InfoRow
-                key={record.id}
-                label={formatMonthDay((record.recorded_at ?? record.created_at).slice(0, 10))}
-                value={record.title || '제목 없는 기록'}
-                caption={record.turning_promise ?? '저장된 회개 기록'}
-                href={`/repentance/${record.id}`}
-              />
+              <li key={record.id} className="rounded-row bg-surface">
+                <Link href={`/repentance/${record.id}`} className="flex items-center gap-3 px-4 py-3">
+                  <span className="min-w-0 flex-1">
+                    <span className="text-body block truncate font-medium text-ink">
+                      {record.title || '제목 없는 기록'}
+                    </span>
+                    <span className="text-caption mt-[2px] block text-ink-faint">
+                      {formatFullDate((record.recorded_at ?? record.created_at).slice(0, 10))}
+                    </span>
+                  </span>
+                  <span aria-hidden="true" className="text-chevron shrink-0 text-ink-faint">
+                    ›
+                  </span>
+                </Link>
+              </li>
             ))}
-          </RowStack>
+          </ul>
         )}
       </div>
     </main>

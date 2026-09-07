@@ -181,7 +181,14 @@ describe('repentance delayed creation (§B)', () => {
   it('leaves existing drafts untouched', () => {
     // No delete or cleanup of historical rows anywhere in the package.
     expect(actions).not.toMatch(/delete\(\)[\s\S]{0,120}state.*draft/)
-    expect(read('app/(app)/repentance/page.tsx')).toContain('쓰다 만 기록')
+
+    // Owner decision 2026-09-08 renamed the section `쓰다 만 기록` to a collapsed
+    // `작성 중인 기록 N개` row. The wording changed; the guarantee did not — every
+    // draft is still listed and still resumable at the same step.
+    const page = read('app/(app)/repentance/page.tsx')
+    expect(page).toContain('작성 중인 기록 {drafts.length}개')
+    expect(page).toContain('/repentance/${draft.id}/write?step=looking_back')
+    expect(page).toContain('drafts.map((draft)')
   })
 
   it('keeps the legacy write, review and detail routes working', () => {
