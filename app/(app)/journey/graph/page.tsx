@@ -83,6 +83,7 @@ export default async function JourneyGraphPage({
     id: event.id,
     date: event.occurred_on,
     title: event.title,
+    body: event.body,
     significance: event.significance,
   }))
 
