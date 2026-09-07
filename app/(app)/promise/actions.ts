@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { safeReturnPath } from '@/lib/auth/safe-path'
 import { todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -121,7 +122,7 @@ export async function bumpPromiseCheck(form: FormData) {
   const checkDate = text(form, 'check_date') || todayKst()
   const target = Math.min(Math.max(number(form, 'daily_target', 1), 1), 10)
   const current = Math.max(number(form, 'done_count', 0), 0)
-  const returnTo = text(form, 'return_to') || '/promise'
+  const returnTo = safeReturnPath(text(form, 'return_to')) ?? '/promise'
 
   const nextCount = current >= target ? 0 : current + 1
 

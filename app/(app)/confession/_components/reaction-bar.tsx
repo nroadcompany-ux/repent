@@ -17,7 +17,12 @@ export { tallyReactions }
 /**
  * Owner simplified Confession feedback to 👍 / 👎 / 💬 + counts.
  * The vote set comes from the Product Lock so the bar and the contract cannot
- * drift apart; legacy reaction rows are ignored by tallyReactions below.
+ * drift apart; legacy reaction rows are ignored by tallyReactions.
+ *
+ * Issue #19: the row is achromatic. The canonical glyphs are unchanged — they
+ * are desaturated in CSS rather than swapped for different artwork — and the
+ * selected state uses ink rather than accent, so no reaction reads as a
+ * highlighted or preferred answer.
  */
 export function ReactionBar({
   postId,
@@ -54,10 +59,12 @@ export function ReactionBar({
               aria-label={label}
               aria-pressed={selected}
               className={`text-body-sm inline-flex min-h-9 items-center gap-1 rounded-chip px-3 font-medium ${
-                selected ? 'bg-accent-tint text-accent' : 'text-ink-muted'
+                selected ? 'bg-line text-ink' : 'text-ink-muted'
               }`}
             >
-              <span aria-hidden="true">{icon}</span>
+              <span aria-hidden="true" className="grayscale">
+                {icon}
+              </span>
               <span>{counts.get(type) ?? 0}</span>
             </button>
           </form>
@@ -70,7 +77,9 @@ export function ReactionBar({
           aria-label="댓글"
           className="text-body-sm inline-flex min-h-9 items-center gap-1 rounded-chip px-3 font-medium text-ink-muted"
         >
-          <span aria-hidden="true">💬</span>
+          <span aria-hidden="true" className="grayscale">
+            💬
+          </span>
           <span>{commentCount}</span>
         </Link>
       ) : null}

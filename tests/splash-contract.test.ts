@@ -31,12 +31,33 @@ describe('Issue #18 — Owner-approved Splash C', () => {
     expect(component).not.toContain('>다시 하나님께<')
   })
 
+  /**
+   * Timing v2 (Issue #19): roughly double the perceived duration, extended by
+   * animation only. The tagline reveal ends exactly when the sequence ends, so
+   * there is no dead frame and no artificial minimum-exposure hold.
+   */
   it('implements the approved motion timing without an extra hold', () => {
-    expect(component).toContain('const SEQUENCE_END_MS = 420')
+    expect(component).toContain('const SEQUENCE_END_MS = 960')
     expect(component).toContain('const FADE_OUT_MS = 140')
-    expect(styles).toContain('240ms ease-out 180ms')
+    expect(styles).toContain('600ms ease-out 360ms')
     expect(styles).toContain('translateY(6px)')
     expect(styles).toContain('transition: opacity 140ms ease-out')
+  })
+
+  it('reaches about 1.1s in total and holds nothing after the animation', () => {
+    const sequence = Number(/const SEQUENCE_END_MS = (\d+)/.exec(component)?.[1])
+    const fade = Number(/const FADE_OUT_MS = (\d+)/.exec(component)?.[1])
+    const [, duration, delay] = /animation: splash-tagline-in (\d+)ms ease-out (\d+)ms/.exec(
+      styles,
+    ) as unknown as [string, string, string]
+
+    expect(sequence + fade).toBeGreaterThanOrEqual(1050)
+    expect(sequence + fade).toBeLessThanOrEqual(1200)
+    // The tagline animation finishes exactly as the splash starts leaving:
+    // the extra time is animation, not a wait.
+    expect(Number(delay) + Number(duration)).toBe(sequence)
+    // Nothing in the component waits on a timer other than these two.
+    expect(component.match(/setTimeout\(/g)?.length).toBe(2)
   })
 
   it('respects reduced motion', () => {

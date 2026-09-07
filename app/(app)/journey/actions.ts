@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { safeReturnPath } from '@/lib/auth/safe-path'
 import { todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -29,7 +30,7 @@ export async function saveMood(form: FormData) {
 
   const level = Number.parseInt(text(form, 'level'), 10)
   const recordedOn = text(form, 'recorded_on') || todayKst()
-  const returnTo = text(form, 'return_to') || '/journey/graph'
+  const returnTo = safeReturnPath(text(form, 'return_to')) ?? '/journey/graph'
 
   if (!Number.isFinite(level) || level < 1 || level > 5) redirect(`${returnTo}?error=level`)
 
@@ -48,7 +49,7 @@ export async function saveMood(form: FormData) {
 export async function deleteMood(form: FormData) {
   const { supabase, userId } = await requireUser()
   const recordedOn = text(form, 'recorded_on')
-  const returnTo = text(form, 'return_to') || '/journey/graph'
+  const returnTo = safeReturnPath(text(form, 'return_to')) ?? '/journey/graph'
 
   await supabase
     .from('mood_records')
@@ -139,7 +140,7 @@ export async function toggleChapter(form: FormData) {
   const book = text(form, 'book')
   const chapter = Number.parseInt(text(form, 'chapter'), 10)
   const alreadyRead = text(form, 'read') === '1'
-  const returnTo = text(form, 'return_to') || '/journey/bible'
+  const returnTo = safeReturnPath(text(form, 'return_to')) ?? '/journey/bible'
 
   if (!book || !Number.isFinite(chapter)) redirect(returnTo)
 

@@ -24,16 +24,66 @@ const SAMPLE_POSTS: ReadonlyArray<{
   author: string
   body: string
 }> = [
-  { id: 'sample-01', type: 'daily', author: 'RETURN 예시', body: '오늘은 하루가 길게 느껴졌어요. 그래도 무사히 마친 것에 감사합니다.' },
-  { id: 'sample-02', type: 'prayer', author: 'RETURN 예시', body: '가족이 건강하게 지낼 수 있도록 기도 부탁드려요.' },
-  { id: 'sample-03', type: 'grace', author: 'RETURN 예시', body: '오늘 말씀을 읽다가 마음이 조금 편안해졌어요.' },
-  { id: 'sample-04', type: 'confession', author: 'RETURN 예시', body: '화가 난 마음을 오래 붙잡고 있었던 것을 돌아봅니다.' },
-  { id: 'sample-05', type: 'daily', author: 'RETURN 예시', body: '출근길 하늘을 보며 잠깐 멈춰 섰습니다.' },
-  { id: 'sample-06', type: 'prayer', author: 'RETURN 예시', body: '중요한 결정을 앞두고 있습니다. 지혜를 구합니다.' },
-  { id: 'sample-07', type: 'grace', author: 'RETURN 예시', body: '예상하지 못한 도움을 받아 감사한 하루였습니다.' },
-  { id: 'sample-08', type: 'confession', author: 'RETURN 예시', body: '해야 할 말을 미루고 있었어요. 용기 내어 먼저 다가가고 싶습니다.' },
-  { id: 'sample-09', type: 'prayer', author: 'RETURN 예시', body: '마음이 지친 친구를 위해 함께 기도해 주세요.' },
-  { id: 'sample-10', type: 'daily', author: 'RETURN 예시', body: '오늘은 조금 느리게 가도 괜찮다고 생각해 봅니다.' },
+  {
+    id: 'sample-01',
+    type: 'daily',
+    author: 'RETURN 예시',
+    body: '오늘은 하루가 유난히 길게 느껴졌어요.\n특별히 힘든 일이 있었던 것도 아닌데\n괜히 마음이 무거웠습니다.\n그래도 무사히 하루를 마친 것에 감사합니다.',
+  },
+  {
+    id: 'sample-02',
+    type: 'prayer',
+    author: 'RETURN 예시',
+    body: '가족이 건강하게 지낼 수 있도록 기도 부탁드려요.\n요즘 부모님 건강이 예전 같지 않아서\n마음이 자주 그쪽으로 갑니다.\n제가 할 수 있는 일이 많지 않다는 것도 알지만\n그래서 더 기도하게 됩니다.',
+  },
+  {
+    id: 'sample-03',
+    type: 'grace',
+    author: 'RETURN 예시',
+    body: '오늘 말씀을 읽다가 마음이 조금 편안해졌어요.\n같은 구절을 여러 번 읽었는데\n오늘따라 다르게 들렸습니다.\n답을 얻은 건 아니지만 덜 조급해졌어요.',
+  },
+  {
+    id: 'sample-04',
+    type: 'confession',
+    author: 'RETURN 예시',
+    body: '화가 난 마음을 오래 붙잡고 있었습니다.\n상대는 이미 잊었을지도 모르는 일인데\n저는 계속 되뇌고 있었어요.\n그 시간이 아깝다는 걸 이제야 알겠습니다.',
+  },
+  {
+    id: 'sample-05',
+    type: 'daily',
+    author: 'RETURN 예시',
+    body: '출근길에 하늘을 보며 잠깐 멈춰 섰습니다.\n늘 지나던 길인데 오늘은 눈에 들어왔어요.\n짧은 순간이었지만 숨이 트이는 기분이었습니다.',
+  },
+  {
+    id: 'sample-06',
+    type: 'prayer',
+    author: 'RETURN 예시',
+    body: '중요한 결정을 앞두고 있습니다.\n어느 쪽을 골라도 후회가 남을 것 같아\n며칠째 미루고만 있었어요.\n제 뜻보다 바른 길을 알아볼 수 있는\n지혜를 구합니다.',
+  },
+  {
+    id: 'sample-07',
+    type: 'grace',
+    author: 'RETURN 예시',
+    body: '예상하지 못한 도움을 받았습니다.\n부탁한 적도 없는데 먼저 손을 내밀어 주셨어요.\n고맙다는 말로는 부족한 하루였습니다.',
+  },
+  {
+    id: 'sample-08',
+    type: 'confession',
+    author: 'RETURN 예시',
+    body: '해야 할 말을 계속 미루고 있었어요.\n사과해야 한다는 걸 알면서도\n먼저 말을 꺼내는 게 어려웠습니다.\n더 늦기 전에 용기를 내어\n먼저 다가가 보려고 합니다.',
+  },
+  {
+    id: 'sample-09',
+    type: 'prayer',
+    author: 'RETURN 예시',
+    body: '마음이 많이 지친 친구가 있습니다.\n곁에 있어 주는 것 말고는\n해줄 수 있는 게 없더라고요.\n함께 기도해 주시면 감사하겠습니다.',
+  },
+  {
+    id: 'sample-10',
+    type: 'daily',
+    author: 'RETURN 예시',
+    body: '오늘은 조금 느리게 가도 괜찮다고\n생각해 보기로 했습니다.\n서두른다고 더 빨리 도착하는 것도 아니더라고요.',
+  },
 ]
 
 function SampleReactionRow() {
@@ -49,7 +99,9 @@ function SampleReactionRow() {
           className="text-body-sm inline-flex min-h-9 items-center gap-1 rounded-chip px-3 font-medium text-ink-muted"
           aria-label={`${label} ${count}`}
         >
-          <span aria-hidden="true">{icon}</span>
+          <span aria-hidden="true" className="grayscale">
+            {icon}
+          </span>
           <span>{count}</span>
         </span>
       ))}
@@ -110,7 +162,7 @@ export default async function ConfessionPage({
 
   return (
     <main>
-      <AppHeader actions={<HeaderAction href="/confession/write">나누기</HeaderAction>} />
+      <AppHeader sticky actions={<HeaderAction href="/confession/write">나누기</HeaderAction>} />
 
       {blocked ? (
         <p className="text-body-sm mx-title-gutter mt-3 rounded-control bg-accent-tint px-4 py-3 leading-[21px] text-accent">
@@ -118,9 +170,16 @@ export default async function ConfessionPage({
         </p>
       ) : null}
 
+      {/*
+        Issue #19: the filter sits at the upper right of the feed and the
+        current value is the filled pill. The taxonomy is the DB enum itself
+        (CONFESSION_TYPE_LABELS) plus 전체, which is the default.
+      */}
       <div className="no-scrollbar mt-4 overflow-x-auto px-title-gutter">
         <SegmentedLinks
           size="sm"
+          align="end"
+          label="고백 유형 필터"
           active={activeType}
           options={FILTERS.map((filter) => ({
             value: filter.value,

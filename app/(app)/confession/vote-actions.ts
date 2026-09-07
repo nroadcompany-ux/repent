@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { safeReturnPath } from '@/lib/auth/safe-path'
 import { requireUser } from '@/lib/supabase/server'
 
 function text(form: FormData, key: string): string {
@@ -15,7 +16,9 @@ export async function toggleSimpleReaction(form: FormData) {
   const { supabase, userId } = await requireUser()
   const postId = text(form, 'post_id')
   const type = text(form, 'type')
-  const returnTo = text(form, 'return_to') || '/confession'
+  // The path comes back from a form field, so it goes through the same
+  // open-redirect guard the auth flow uses before it reaches redirect().
+  const returnTo = safeReturnPath(text(form, 'return_to')) ?? '/confession'
 
   if (!postId || (type !== 'like' && type !== 'dislike')) redirect(returnTo)
 

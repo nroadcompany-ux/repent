@@ -47,7 +47,7 @@ export default async function RepentancePage({
 
   return (
     <main>
-      <AppHeader />
+      <AppHeader sticky />
       <EducationBanner slides={SLIDES} />
 
       {saved === 'draft' ? (

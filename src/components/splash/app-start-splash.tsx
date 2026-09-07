@@ -18,7 +18,18 @@ const LOOP_MARK_SRC = '/brand/splash-loop-mark.svg'
 const LOOP_MARK_WIDTH = 69.12
 const LOOP_MARK_HEIGHT = 91.3344
 
-const SEQUENCE_END_MS = 420
+/**
+ * Splash timing v2 (Issue #19). The Owner asked for roughly double the
+ * perceived duration. The extension is entirely animation: the tagline reveal
+ * now starts at 360ms and runs 600ms, finishing exactly as the sequence ends,
+ * so there is no dead frame and no artificial minimum-exposure hold — the
+ * splash still leaves as soon as its own animation is done.
+ *
+ *   0–360ms    RETURN and the mark are visible; tagline at opacity 0
+ *   360–960ms  tagline opacity 0→1, translateY 6→0
+ *   960–1100ms fade out
+ */
+const SEQUENCE_END_MS = 960
 const FADE_OUT_MS = 140
 
 type SplashPhase = 'active' | 'exiting' | 'done'
