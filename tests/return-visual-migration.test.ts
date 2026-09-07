@@ -276,3 +276,108 @@ describe('Prototype boundary', () => {
     expect(journeyData).toContain('body')
   })
 })
+
+/**
+ * Step 13 — full route regression.
+ *
+ * Every internal destination the app can navigate to must resolve to a route
+ * that exists. This is the net under the whole migration: the visual pass moved
+ * links between screens (달력 out of the header, 캘린더 into 나의 기록, drafts
+ * behind a disclosure), and a link that now points nowhere is exactly the kind
+ * of damage a screenshot does not show.
+ */
+describe('Step 13 — every internal link resolves', () => {
+  const APP = join(process.cwd(), 'app')
+
+  function walk(dir: string, out: string[] = []): string[] {
+    for (const entry of readdirSync(dir)) {
+      const full = join(dir, entry)
+      if (statSync(full).isDirectory()) walk(full, out)
+      else if (entry === 'page.tsx' || entry === 'route.ts') out.push(full)
+    }
+    return out
+  }
+
+  /** app/(app)/journey/[id]/page.tsx → ['journey', '*'] */
+  const routes = walk(APP).map((file) =>
+    file
+      .slice(APP.length + 1)
+      .split(/[\\/]/)
+      .slice(0, -1)
+      .filter((segment) => !segment.startsWith('(') && segment !== '')
+      .map((segment) => (segment.startsWith('[') ? '*' : segment)),
+  )
+
+  function resolves(path: string): boolean {
+    const wanted = path.split('/').filter(Boolean)
+    return routes.some(
+      (route) =>
+        route.length === wanted.length &&
+        route.every((segment, i) => segment === '*' || segment === wanted[i]),
+    )
+  }
+
+  it('has a route tree to check against', () => {
+    expect(routes.length).toBeGreaterThan(30)
+    expect(resolves('/journey')).toBe(true)
+    expect(resolves('/repentance/abc')).toBe(true)
+    expect(resolves('/nope')).toBe(false)
+  })
+
+  it('resolves every href, redirect and action target in the app', () => {
+    const sources = [...walk(APP), ...walkAll(join(process.cwd(), 'src'))]
+    const broken: string[] = []
+
+    for (const file of sources) {
+      const source = stripComments(readFileSync(file, 'utf8'))
+      const found = [
+        ...source.matchAll(/href=(?:"|\{`)(\/[^"`{?#]*)/g),
+        ...source.matchAll(/redirect\(\s*`?'?(\/[^'`)?#]*)/g),
+        ...source.matchAll(/action="(\/[^"?#]*)"/g),
+      ]
+
+      for (const match of found) {
+        // `${promise.id}` and friends stand in for a dynamic segment.
+        const path = (match[1] as string).replace(/\$\{[^}]*\}/g, '*').replace(/\*+/g, '*')
+        if (path === '/' || path.startsWith('//') || path.includes('$')) continue
+        const normalised = path.replace(/\/$/, '') || '/'
+        if (normalised === '/') continue
+        if (!resolves(normalised)) broken.push(`${file.slice(process.cwd().length + 1)} → ${path}`)
+      }
+    }
+
+    expect(broken).toEqual([])
+  })
+
+  it('still routes the screens this migration touched', () => {
+    for (const path of [
+      '/journey',
+      '/journey/graph',
+      '/journey/timeline',
+      '/journey/calendar',
+      '/journey/scripture',
+      '/journey/bible',
+      '/journey/search',
+      '/journey/menu',
+      '/repentance',
+      '/repentance/write',
+      '/repentance/*',
+      '/repentance/*/write',
+      '/prayer',
+      '/promise',
+      '/confession',
+      '/settings',
+    ]) {
+      expect(resolves(path), path).toBe(true)
+    }
+  })
+})
+
+function walkAll(dir: string, out: string[] = []): string[] {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry)
+    if (statSync(full).isDirectory()) walkAll(full, out)
+    else if (/\.tsx?$/.test(entry)) out.push(full)
+  }
+  return out
+}
