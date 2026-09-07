@@ -73,7 +73,7 @@ export default async function PrayerPage({
 
   return (
     <main>
-      <AppHeader actions={<HeaderAction href="/journey/search?domain=prayer">검색</HeaderAction>} />
+      <AppHeader sticky actions={<HeaderAction href="/journey/search?domain=prayer">검색</HeaderAction>} />
       <EducationBanner slides={SLIDES} />
 
       <div className="mt-7 px-title-gutter">

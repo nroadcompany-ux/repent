@@ -11,6 +11,8 @@
  * is never a failure state.
  */
 
+import { PROMISE_ACTIVE_LABEL, PROMISE_CLOSE_LABEL } from './product-lock'
+
 export type RepeatType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 /** The fields recurrence needs. `repeat_*` is optional: a pre-0009 row lacks it. */
@@ -63,4 +65,55 @@ export function recurrenceLabel(promise: PromiseWithRepeat): string {
  */
 export function keepRate(done: number, target: number): number {
   return target > 0 ? Math.round((done / target) * 100) : 0
+}
+
+/* -------------------------------------------------------------------------
+ * List filter (Issue #19)
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Four states, all derived from what the row already stores. `예정` is not a
+ * new stored state — it is an active promise whose start day has not arrived,
+ * so no column and no migration is involved.
+ *
+ * Splitting `예정` out narrows `진행 중` to promises that have actually begun.
+ * Every existing row has started_on <= today (the column defaults to today),
+ * so nothing already in the database moves out of 진행 중 on release.
+ */
+export const PROMISE_FILTERS = ['active', 'upcoming', 'closed', 'all'] as const
+export type PromiseFilter = (typeof PROMISE_FILTERS)[number]
+
+/**
+ * Labels reuse the Product Lock wording. docs/04 fixes the finished promise as
+ * `마무리됨`, so that is what the closed filter says.
+ *
+ * [OPEN] Issue #19 wrote this state as `완료`. Renaming it is a canonical copy
+ * change (PROMISE_CLOSE_LABEL is asserted in tests/product-lock.test.ts), so
+ * the locked wording is kept and the difference is reported rather than
+ * decided here.
+ */
+export const PROMISE_FILTER_LABELS: Record<PromiseFilter, string> = {
+  active: PROMISE_ACTIVE_LABEL,
+  upcoming: '예정',
+  closed: PROMISE_CLOSE_LABEL,
+  all: '전체',
+}
+
+export function promiseFilter(value: string | undefined | null): PromiseFilter {
+  return (PROMISE_FILTERS as readonly string[]).includes(value ?? '')
+    ? (value as PromiseFilter)
+    : 'active'
+}
+
+export type PromiseListRow = { state: 'active' | 'closed'; started_on: string }
+
+export function matchesPromiseFilter(
+  promise: PromiseListRow,
+  filter: PromiseFilter,
+  today: string,
+): boolean {
+  if (filter === 'all') return true
+  if (filter === 'closed') return promise.state === 'closed'
+  if (promise.state !== 'active') return false
+  return filter === 'upcoming' ? promise.started_on > today : promise.started_on <= today
 }

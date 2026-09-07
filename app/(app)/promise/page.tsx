@@ -6,7 +6,8 @@ import { KeepStrip } from './_components/keep-strip'
 import { SegmentedLinks } from '@/components/ui/segmented-links'
 import { EmptyState } from '@/components/ui/state'
 import { SectionHeader } from '@/components/ui/surface'
-import { PROMISE_ACTIVE_LABEL, PROMISE_CLOSE_LABEL } from '@/domain/product-lock'
+import { PROMISE_CLOSE_LABEL } from '@/domain/product-lock'
+import { PROMISE_FILTERS, PROMISE_FILTER_LABELS, promiseFilter } from '@/domain/promise'
 import { addDays, dDayLabel, todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -31,8 +32,6 @@ const SLIDES: readonly EducationSlide[] = [
   },
 ]
 
-type Filter = 'active' | 'closed' | 'all'
-
 export default async function PromisePage({
   searchParams,
 }: {
@@ -41,8 +40,7 @@ export default async function PromisePage({
   const { supabase, userId } = await requireUser()
   const params = await searchParams
 
-  const filter: Filter =
-    params.filter === 'closed' ? 'closed' : params.filter === 'all' ? 'all' : 'active'
+  const filter = promiseFilter(params.filter)
   const groupId = params.group ?? ''
 
   const today = todayKst()
@@ -53,7 +51,10 @@ export default async function PromisePage({
     .select('id, title, group_id, due_date, daily_target, state, started_on')
     .eq('user_id', userId)
 
-  if (filter !== 'all') query = query.eq('state', filter)
+  // The four states are derived from state + started_on; see src/domain/promise.
+  if (filter === 'closed') query = query.eq('state', 'closed')
+  if (filter === 'active') query = query.eq('state', 'active').lte('started_on', today)
+  if (filter === 'upcoming') query = query.eq('state', 'active').gt('started_on', today)
   if (groupId) query = query.eq('group_id', groupId)
 
   // The group list and the promise list do not depend on each other, so they
@@ -90,36 +91,54 @@ export default async function PromisePage({
 
   return (
     <main>
-      <AppHeader />
+      <AppHeader sticky />
       <EducationBanner slides={SLIDES} />
 
-      <div className="mt-7 px-title-gutter">
+      {/*
+        Issue #19: state and group read as one panel rather than two loose
+        rows, and the panel states the combined result in words so the member
+        can see what the list is currently showing. Group labels come from the
+        member's own promise_groups rows — never renamed here.
+      */}
+      <section
+        aria-label="약속 필터"
+        className="mx-gutter mt-7 rounded-card bg-surface px-4 py-3"
+      >
         <SegmentedLinks
+          size="sm"
+          label="약속 상태 필터"
           active={filter}
-          options={[
-            { value: 'active', label: PROMISE_ACTIVE_LABEL, href: '/promise?filter=active' },
-            { value: 'closed', label: PROMISE_CLOSE_LABEL, href: '/promise?filter=closed' },
-            { value: 'all', label: '전체', href: '/promise?filter=all' },
-          ]}
+          options={PROMISE_FILTERS.map((value) => ({
+            value,
+            label: PROMISE_FILTER_LABELS[value],
+            href: `/promise?filter=${value}${groupId ? `&group=${groupId}` : ''}`,
+          }))}
         />
-      </div>
 
-      {(groups ?? []).length > 0 ? (
-        <div className="no-scrollbar mt-3 overflow-x-auto px-title-gutter">
-          <SegmentedLinks
-            size="sm"
-            active={groupId}
-            options={[
-              { value: '', label: '모든 그룹', href: `/promise?filter=${filter}` },
-              ...(groups ?? []).map((group) => ({
-                value: group.id,
-                label: group.name,
-                href: `/promise?filter=${filter}&group=${group.id}`,
-              })),
-            ]}
-          />
-        </div>
-      ) : null}
+        {(groups ?? []).length > 0 ? (
+          <div className="no-scrollbar -mx-1 mt-2 overflow-x-auto px-1">
+            <SegmentedLinks
+              size="sm"
+              label="약속 그룹 필터"
+              active={groupId}
+              options={[
+                { value: '', label: '모든 그룹', href: `/promise?filter=${filter}` },
+                ...(groups ?? []).map((group) => ({
+                  value: group.id,
+                  label: group.name,
+                  href: `/promise?filter=${filter}&group=${group.id}`,
+                })),
+              ]}
+            />
+          </div>
+        ) : null}
+
+        <p aria-live="polite" className="text-caption mt-3 border-t border-line pt-2 text-ink-muted">
+          {PROMISE_FILTER_LABELS[filter]}
+          {groupId ? ` · ${groupName.get(groupId) ?? '선택한 그룹'}` : ' · 모든 그룹'}
+          {` · ${(promises ?? []).length}개`}
+        </p>
+      </section>
 
       <div className="mt-6">
         <SectionHeader
