@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { PageHeader } from '@/components/layout/app-header'
 import { Button } from '@/components/ui/control'
 import { PROMISE_CLOSE_LABEL } from '@/domain/product-lock'
+import { PROVENANCE_LABELS, provenanceHref } from '@/domain/provenance'
+import type { ShareSourceKind } from '@/lib/supabase/database.types'
 import {
   isScheduled,
   keepRate as keepRateOf,
@@ -18,6 +20,8 @@ import { closePromise, reopenPromise } from '../actions'
 export const dynamic = 'force-dynamic'
 
 type PromiseWithRepeat = PromiseRecurrence & {
+  source_kind?: ShareSourceKind | null
+  source_id?: string | null
   id: string
   title: string
   group_id: string | null
@@ -80,6 +84,14 @@ export default async function PromiseDetailPage({
   const keepRate = keepRateOf(done, target)
   const recentScheduled = scheduled.slice(-3).reverse()
 
+  const provenanceNotice =
+    promise.source_kind && promise.source_id
+      ? {
+          label: PROVENANCE_LABELS[promise.source_kind],
+          href: provenanceHref(promise.source_kind, promise.source_id),
+        }
+      : null
+
   return (
     <main>
       <PageHeader
@@ -135,6 +147,24 @@ export default async function PromiseDetailPage({
               returnTo={`/promise/${id}`}
             />
           </div>
+        </section>
+      ) : null}
+
+      {/*
+        0011 provenance. Only the fact and a link — never the source body, and
+        only when the pointer resolves to a screen this member can open.
+      */}
+      {provenanceNotice ? (
+        <section className="mx-gutter mt-2 rounded-card bg-surface px-4 py-3">
+          <p className="text-caption leading-[19px] text-ink-muted">{provenanceNotice.label}</p>
+          {provenanceNotice.href ? (
+            <Link
+              href={provenanceNotice.href}
+              className="text-body-sm mt-[2px] inline-block font-medium text-accent"
+            >
+              시작이 된 기록 보기
+            </Link>
+          ) : null}
         </section>
       ) : null}
 

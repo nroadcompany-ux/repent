@@ -10,21 +10,15 @@ function text(form: FormData, key: string): string {
   return typeof value === 'string' ? value.trim() : ''
 }
 
-/** Start a new record. Creates the draft immediately so nothing can be lost. */
-export async function startRepentance() {
-  const { supabase, userId } = await requireUser()
-
-  const { data, error } = await supabase
-    .from('repentances')
-    .insert({ user_id: userId, state: 'draft', recorded_at: new Date().toISOString() })
-    .select('id')
-    .single()
-
-  if (error || !data) redirect('/repentance?error=start')
-
-  revalidatePath('/repentance')
-  redirect(`/repentance/${data.id}/write?step=looking_back`)
-}
+/*
+ * The old startRepentance() was removed on 2026-09-07 (Issue #21 §B).
+ *
+ * It inserted a draft the moment the 회개하기 button was pressed, so opening
+ * the screen and walking away left a row behind: every one of the 5 rows in
+ * the table was an untouched draft. The entry point is now a plain link to
+ * /repentance/write, and saveRepentanceStep below creates the row on the first
+ * real save instead. Existing drafts are left exactly as they are.
+ */
 
 const STEP_FIELDS = {
   looking_back: 'looking_back',
@@ -45,12 +39,12 @@ function recordedAtFromDate(date: string): string | null {
 export async function saveRepentanceStep(form: FormData) {
   const { supabase, userId } = await requireUser()
 
-  const id = text(form, 'id')
+  const submittedId = text(form, 'id')
   const step = text(form, 'step') as RepentanceStep
   const intent = text(form, 'intent')
   const title = text(form, 'title')
 
-  if (!id || !STEP_ORDER.includes(step)) redirect('/repentance')
+  if (!STEP_ORDER.includes(step)) redirect('/repentance')
 
   const column = STEP_FIELDS[step]
   const body = text(form, column) || null
@@ -67,13 +61,35 @@ export async function saveRepentanceStep(form: FormData) {
         ? { realization: body }
         : { returning_note: body }
 
-  const { error } = await supabase
-    .from('repentances')
-    .update(payload)
-    .eq('id', id)
-    .eq('user_id', userId)
+  let id = submittedId
 
-  if (error) redirect(`/repentance/${id}/write?step=${step}&error=save`)
+  if (id) {
+    const { error } = await supabase
+      .from('repentances')
+      .update(payload)
+      .eq('id', id)
+      .eq('user_id', userId)
+
+    if (error) redirect(`/repentance/${id}/write?step=${step}&error=save`)
+  } else {
+    // Delayed creation (Issue #21 §B): the row appears on the first real save.
+    // Opening the screen and leaving writes nothing.
+    if (step !== 'looking_back') redirect('/repentance')
+
+    const { data, error } = await supabase
+      .from('repentances')
+      .insert({
+        user_id: userId,
+        state: 'draft',
+        recorded_at: recordedAtFromDate(recordedOn) ?? new Date().toISOString(),
+        ...payload,
+      })
+      .select('id')
+      .single()
+
+    if (error || !data) redirect(`/repentance/write?error=save`)
+    id = data.id
+  }
 
   if (intent === 'draft') {
     revalidatePath('/repentance')

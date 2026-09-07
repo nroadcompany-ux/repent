@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { readProvenance } from '@/domain/provenance'
 import { todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -56,6 +57,12 @@ export async function createPromise(form: FormData) {
     daily_target: 1,
     repeat_type: recurrence,
     repeat_weekdays: weekdays,
+    // 0011: re-validated here, never trusted from the form. A half-filled
+    // pointer becomes null/null rather than failing the pair CHECK.
+    ...(readProvenance(text(form, 'source_kind'), text(form, 'source_id')) ?? {
+      source_kind: null,
+      source_id: null,
+    }),
   }
 
   const { data, error } = await supabase

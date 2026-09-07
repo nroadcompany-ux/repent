@@ -38,7 +38,7 @@ owner_approval: 2026-09-06
 - 기본 그룹: 나의 삶 / 사람과 관계 / 신앙생활.
 - Promise는 1:N Action을 가진다.
 - 이행률은 행동 측정치만 의미한다.
-- 사용자-facing 완료 상태는 `마무리됨`이다.
+- 사용자-facing 완료 상태는 `완료`이다.  <!-- Owner decision 2026-09-07 (#21 §G): 기존 `마무리됨` 대체 -->
 - Action 실패를 죄로 자동 연결하지 않는다.
 - Retry / Modify / Reschedule / Record Only / Optional Repent를 지원한다.
 - Reminder는 Promise/Action 사용자 설정형만 허용한다.

@@ -250,8 +250,9 @@ describe('promise / action (docs/04, AC-05)', () => {
     for (const group of PROMISE_DEFAULT_GROUPS) expect(migration).toContain(group)
   })
 
-  it('labels a finished promise 마무리됨', () => {
-    expect(PROMISE_CLOSE_LABEL).toBe('마무리됨')
+  it('labels a finished promise 완료', () => {
+    // Owner decision 2026-09-07 (Issue #21 §G) supersedes `마무리됨`.
+    expect(PROMISE_CLOSE_LABEL).toBe('완료')
   })
 
   it('never equates a missed action with sin', () => {

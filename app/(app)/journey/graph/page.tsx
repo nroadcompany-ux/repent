@@ -2,6 +2,7 @@ import { PageHeader } from '@/components/layout/app-header'
 import { JourneyGraph, JourneyGraphEmpty } from '@/components/journey/journey-graph'
 import { Button, FieldLabel, TextArea, TextField } from '@/components/ui/control'
 import { SegmentedLinks } from '@/components/ui/segmented-links'
+import { HISTORY_EXAMPLE_BANDS, groupHistory } from '@/domain/journey-history'
 import { MOOD_LABELS } from '@/domain/product-lock'
 import { addDays, formatFullDate, formatMonthDay, todayKst } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
@@ -40,7 +41,13 @@ export default async function JourneyGraphPage({
   const from = addDays(today, -(days - 1))
   const focusDate = dateParam && dateParam <= today ? dateParam : today
 
-  const [{ data: moods }, { data: events }, { data: focusMood }] = await Promise.all([
+  const [
+    { data: moods },
+    { data: events },
+    { data: focusMood },
+    { data: historyEvents },
+    { data: profile },
+  ] = await Promise.all([
     supabase
       .from('mood_records')
       .select('recorded_on, level, note')
@@ -61,6 +68,14 @@ export default async function JourneyGraphPage({
       .eq('user_id', userId)
       .eq('recorded_on', focusDate)
       .maybeSingle(),
+    // History spans a life, not the selected range, so it is fetched whole.
+    supabase
+      .from('life_events')
+      .select('id, occurred_on, title, body, significance')
+      .eq('user_id', userId)
+      .order('occurred_on', { ascending: true })
+      .limit(500),
+    supabase.from('profiles').select('birth_date').eq('id', userId).maybeSingle(),
   ])
 
   const graphMoods = (moods ?? []).map((mood) => ({ date: mood.recorded_on, level: mood.level }))
@@ -70,6 +85,9 @@ export default async function JourneyGraphPage({
     title: event.title,
     significance: event.significance,
   }))
+
+  // Display-only era grouping (Issue #21 §D). Nothing here is stored.
+  const bands = groupHistory(historyEvents ?? [], profile?.birth_date ?? null)
 
   return (
     <main>
@@ -164,6 +182,76 @@ export default async function JourneyGraphPage({
             </button>
           </form>
         ) : null}
+      </section>
+
+      {/*
+        시대별 History (Issue #21 §D). Grouped by age band from birth_date,
+        falling back to the calendar year when there is no birth date. The
+        example below is UI-only and disappears after the first real event.
+      */}
+      <section className="mt-9 px-title-gutter">
+        <h2 className="text-section font-semibold text-ink">시대별 기록</h2>
+        <p className="text-body-sm mt-1 leading-[21px] text-ink-muted">
+          {profile?.birth_date
+            ? '남겨둔 사건을 나이대별로 모아 보여드립니다.'
+            : '생년월일을 입력하면 나이대별로 모아 볼 수 있어요. 지금은 연도로 묶습니다.'}
+        </p>
+
+        {bands.length > 0 ? (
+          <div className="mt-4 flex flex-col gap-2">
+            {bands.map((band) => (
+              <details key={band.key} className="rounded-card bg-surface px-4 py-3">
+                <summary className="text-body flex cursor-pointer items-center justify-between font-medium text-ink">
+                  <span>{band.label}</span>
+                  <span className="text-caption text-ink-muted">{band.events.length}개</span>
+                </summary>
+                <ul className="mt-3 flex flex-col gap-2 border-t border-line pt-3">
+                  {band.events.map((event) => (
+                    <li key={event.id}>
+                      <details>
+                        <summary className="text-body-sm flex cursor-pointer items-baseline gap-2 font-medium text-ink">
+                          <span className="text-caption shrink-0 text-ink-faint">
+                            {formatMonthDay(event.occurred_on)}
+                          </span>
+                          <span className="min-w-0 flex-1">{event.title}</span>
+                        </summary>
+                        <div className="mt-2 pl-1">
+                          <p className="text-caption text-ink-faint">{event.occurred_on}</p>
+                          {event.body ? (
+                            <p className="text-body-sm mt-1 whitespace-pre-wrap leading-[21px] text-ink-muted">
+                              {event.body}
+                            </p>
+                          ) : null}
+                        </div>
+                      </details>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4 flex flex-col gap-2">
+            {HISTORY_EXAMPLE_BANDS.map((band) => (
+              <div key={band.label} className="rounded-card bg-surface px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-body font-medium text-ink">{band.label}</span>
+                  <span className="text-caption rounded-chip border border-line px-[10px] py-[2px] font-medium text-accent">
+                    예시
+                  </span>
+                </div>
+                <ul className="text-body-sm mt-2 flex flex-col gap-1 text-ink-muted">
+                  {band.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <p className="text-caption mt-1 text-ink-faint">
+              예시는 실제 기록에 포함되지 않아요. 사건을 하나 남기면 사라집니다.
+            </p>
+          </div>
+        )}
       </section>
 
       {/* 삶의 사건 */}
