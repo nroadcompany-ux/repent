@@ -4,7 +4,7 @@ import { AppHeader } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
 import { ButtonLink } from '@/components/ui/control'
 import { EmptyState } from '@/components/ui/state'
-import { SectionHeader } from '@/components/ui/surface'
+import { RecordList, RecordRow, SectionHeader } from '@/components/ui/surface'
 import { formatFullDate, formatMonthDay } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -111,25 +111,17 @@ export default async function RepentancePage({
             description="잘 쓰지 않아도 됩니다. 마음에 걸리는 것 한 가지부터 적어보세요."
           />
         ) : (
-          <ul className="flex flex-col gap-row-gap px-gutter">
+          <RecordList>
             {recorded.map((record) => (
-              <li key={record.id} className="rounded-row bg-surface">
-                <Link href={`/repentance/${record.id}`} className="flex items-center gap-3 px-4 py-3">
-                  <span className="min-w-0 flex-1">
-                    <span className="text-body block truncate font-medium text-ink">
-                      {record.title || '제목 없는 기록'}
-                    </span>
-                    <span className="text-caption mt-[2px] block text-ink-faint">
-                      {formatFullDate((record.recorded_at ?? record.created_at).slice(0, 10))}
-                    </span>
-                  </span>
-                  <span aria-hidden="true" className="text-chevron shrink-0 text-ink-faint">
-                    ›
-                  </span>
-                </Link>
-              </li>
+              <RecordRow
+                key={record.id}
+                meta={formatFullDate((record.recorded_at ?? record.created_at).slice(0, 10))}
+                title={record.title || '제목 없는 기록'}
+                caption={record.turning_promise}
+                href={`/repentance/${record.id}`}
+              />
             ))}
-          </ul>
+          </RecordList>
         )}
       </div>
     </main>

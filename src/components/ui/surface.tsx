@@ -83,6 +83,74 @@ export function RowStack({ children }: { children: ReactNode }) {
 }
 
 /**
+ * Record row. Figma 155:4 (Journey) and 150:2 (Repentance history) draw the
+ * same shape, so it exists once here rather than four times in four screens.
+ *
+ * It differs from InfoRow in what it puts first. InfoRow leads with an accent
+ * label in a fixed 88px column, which suits a fixed set of named slots (나의
+ * 말씀, 기도, 약속). A list of records has no such slots: what identifies the
+ * row is the member's own words, so the title leads and the date or category
+ * sits above it, quiet and small.
+ */
+export function RecordRow({
+  meta,
+  title,
+  caption,
+  href,
+  trailing,
+}: {
+  meta?: ReactNode
+  title: ReactNode
+  caption?: ReactNode
+  href?: string
+  trailing?: ReactNode
+}) {
+  const body = (
+    <>
+      <span className="min-w-0 flex-1">
+        {meta ? <span className="text-caption block truncate text-ink-faint">{meta}</span> : null}
+        <span
+          className={`text-body-sm block truncate font-semibold text-ink ${meta ? 'mt-[2px]' : ''}`}
+        >
+          {title}
+        </span>
+        {caption ? (
+          <span className="text-caption mt-[2px] block truncate text-ink-muted">{caption}</span>
+        ) : null}
+      </span>
+      {href ? (
+        (trailing ?? (
+          <span aria-hidden="true" className="text-chevron shrink-0 text-ink-faint">
+            ›
+          </span>
+        ))
+      ) : (
+        trailing
+      )}
+    </>
+  )
+
+  const shell = 'flex items-center gap-3 px-4 py-3'
+
+  return (
+    <li className="rounded-row bg-surface">
+      {href ? (
+        <Link href={href} className={shell}>
+          {body}
+        </Link>
+      ) : (
+        <div className={shell}>{body}</div>
+      )}
+    </li>
+  )
+}
+
+/** Vertical stack of RecordRows. Figma 155:4→155:9 sit 4 apart. */
+export function RecordList({ children }: { children: ReactNode }) {
+  return <ul className="flex flex-col gap-1 px-gutter">{children}</ul>
+}
+
+/**
  * Section heading. Figma 3:12/3:13/3:14 and 3:35/3:36/3:37.
  *   title 18/24 semibold · subtitle 12/17 muted 26px below the title top ·
  *   optional right-aligned action 12/16 medium accent · gutter 24

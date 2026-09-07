@@ -41,6 +41,48 @@ export function HeaderAction({ href, children }: { href: string; children: React
   )
 }
 
+/**
+ * Icon action. Figma 118:4–118:8 draw the two the header carries: a magnifier
+ * (circle d15 with a 5px handle) and three 18px rules 6 apart, both in a 24px
+ * box, 12 apart, right inset 24.
+ *
+ * The label is required and never rendered — an icon-only control still has to
+ * say what it is. The hamburger in particular was a bare ☰ character, whose
+ * spoken name in most screen readers is "trigram for heaven".
+ */
+export function HeaderIconAction({
+  href,
+  label,
+  icon,
+}: {
+  href: string
+  label: string
+  icon: 'search' | 'menu'
+}) {
+  return (
+    <Link href={href} aria-label={label} className="text-ink-muted">
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        className="size-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.8}
+        strokeLinecap="round"
+      >
+        {icon === 'search' ? (
+          <>
+            <circle cx="11" cy="11" r="7.5" />
+            <path d="m16.5 16.5 4 4" />
+          </>
+        ) : (
+          <path d="M3 7h18M3 12h18M3 17h18" />
+        )}
+      </svg>
+    </Link>
+  )
+}
+
 /** Sub-page header: back affordance + page title, same metrics as AppHeader. */
 export function PageHeader({
   title,

@@ -158,23 +158,22 @@ export default async function PromisePage({
             actionHref="/promise/new"
           />
         ) : (
-          <ul className="flex flex-col gap-row-gap px-gutter">
+          <ul className="flex flex-col gap-1 px-gutter">
             {(promises ?? []).map((promise) => (
               <li key={promise.id} className="rounded-row bg-surface px-4 py-3">
                 <div className="flex items-start gap-3">
                   <Link href={`/promise/${promise.id}`} className="min-w-0 flex-1">
-                    <p className="text-caption font-medium text-accent">
+                    <p className="text-caption truncate text-ink-faint">
                       {promise.state === 'closed'
                         ? PROMISE_CLOSE_LABEL
                         : (groupName.get(promise.group_id ?? '') ?? '약속')}
                     </p>
                     {/* Two lines, not one. The 3-day strip takes 156px of a
-                        375px screen, leaving the title 135px — at 16px Korean
-                        that clipped even an ordinary promise on one line.
-                        Measured at 375: only a title over ~30 characters is
-                        cut now. Typography is unchanged; this is the row
-                        layout adapting to it. */}
-                    <p className="text-value mt-[2px] line-clamp-2 font-semibold text-ink">
+                        375px screen, leaving the title 135px — on one line that
+                        clipped even an ordinary promise. The record-row size
+                        (14 semibold, Owner Visual Migration step 9) fits more
+                        per line, and the clamp still covers the long ones. */}
+                    <p className="text-body-sm mt-[2px] line-clamp-2 font-semibold text-ink">
                       {promise.title}
                     </p>
                     <p className="text-caption mt-[2px] truncate text-ink-muted">

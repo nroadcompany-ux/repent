@@ -1,9 +1,9 @@
 import Link from 'next/link'
 
-import { AppHeader, HeaderAction } from '@/components/layout/app-header'
+import { AppHeader, HeaderIconAction } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
 import { SegmentedLinks } from '@/components/ui/segmented-links'
-import { InfoRow, RowStack, SectionHeader } from '@/components/ui/surface'
+import { RecordList, RecordRow, SectionHeader } from '@/components/ui/surface'
 import { formatMonthDay } from '@/lib/date'
 import { requireUser } from '@/lib/supabase/server'
 
@@ -23,6 +23,16 @@ const SLIDES: readonly EducationSlide[] = [
 type Surface = 'topics' | 'texts'
 type Kind = 'mine' | 'intercession'
 
+/**
+ * Owner Visual Migration step 8. No Figma frame exists for Prayer, so this pass
+ * applies the record-row shape approved on Home (155:4) and Repentance (150:2)
+ * and changes nothing else: the same two surfaces, the same 나의 기도 /
+ * 중보기도 split, the same example rows for a member who has written nothing.
+ *
+ * A prayer topic has no fixed slot to name it — what identifies the row is the
+ * member's own words — so the title leads and 마무리됨 / 중보 대상 / 상황 sits
+ * above it, which is exactly what InfoRow's fixed accent column could not do.
+ */
 function ExamplePill() {
   return (
     <span className="text-caption mr-1 inline-flex rounded-chip bg-accent-tint px-2 py-[2px] align-middle font-medium text-accent">
@@ -73,7 +83,12 @@ export default async function PrayerPage({
 
   return (
     <main>
-      <AppHeader sticky actions={<HeaderAction href="/journey/search?domain=prayer">검색</HeaderAction>} />
+      <AppHeader
+        sticky
+        actions={
+          <HeaderIconAction href="/journey/search?domain=prayer" label="기도 검색" icon="search" />
+        }
+      />
       <EducationBanner slides={SLIDES} />
 
       <div className="mt-7 px-title-gutter">
@@ -126,10 +141,10 @@ export default async function PrayerPage({
 
           <div className="mt-[13px]">
             {(topics ?? []).length === 0 ? (
-              <RowStack>
-                <InfoRow
-                  label={kind === 'mine' ? '나의 기도' : '중보기도'}
-                  value={
+              <RecordList>
+                <RecordRow
+                  meta={kind === 'mine' ? '나의 기도' : '중보기도'}
+                  title={
                     <>
                       <ExamplePill />
                       {kind === 'mine' ? '가족의 건강과 평안을 위해 기도' : '아픈 친구의 회복을 위해 기도'}
@@ -137,9 +152,9 @@ export default async function PrayerPage({
                   }
                   caption="이런 식으로 기도제목을 남길 수 있어요"
                 />
-                <InfoRow
-                  label={kind === 'mine' ? '나의 기도' : '중보기도'}
-                  value={
+                <RecordRow
+                  meta={kind === 'mine' ? '나의 기도' : '중보기도'}
+                  title={
                     <>
                       <ExamplePill />
                       {kind === 'mine' ? '오늘 마음이 조급하지 않도록 기도' : '친구가 치료 과정에서 지치지 않도록 기도'}
@@ -147,22 +162,22 @@ export default async function PrayerPage({
                   }
                   caption="예시는 실제 기록이나 개수에 포함되지 않아요"
                 />
-              </RowStack>
+              </RecordList>
             ) : (
-              <RowStack>
+              <RecordList>
                 {(topics ?? []).map((topic) => {
                   const lastPrayed = lastPrayedByTopic.get(topic.id)
                   return (
-                    <InfoRow
+                    <RecordRow
                       key={topic.id}
-                      label={topic.closed_at ? '마무리됨' : (topic.subject_name ?? '기도제목')}
-                      value={topic.title}
+                      meta={topic.closed_at ? '마무리됨' : topic.subject_name}
+                      title={topic.title}
                       caption={lastPrayed ? `최근 기도 ${formatMonthDay(lastPrayed)}` : '아직 기도 기록이 없어요'}
                       href={`/prayer/topic/${topic.id}`}
                     />
                   )
                 })}
-              </RowStack>
+              </RecordList>
             )}
           </div>
         </>
@@ -173,30 +188,30 @@ export default async function PrayerPage({
           </div>
           <div className="mt-[13px]">
             {(texts ?? []).length === 0 ? (
-              <RowStack>
-                <InfoRow
-                  label="기도문"
-                  value={<><ExamplePill />주일예배 대표기도</>}
+              <RecordList>
+                <RecordRow
+                  meta="기도문"
+                  title={<><ExamplePill />주일예배 대표기도</>}
                   caption="예: 감사와 교회를 위한 기도문"
                 />
-                <InfoRow
-                  label="기도문"
-                  value={<><ExamplePill />가족을 위한 저녁 기도</>}
+                <RecordRow
+                  meta="기도문"
+                  title={<><ExamplePill />가족을 위한 저녁 기도</>}
                   caption="예시는 실제 기록에 포함되지 않아요"
                 />
-              </RowStack>
+              </RecordList>
             ) : (
-              <RowStack>
+              <RecordList>
                 {(texts ?? []).map((prayerText) => (
-                  <InfoRow
+                  <RecordRow
                     key={prayerText.id}
-                    label={prayerText.occasion ?? '기도문'}
-                    value={prayerText.title}
+                    meta={prayerText.occasion}
+                    title={prayerText.title}
                     caption={`수정 ${formatMonthDay(prayerText.updated_at.slice(0, 10))}`}
                     href={`/prayer/text/${prayerText.id}`}
                   />
                 ))}
-              </RowStack>
+              </RecordList>
             )}
           </div>
         </>

@@ -1,11 +1,9 @@
-import Link from 'next/link'
-
-import { AppHeader, HeaderAction } from '@/components/layout/app-header'
+import { AppHeader, HeaderIconAction } from '@/components/layout/app-header'
 import { EducationBanner, type EducationSlide } from '@/components/layout/education-banner'
 import { JourneyGraph, JourneyGraphEmpty } from '@/components/journey/journey-graph'
 import { JourneyQuickActions } from '@/components/journey/quick-actions'
 import { SegmentedLinks } from '@/components/ui/segmented-links'
-import { SectionHeader } from '@/components/ui/surface'
+import { RecordList, RecordRow, SectionHeader } from '@/components/ui/surface'
 import { JOURNEY_BANNER_LEGACY_COPY } from '@/domain/copy'
 import {
   getJourneyHome,
@@ -58,15 +56,17 @@ export default async function JourneyPage({
 
   return (
     <main>
+      {/*
+        Owner Visual Migration step 11, from Figma 118:2. 달력 leaves the header
+        because it is now the fourth 나의 기록 quick action and is still listed
+        under 여정 in the full menu, so no route became unreachable.
+      */}
       <AppHeader
         sticky
         actions={
           <>
-            <HeaderAction href="/journey/search">검색</HeaderAction>
-            <HeaderAction href="/journey/calendar">달력</HeaderAction>
-            <Link href="/journey/menu" aria-label="메뉴" className="text-body font-medium text-ink-muted">
-              ☰
-            </Link>
+            <HeaderIconAction href="/journey/search" label="검색" icon="search" />
+            <HeaderIconAction href="/journey/menu" label="전체 메뉴" icon="menu" />
           </>
         }
       />
@@ -119,33 +119,17 @@ export default async function JourneyPage({
             아직 남긴 여정 기록이 없어요. 오늘 있었던 일 한 가지부터 적어보세요.
           </p>
         ) : (
-          <ul className="flex flex-col gap-1 px-gutter">
+          <RecordList>
             {home.recentEvents.map((event) => (
-              <li key={event.id} className="rounded-row bg-surface">
-                <Link
-                  href={`/journey/graph?date=${event.date}`}
-                  className="flex items-center gap-3 px-4 py-3"
-                >
-                  <span className="min-w-0 flex-1">
-                    <span className="text-caption block text-ink-faint">
-                      {formatFullDate(event.date)}
-                    </span>
-                    <span className="text-body-sm mt-[2px] block truncate font-semibold text-ink">
-                      {event.title}
-                    </span>
-                    {event.body ? (
-                      <span className="text-caption mt-[2px] block truncate text-ink-muted">
-                        {event.body}
-                      </span>
-                    ) : null}
-                  </span>
-                  <span aria-hidden="true" className="text-chevron shrink-0 text-ink-faint">
-                    ›
-                  </span>
-                </Link>
-              </li>
+              <RecordRow
+                key={event.id}
+                meta={formatFullDate(event.date)}
+                title={event.title}
+                caption={event.body}
+                href={`/journey/graph?date=${event.date}`}
+              />
             ))}
-          </ul>
+          </RecordList>
         )}
       </div>
     </main>
