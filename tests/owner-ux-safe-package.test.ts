@@ -251,13 +251,19 @@ describe('confession feed (Issue #19 §5)', () => {
 })
 
 describe('scope discipline (Issue #19 Forbidden)', () => {
-  it('adds no migration', () => {
+  it('adds no migration of its own', () => {
     const { readdirSync } = require('node:fs') as typeof import('node:fs')
-    const migrations = readdirSync(join(ROOT, 'supabase/migrations')).filter((f) =>
-      f.endsWith('.sql'),
-    )
-    expect(migrations.length).toBe(10)
-    expect(migrations.some((f) => f.startsWith('0011'))).toBe(false)
+    const migrations = readdirSync(join(ROOT, 'supabase/migrations'))
+      .filter((f) => f.endsWith('.sql'))
+      .sort()
+    // 0011 belongs to the meaning/data package, not this one. On the prototype
+    // base both packages are present, so the guarantee is stated as the exact
+    // known set rather than a count: nothing beyond it was introduced here.
+    expect(migrations.map((f) => f.slice(0, 4))).toEqual([
+      '0001', '0002', '0003', '0004', '0005', '0006',
+      '0007', '0008', '0009', '0010', '0011',
+    ])
+    expect(migrations.some((f) => f.startsWith('0012'))).toBe(false)
   })
 
   it('does not implement Journey automatic related-record linking', () => {
