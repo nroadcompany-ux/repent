@@ -30,7 +30,7 @@ owner_approval: 2026-09-06
 
 ## Promise / Action
 
-- 기본 그룹: 나의 삶 / 사람과 관계 / 신앙생활
+- 기본 그룹(초기값, 사용자 변경 가능): 나의 삶 / 사람과 관계 / 신앙생활 <!-- Owner decision 2026-09-08: 초기값이며 사용자별로 이름 변경 가능 (/promise/groups). 고정 문구 아님 -->
 - Promise user-facing finish: `완료`  <!-- Owner decision 2026-09-07 (#21 §G): 기존 `마무리됨` 대체. DB state(active/closed)는 불변 -->
 - Promise 1:N Action
 - 이행률은 행동 측정치만 허용.

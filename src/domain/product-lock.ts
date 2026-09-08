@@ -75,6 +75,17 @@ export const REPENTANCE_SHOWS_PROGRESS_PERCENT = false
  * Promise / Action (docs/04, AC-05)
  * ---------------------------------------------------------------------- */
 
+/**
+ * The three groups a new member starts with, seeded per user by
+ * seed_user_defaults() in migration 0004.
+ *
+ * Owner decision 2026-09-08: these are an INITIAL VALUE, not fixed wording. A
+ * member renames them into their own language at /promise/groups, and nothing
+ * in the app compares a stored group name against this list — every screen
+ * reads the member's own promise_groups rows. What stays locked is the seed:
+ * that a new member arrives with these three, and with three.
+ */
+export const PROMISE_DEFAULT_GROUPS_ARE_RENAMEABLE = true
 export const PROMISE_DEFAULT_GROUPS = ['나의 삶', '사람과 관계', '신앙생활'] as const
 
 /**

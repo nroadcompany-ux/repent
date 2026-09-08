@@ -200,6 +200,15 @@ export default async function PromisePage({
         )}
       </div>
 
+      <div className="mt-8 px-title-gutter">
+        <Link href="/promise/groups" className="text-body-sm font-medium text-accent">
+          약속 그룹 이름
+        </Link>
+        <p className="text-caption mt-1 text-ink-faint">
+          그룹 이름은 내가 쓰는 말로 바꿀 수 있습니다.
+        </p>
+      </div>
+
       <p className="text-caption mt-6 px-title-gutter text-center leading-[20px] text-ink-faint">
         기록하지 않은 날은 비어 있을 뿐, 잘못한 날이 아닙니다.
       </p>

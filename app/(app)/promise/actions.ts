@@ -118,7 +118,10 @@ export async function updatePromise(form: FormData) {
   revalidatePath(`/promise/${id}`)
   revalidatePath('/promise')
   revalidatePath('/journey')
-  redirect(`/promise/${id}`)
+  // Owner decision 2026-09-08: finishing a promise must not be a dead end. The
+  // member stays on the promise they just acted on — that is where the result
+  // belongs — and `closed` tells the screen to offer the way onward.
+  redirect(`/promise/${id}?closed=1`)
 }
 
 /** One tap records whether the promise itself was kept on that date. */
@@ -178,6 +181,29 @@ export async function reopenPromise(form: FormData) {
 
   revalidatePath('/promise')
   redirect(`/promise/${id}`)
+}
+
+/**
+ * Owner decision 2026-09-08: the three seeded group names are an initial value,
+ * not fixed wording. A member renames them into their own language.
+ *
+ * No migration is involved. promise_groups has been user-owned since 0002 —
+ * per-user rows, `name text not null` rather than an enum, and RLS keyed on
+ * auth.uid() — so a rename is a plain UPDATE that no other member can see, and
+ * promises.group_id is untouched, so nothing is regrouped.
+ */
+export async function renamePromiseGroup(form: FormData) {
+  const { supabase, userId } = await requireUser()
+  const id = text(form, 'id')
+  const name = text(form, 'name')
+
+  if (!id || !name) redirect('/promise/groups?error=name')
+
+  await supabase.from('promise_groups').update({ name }).eq('id', id).eq('user_id', userId)
+
+  revalidatePath('/promise/groups')
+  revalidatePath('/promise')
+  redirect('/promise/groups?saved=1')
 }
 
 export async function deletePromise(form: FormData) {

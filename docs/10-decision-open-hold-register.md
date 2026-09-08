@@ -39,10 +39,11 @@ owner_approval: 2026-09-06
 - Final CTA = 회개 기록 마치기
 
 ### Promise / Action
-- 기본 그룹: 나의 삶 / 사람과 관계 / 신앙생활
+- 기본 그룹(초기값, 사용자 변경 가능): 나의 삶 / 사람과 관계 / 신앙생활 <!-- Owner decision 2026-09-08: 초기값이며 사용자별로 이름 변경 가능 (/promise/groups). 고정 문구 아님 -->
 - 1:N Action
 - 사용자-facing finish = 완료  <!-- Owner decision 2026-09-07 (#21 §G): 기존 `마무리됨` 대체 -->
 - Promise/Action 사용자 설정 Reminder만 허용
+- Promise 상세는 항상 목록 복귀 경로를 제공한다 (dead-end 금지) <!-- Owner decision 2026-09-08: 마무리 후에도 '약속 목록으로' 이동 가능 -->
 
 ### Confession
 - Types: 기도 / 고백 / 은혜 / 일상

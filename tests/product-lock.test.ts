@@ -27,6 +27,7 @@ import {
   PROFILE_GALLERY_MAX,
   PROMISE_CLOSE_LABEL,
   PROMISE_DEFAULT_GROUPS,
+  PROMISE_DEFAULT_GROUPS_ARE_RENAMEABLE,
   REPENTANCE_FINAL_CTA,
   REPENTANCE_IS_DAILY_DUTY_TILE,
   REPENTANCE_SHOWS_PROGRESS_PERCENT,
@@ -239,7 +240,7 @@ describe('repentance (docs/01, AC-04)', () => {
 })
 
 describe('promise / action (docs/04, AC-05)', () => {
-  it('uses the canonical default groups', () => {
+  it('starts every member on the same three groups', () => {
     expect(PROMISE_DEFAULT_GROUPS).toEqual(['나의 삶', '사람과 관계', '신앙생활'])
   })
 
@@ -249,6 +250,40 @@ describe('promise / action (docs/04, AC-05)', () => {
       'utf8',
     )
     for (const group of PROMISE_DEFAULT_GROUPS) expect(migration).toContain(group)
+  })
+
+  /**
+   * Owner decision 2026-09-08. The three names are where a member starts, not
+   * wording they have to keep. This is the assertion that stops a later pass
+   * from turning the seed back into a fixed label set.
+   */
+  it('treats those names as an initial value the member may rename', () => {
+    expect(PROMISE_DEFAULT_GROUPS_ARE_RENAMEABLE).toBe(true)
+
+    // The column is free text with no enum and no CHECK behind it.
+    const schema = readFileSync(join(ROOT, 'supabase/migrations/0002_private_domains.sql'), 'utf8')
+    const table = schema.slice(schema.indexOf('create table public.promise_groups')).slice(0, 500)
+    expect(table).toContain('user_id uuid not null references auth.users(id)')
+    expect(table).toContain('name text not null')
+    expect(table).not.toMatch(/name[^,]*check/i)
+
+    // No screen compares a stored name against the seed list.
+    for (const file of [
+      'app/(app)/promise/page.tsx',
+      'app/(app)/promise/new/page.tsx',
+      'app/(app)/promise/[id]/page.tsx',
+      'app/(app)/promise/groups/page.tsx',
+    ]) {
+      expect(readFileSync(join(ROOT, file), 'utf8'), file).not.toContain('PROMISE_DEFAULT_GROUPS')
+    }
+
+    // Renaming is a plain per-user UPDATE: no regrouping, no other member.
+    const actions = readFileSync(join(ROOT, 'app/(app)/promise/actions.ts'), 'utf8')
+    const rename = actions.slice(actions.indexOf('export async function renamePromiseGroup'))
+    expect(rename).toContain(".from('promise_groups')")
+    expect(rename).toContain('.update({ name })')
+    expect(rename).toContain(".eq('user_id', userId)")
+    expect(rename.slice(0, 700)).not.toContain('group_id')
   })
 
   it('labels a finished promise 완료', () => {

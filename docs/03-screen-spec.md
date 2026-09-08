@@ -60,7 +60,7 @@ Progress %, 회개 완료율, 영적 점수 금지.
 - Return: Promise Home / Journey
 - Data Owner: Promise + nested Action
 
-기본 그룹:
+기본 그룹 (초기값 · 사용자가 자기 언어로 변경 가능, /promise/groups):
 - 나의 삶
 - 사람과 관계
 - 신앙생활

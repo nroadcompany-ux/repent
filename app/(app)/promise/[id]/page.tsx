@@ -37,11 +37,11 @@ export default async function PromiseDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; closed?: string }>
 }) {
   const { supabase, userId } = await requireUser()
   const { id } = await params
-  const { error } = await searchParams
+  const { error, closed } = await searchParams
 
   const { data: rawPromise } = await supabase
     .from('promises')
@@ -228,6 +228,29 @@ export default async function PromiseDetailPage({
         </div>
       </section>
 
+      {/*
+        Owner decision 2026-09-08: no dead-end flow. Finishing a promise used to
+        leave the member on a screen whose only remaining control was 다시
+        이어가기 — undoing what they had just decided. The confirmation now says
+        what happened and offers the way on, and the list link below is present
+        in every state, closed or not, so the way back never depends on the
+        header chevron alone.
+      */}
+      {closed && promise.state === 'closed' ? (
+        <section className="mx-gutter mt-8 rounded-card bg-accent-tint px-4 py-4">
+          <p className="text-body-sm font-semibold text-accent">약속을 마무리했어요.</p>
+          <p className="text-caption mt-1 leading-[19px] text-accent">
+            지금까지 지킨 기록은 그대로 남습니다.
+          </p>
+          <Link
+            href={`/promise?filter=closed`}
+            className="text-body-sm mt-3 inline-block font-semibold text-accent underline"
+          >
+            마무리한 약속 목록으로
+          </Link>
+        </section>
+      ) : null}
+
       <div className="mt-9 px-title-gutter">
         <form action={promise.state === 'closed' ? reopenPromise : closePromise}>
           <input type="hidden" name="id" value={id} />
@@ -235,6 +258,12 @@ export default async function PromiseDetailPage({
             {promise.state === 'closed' ? '다시 이어가기' : '이 약속 마무리하기'}
           </Button>
         </form>
+      </div>
+
+      <div className="mt-4 px-title-gutter">
+        <Link href="/promise" className="text-body-sm block text-center font-medium text-ink-muted">
+          약속 목록으로
+        </Link>
       </div>
     </main>
   )

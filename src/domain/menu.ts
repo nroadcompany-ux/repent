@@ -55,6 +55,7 @@ export const MENU_SECTIONS: readonly MenuSection[] = [
     items: [
       { label: '약속 홈', href: '/promise' },
       { label: '새 약속', href: '/promise/new' },
+      { label: '약속 그룹 이름', href: '/promise/groups', caption: '내가 쓰는 말로 바꾸기' },
     ],
   },
   {

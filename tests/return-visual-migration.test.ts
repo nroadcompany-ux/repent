@@ -30,6 +30,9 @@ const quickActions = read('src/components/journey/quick-actions.tsx')
 const graph = read('src/components/journey/journey-graph.tsx')
 const prayer = read('app/(app)/prayer/page.tsx')
 const promise = read('app/(app)/promise/page.tsx')
+const promiseDetail = read('app/(app)/promise/[id]/page.tsx')
+const promiseActions = read('app/(app)/promise/actions.ts')
+const promiseGroups = read('app/(app)/promise/groups/page.tsx')
 const surface = read('src/components/ui/surface.tsx')
 const header = read('src/components/layout/app-header.tsx')
 
@@ -381,3 +384,88 @@ function walkAll(dir: string, out: string[] = []): string[] {
   }
   return out
 }
+
+/**
+ * Owner decision 2026-09-08 — PROMISE UX / PRODUCT DELTA.
+ */
+describe('Promise — no dead-end flow', () => {
+  it('always offers the list, in every state', () => {
+    expect(promiseDetail).toContain('backHref="/promise"')
+    expect(promiseDetail).toContain('약속 목록으로')
+
+    // Two separate ways on: one inside the closed confirmation, and one that
+    // sits below the close form and therefore renders in every state.
+    expect(promiseDetail).toContain('마무리한 약속 목록으로')
+
+    const footer = promiseDetail.lastIndexOf('약속 목록으로')
+    const before = promiseDetail.slice(0, footer)
+    expect(before).toContain('</section>')
+    expect(before).toContain('closePromise')
+    expect(before).toContain('이 약속 마무리하기')
+  })
+
+  it('says what happened after 마무리하기 and offers the way on', () => {
+    expect(promiseActions).toContain('redirect(`/promise/${id}?closed=1`)')
+    expect(promiseDetail).toContain('{closed && promise.state === ')
+    expect(promiseDetail).toContain('약속을 마무리했어요.')
+    expect(promiseDetail).toContain('/promise?filter=closed')
+    // 다시 이어가기 must no longer be the only remaining control.
+    expect(promiseDetail).toContain('다시 이어가기')
+  })
+
+  it('reuses the existing list route rather than adding one', () => {
+    // Both ways back land on /promise; the filter is an existing search param.
+    expect(promiseDetail).toContain('href="/promise"')
+    expect(promiseDetail).toContain('/promise?filter=closed')
+    // `closed` is an existing filter on the existing list, not a new screen.
+    expect(promise).toContain('promiseFilter(params.filter)')
+    expect(read('src/domain/promise.ts')).toContain("'closed'")
+    expect(statSync(join(process.cwd(), 'app/(app)/promise/page.tsx')).isFile()).toBe(true)
+  })
+})
+
+describe('Promise — the member owns the group names', () => {
+  it('renames in place, with no migration', () => {
+    expect(promiseGroups).toContain('renamePromiseGroup')
+    expect(promiseActions).toContain('export async function renamePromiseGroup')
+    const files = readdirSync(join(process.cwd(), 'supabase/migrations')).filter((f) =>
+      f.endsWith('.sql'),
+    )
+    expect(files.length).toBe(11)
+  })
+
+  it('touches only this member and only the name', () => {
+    const start = promiseActions.indexOf('export async function renamePromiseGroup')
+    const next = promiseActions.indexOf('export async function', start + 1)
+    const rename = promiseActions.slice(start, next)
+    expect(rename).toContain(".eq('user_id', userId)")
+    expect(rename).toContain('.update({ name })')
+    // Nothing is regrouped, resorted or re-flagged by a rename.
+    expect(rename).not.toContain("from('promises')")
+    expect(rename).not.toContain('group_id')
+    expect(rename).not.toContain('sort_order')
+    expect(rename).not.toContain('is_default')
+  })
+
+  it('offers no feature the decision did not ask for', () => {
+    // Rename only. Create, delete and reorder were not requested, so the screen
+    // has one action and the actions file has one group mutation.
+    expect(promiseGroups).not.toContain('createPromiseGroup')
+    expect(promiseGroups).not.toContain('deletePromiseGroup')
+    expect(stripComments(promiseGroups)).not.toContain('추가')
+    expect(stripComments(promiseGroups)).not.toContain('삭제')
+    // sort_order is read to order the list; it is never written.
+    expect(promiseGroups).toContain(".order('sort_order')")
+    expect(promiseActions).not.toMatch(/promise_groups'\)[\s\S]{0,120}(insert|delete)\(/)
+    expect((promiseActions.match(/from\('promise_groups'\)/g) ?? []).length).toBe(1)
+  })
+
+  it('is reachable from the list and from the full menu', () => {
+    expect(read('app/(app)/promise/page.tsx')).toContain('href="/promise/groups"')
+    expect(read('src/domain/menu.ts')).toContain("href: '/promise/groups'")
+  })
+
+  it('tells the member the rename is theirs alone', () => {
+    expect(promiseGroups).toContain('바꾼 이름은 나에게만 보입니다')
+  })
+})
