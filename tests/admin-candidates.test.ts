@@ -14,6 +14,11 @@ import { describe, expect, it } from 'vitest'
  * The rule the Owner set is a governance boundary: 운영 문구 is Admin-managed,
  * 제품 의미 is Owner Decision / Product Lock, and the two must not be mixed.
  * These assertions are what stops them mixing.
+ *
+ * The set of candidates marked today is PROVISIONAL. Owner decision 2026-09-08:
+ * the final list is re-audited in full once the Frontend Visual Migration is
+ * complete. Nothing below asserts the list is finished — only that what is
+ * marked is well-formed and stays out of the Product Lock lane.
  */
 
 const ROOT = process.cwd()
@@ -67,7 +72,6 @@ describe('Admin candidates are marked, not implemented', () => {
       'repentance.hero.slides',
       'prayer.hero.slides',
       'promise.hero.slides',
-      'splash.tagline',
     ]) {
       expect(keys, key).toContain(key)
     }
@@ -110,14 +114,25 @@ describe('Governance: 운영 문구 and 제품 의미 stay apart', () => {
     }
   })
 
-  it('records the splash tagline as an unresolved Owner conflict', () => {
-    // ADMIN CONTENT §1 lists it as an admin target; §2 excludes Canonical Owner
-    // Decisions, and this string is one, locked by splash-contract.test.ts.
-    // Reported, not silently decided either way.
+  it('keeps the splash tagline in the Product Lock lane', () => {
+    // Owner decision 2026-09-08 resolved the §1/§2 conflict: 다시 하나님께로 is
+    // not an admin candidate. It stays a Canonical Owner Decision, locked by
+    // splash-contract.test.ts.
     const splash = sources.find((entry) =>
       entry.file.endsWith('components/splash/app-start-splash.tsx'),
     )
-    expect(splash?.text).toContain('[ADMIN CANDIDATE — OWNER CONFLICT] splash.tagline')
+    expect(splash?.text).toContain('[PRODUCT LOCK — NOT ADMIN] splash.tagline')
+    expect(splash?.text).not.toContain('[ADMIN CANDIDATE')
+    expect(candidates.map((entry) => entry.key)).not.toContain('splash.tagline')
     expect(splash?.text).toContain('다시 하나님께로')
+  })
+
+  it('carries no unresolved Owner conflict', () => {
+    // A conflict marker is how a candidate that is also a Canonical Decision
+    // gets reported instead of decided. None is open right now; a new one
+    // must fail here until the Owner rules on it.
+    for (const { file, text } of sources) {
+      expect(text, file).not.toContain('[ADMIN CANDIDATE — OWNER CONFLICT]')
+    }
   })
 })
