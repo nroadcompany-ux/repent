@@ -169,6 +169,7 @@ export default async function ConfessionPage({
 
   return (
     <main>
+      {/* [PRODUCT LOCK — NOT ADMIN] sns.header.action — 전체 메뉴와 같은 제품 용어 */}
       <AppHeader sticky actions={<HeaderAction href="/confession/write">나누기</HeaderAction>} />
 
       {blocked ? (

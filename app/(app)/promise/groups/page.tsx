@@ -52,6 +52,7 @@ export default async function PromiseGroupsPage({
       <PageHeader title="약속 그룹" backHref="/promise" />
 
       <div className="px-title-gutter pt-1">
+        {/* [ADMIN CANDIDATE] promise.groups.intro */}
         <p className="text-body-sm leading-[21px] text-ink-muted">
           그룹 이름은 처음 만들어 드린 것일 뿐이에요. 내가 쓰는 말로 바꿔도 됩니다.
         </p>

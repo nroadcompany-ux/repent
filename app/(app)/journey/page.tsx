@@ -27,8 +27,15 @@ export const dynamic = 'force-dynamic'
  * graph, and what was last written into it.
  */
 
+/*
+ * [ADMIN CANDIDATE] home.hero.slides — 교육 배너 슬라이드.
+ * 단, 첫 슬라이드 headline은 JOURNEY_BANNER_LEGACY_COPY로 Product Lock 대상이며
+ * Admin 관리에서 제외합니다. body 및 2·3번 슬라이드만 후보입니다
+ * (Owner ADMIN PREP RULE 2026-09-08. 구현하지 않음).
+ */
 const SLIDES: readonly EducationSlide[] = [
   {
+    // [PRODUCT LOCK — NOT ADMIN] home.hero.title
     headline: [...JOURNEY_BANNER_LEGACY_COPY],
     body: ['기도와 말씀, 돌아봄과 약속이', '시간 속에서 하나의 이야기로 이어집니다.'],
   },
@@ -74,6 +81,7 @@ export default async function JourneyPage({
       <EducationBanner slides={SLIDES} />
 
       <div className="mt-5">
+        {/* [ADMIN CANDIDATE] home.records.subtitle */}
         <SectionHeader title="나의 기록" subtitle="말씀을 읽고, 적고, 하루를 돌아보세요." />
       </div>
 
@@ -116,6 +124,7 @@ export default async function JourneyPage({
       <div className="mt-3">
         {home.recentEvents.length === 0 ? (
           <p className="text-body-sm mx-gutter rounded-card bg-surface px-4 py-5 leading-[21px] text-ink-muted">
+            {/* [ADMIN CANDIDATE] home.recentEvents.empty */}
             아직 남긴 여정 기록이 없어요. 오늘 있었던 일 한 가지부터 적어보세요.
           </p>
         ) : (

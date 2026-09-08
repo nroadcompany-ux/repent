@@ -9,6 +9,11 @@ import { requireUser } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+/*
+ * [ADMIN CANDIDATE] prayer.hero.slides — 교육 배너 슬라이드. 운영 중 문구 교체 가능성이 높은
+ * 안내 카피입니다. 지금은 Admin을 구현하지 않고 표시만 합니다
+ * (Owner ADMIN PREP RULE 2026-09-08).
+ */
 const SLIDES: readonly EducationSlide[] = [
   {
     headline: ['기도는 쌓여서', '한 사람의 기록이 됩니다'],

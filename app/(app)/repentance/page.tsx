@@ -10,6 +10,11 @@ import { requireUser } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+/*
+ * [ADMIN CANDIDATE] repentance.hero.slides — 교육 배너 슬라이드. 운영 중 문구 교체 가능성이 높은
+ * 안내 카피입니다. 지금은 Admin을 구현하지 않고 표시만 합니다
+ * (Owner ADMIN PREP RULE 2026-09-08).
+ */
 const SLIDES: readonly EducationSlide[] = [
   {
     headline: ['모든 사람이', '죄를 범했습니다'],
@@ -101,11 +106,13 @@ export default async function RepentancePage({
       ) : null}
 
       <div className="mt-8">
+        {/* [ADMIN CANDIDATE] repentance.history.subtitle */}
         <SectionHeader title="나의 회개 기록" subtitle="지난 돌이킴을 다시 읽어볼 수 있어요" />
       </div>
 
       <div className="mt-[13px]">
         {recorded.length === 0 ? (
+          /* [ADMIN CANDIDATE] repentance.history.empty */
           <EmptyState
             title="아직 남긴 기록이 없어요"
             description="잘 쓰지 않아도 됩니다. 마음에 걸리는 것 한 가지부터 적어보세요."

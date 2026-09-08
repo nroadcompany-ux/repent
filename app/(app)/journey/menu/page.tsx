@@ -61,6 +61,7 @@ export default function JourneyMenuPage() {
         </form>
       </div>
 
+      {/* [ADMIN CANDIDATE] menu.footerNote */}
       <p className="text-caption mt-6 px-title-gutter text-center leading-[20px] text-ink-faint">
         준비 중인 기능은 이 목록에 넣지 않았습니다.
       </p>

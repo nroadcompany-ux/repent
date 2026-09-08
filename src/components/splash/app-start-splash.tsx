@@ -88,7 +88,16 @@ export function AppStartSplash() {
             fetchPriority="high"
             decoding="sync"
           />
+          {/* [PRODUCT LOCK — NOT ADMIN] splash.wordmark */}
           <div className={styles.wordmark}>RETURN</div>
+          {/*
+            [ADMIN CANDIDATE — OWNER CONFLICT] splash.tagline
+            Owner ADMIN CONTENT §1은 Splash Tagline을 Admin 관리 대상으로 지정했으나,
+            같은 지시 §2는 Canonical Owner Decision을 Admin 관리에서 제외합니다. 이 문구는
+            Owner Final Correction 2026-09-06으로 확정되고 splash-contract.test.ts가
+            잠그고 있는 Canonical Copy입니다. 양쪽에 동시에 해당하므로 임의로 정하지 않고
+            충돌로 보고합니다. 결정 전까지는 Product Lock으로 취급합니다.
+          */}
           <div className={styles.tagline}>다시 하나님께로</div>
         </div>
       </div>

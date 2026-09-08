@@ -1,4 +1,15 @@
 /**
+ * [PRODUCT LOCK — NOT ADMIN]
+ *
+ * Owner ADMIN PREP RULE 2026-09-08 / GOVERNANCE: 운영 문구는 Admin-managed,
+ * 제품 의미는 Owner Decision / Product Lock. 둘을 섞지 않는다.
+ *
+ * 이 파일의 모든 값은 후자입니다 — Bottom Navigation 라벨, 핵심 제품 용어,
+ * 상태 라벨, 정책 불변식. 어느 것도 Admin 편집 대상이 아니며, 변경은 Owner
+ * Decision과 이 파일을 잠그고 있는 tests/product-lock.test.ts를 통해서만
+ * 이루어집니다.
+ */
+/**
  * RETURN Product Lock.
  *
  * Canonical Product Meaning, encoded once so that screens cannot drift from it

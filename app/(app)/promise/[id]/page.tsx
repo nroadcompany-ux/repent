@@ -174,6 +174,8 @@ export default async function PromiseDetailPage({
           {done} / {target}회 · {keepRate}%
         </p>
         <p className="text-caption mt-[2px] leading-[19px] text-ink-muted">
+          {/* [PRODUCT LOCK — NOT ADMIN] promise.keepRate.guardrail — docs/04
+              PROMISE_KEEP_RATE_IS_BEHAVIOURAL_ONLY 를 진술하는 문장 */}
           예정된 날 중 내가 직접 지켰다고 남긴 기록입니다. 신앙을 재는 숫자가 아닙니다.
         </p>
       </section>

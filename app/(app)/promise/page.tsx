@@ -21,6 +21,11 @@ export const dynamic = 'force-dynamic'
  * the list itself, which is what keeps the screen usable at 10 or 100 promises.
  */
 
+/*
+ * [ADMIN CANDIDATE] promise.hero.slides — 교육 배너 슬라이드. 운영 중 문구 교체 가능성이 높은
+ * 안내 카피입니다. 지금은 Admin을 구현하지 않고 표시만 합니다
+ * (Owner ADMIN PREP RULE 2026-09-08).
+ */
 const SLIDES: readonly EducationSlide[] = [
   {
     headline: ['약속은 기억할 때', '지켜지기 시작합니다'],
@@ -152,6 +157,7 @@ export default async function PromisePage({
       <div className="mt-[13px]">
         {(promises ?? []).length === 0 ? (
           <EmptyState
+            /* [ADMIN CANDIDATE] promise.list.empty */
             title={filter === 'closed' ? '마무리한 약속이 없어요' : '아직 약속이 없어요'}
             description="지금 지킬 수 있는 작은 한 가지부터 정해보세요."
             actionLabel="첫 약속 만들기"
@@ -204,11 +210,17 @@ export default async function PromisePage({
         <Link href="/promise/groups" className="text-body-sm font-medium text-accent">
           약속 그룹 이름
         </Link>
+        {/* [ADMIN CANDIDATE] promise.groups.entryNote */}
         <p className="text-caption mt-1 text-ink-faint">
           그룹 이름은 내가 쓰는 말로 바꿀 수 있습니다.
         </p>
       </div>
 
+      {/*
+        [PRODUCT LOCK — NOT ADMIN] promise.list.guardrail
+        ACTION_FAILURE_IS_SIN = false 를 사용자에게 진술하는 문장입니다. 제품 의미이므로
+        Admin 편집 대상이 아닙니다 (Owner ADMIN PREP RULE §2 / GOVERNANCE).
+      */}
       <p className="text-caption mt-6 px-title-gutter text-center leading-[20px] text-ink-faint">
         기록하지 않은 날은 비어 있을 뿐, 잘못한 날이 아닙니다.
       </p>
