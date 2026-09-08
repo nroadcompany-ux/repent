@@ -7,6 +7,8 @@ owner_approval: 2026-09-06
 
 # 00 Product Foundation
 
+> **Shared Canonical** — 이 문서는 Flutter(CURRENT CANONICAL) / Future PC / Next.js(LEGACY REFERENCE) 공통 Source입니다. Owner Decision 2026-09-08, [PLATFORM-STATUS.md](../PLATFORM-STATUS.md).
+
 > Owner Approved / Planning Locked. 본 문서는 RETURN의 Canonical Product Foundation이다.
 
 ## Product Core

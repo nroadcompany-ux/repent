@@ -69,6 +69,15 @@ owner_approval: 2026-09-06
 - Private Original과 별도 객체
 - Source 삭제 시 ShareCopy 자동삭제 금지 + 사용자 선택
 
+### Platform (Owner Decision 2026-09-08 — PLATFORM TRANSITION GOVERNANCE)
+- RETURN Flutter = CURRENT CANONICAL CLIENT
+- Existing Next.js / repent = LEGACY REFERENCE (삭제 금지, Current Product Source 아님, 신규 Product Change 자동 동기화 금지)
+- Supabase = CURRENT SHARED BACKEND
+- Future PC Web = FUTURE (Next.js 부활 아님 — 그 시점의 Flutter Current 기준으로 재설계)
+- 충돌 시 우선순위: Owner Latest Decision → Flutter Current → Shared Canonical → Figma Current → Next.js Legacy
+- Shared Canonical: Product Definition / Guardrail / Product Lock / Owner Decisions / Backend Schema / RLS / Data Dictionary / Core Domain Meaning
+- 상세: PLATFORM-STATUS.md
+
 ## HOLD / NON-BLOCKING
 
 1. Account Delete 최종 보존기간 / Legal wording
